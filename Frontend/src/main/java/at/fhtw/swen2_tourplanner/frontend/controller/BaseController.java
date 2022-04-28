@@ -1,6 +1,6 @@
-package at.fhtw.swen2_tourplanner.swen2_tourplanner.controller;
+package at.fhtw.swen2_tourplanner.frontend.controller;
 
-import at.fhtw.swen2_tourplanner.swen2_tourplanner.viewmodel.ViewModel;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.ViewModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

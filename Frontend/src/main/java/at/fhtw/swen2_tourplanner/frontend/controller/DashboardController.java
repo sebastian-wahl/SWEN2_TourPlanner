@@ -1,9 +1,12 @@
-package at.fhtw.swen2_tourplanner.swen2_tourplanner.controller;
+package at.fhtw.swen2_tourplanner.frontend.controller;
 
-import at.fhtw.swen2_tourplanner.swen2_tourplanner.viewmodel.Dashboard;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.Dashboard;
 import javafx.fxml.FXML;
 
 public class DashboardController extends BaseController<Dashboard> {
+    @FXML
+    public MenubarController menubarController;
+
     public DashboardController() {
         super(new Dashboard());
     }
