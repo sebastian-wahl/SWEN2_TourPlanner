@@ -1,10 +1,10 @@
-package at.fhtw.swen2_tour_backend;
+package at.fhtw.swen2_tourplanner.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Swen2TourBackendApplicationTests {
+class BackendApplicationTests {
 
     @Test
     void contextLoads() {

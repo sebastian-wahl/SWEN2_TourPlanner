@@ -8,11 +8,11 @@
         <version>2.6.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>at.fhtw</groupId>
-    <artifactId>swen2_tour_backend</artifactId>
+    <groupId>at.fhtw.SWEN2_TourPlanner</groupId>
+    <artifactId>Backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>swen2_tour_backend</name>
-    <description>swen2_tour_backend</description>
+    <name>Backend</name>
+    <description>Backend</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -29,6 +29,10 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
@@ -37,10 +41,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
