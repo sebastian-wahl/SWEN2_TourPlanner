@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<VBox prefHeight="311.0" prefWidth="160.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.TourListController">
+    <fx:include source="searchbar.fxml" />
+    <HBox prefHeight="24.0" prefWidth="166.0">
+        <TextField promptText="Tour name" HBox.hgrow="ALWAYS" />
+        <Button maxHeight="1.5E308" maxWidth="95.0" mnemonicParsing="false" onAction="#handleAddTour" text="Add Tour" HBox.hgrow="ALWAYS">
+            <graphic>
+                <ImageView>
+                    <Image url="@../icons/icons8-plus-math-16.png" />
+                </ImageView>
+            </graphic>
+        </Button>
+        <CheckBox fx:id="favoritesCheckbox" text="Only Favorites">
+            <padding>
+                <Insets left="4" right="4" top="4" />
+            </padding>
+        </CheckBox>
+    </HBox>
+    <ListView fx:id="tourList" prefHeight="311.0" prefWidth="189.0" VBox.vgrow="ALWAYS" />
+</VBox>

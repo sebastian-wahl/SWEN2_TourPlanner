@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.SearchbarController">
+    <TextField fx:id="searchTextField" promptText="Search..." HBox.hgrow="ALWAYS" />
+    <Button fx:id="clearButton" onAction="#clearSearch">
+        <graphic>
+            <ImageView>
+                <Image url="@../icons/icons8-close-16.png" />
+            </ImageView>
+        </graphic>
+    </Button>
+</HBox>
