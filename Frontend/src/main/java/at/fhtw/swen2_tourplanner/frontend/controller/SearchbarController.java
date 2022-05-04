@@ -12,15 +12,21 @@ public class SearchbarController extends BaseController<Searchbar> {
     @FXML
     private Button clearButton;
 
-    public SearchbarController() {
-        super(new Searchbar());
+    public SearchbarController(Searchbar searchbar) {
+        super(searchbar);
     }
 
     @FXML
     public void initialize() {
+        // set up viewModel mapping
+        this.searchTextField.textProperty().bindBidirectional(getViewModel().getSearchText());
     }
 
     public void onClearSearch() {
-        this.searchTextField.setText("");
+        getViewModel().clearSearch();
+    }
+
+    public void onKeyReleased() {
+        getViewModel().search();
     }
 }

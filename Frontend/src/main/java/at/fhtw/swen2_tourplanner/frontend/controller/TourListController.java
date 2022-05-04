@@ -8,9 +8,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class TourListController extends BaseController<TourList> implements Initializable {
     @FXML
@@ -19,27 +21,31 @@ public class TourListController extends BaseController<TourList> implements Init
     private ListView<TourDTO> tourListView;
     @FXML
     private TextField toAddTourName;
+    @FXML
+    private SearchbarController searchbarController;
 
 
-    public TourListController() {
-        super(new TourList());
+    public TourListController(TourList tourList) {
+        super(tourList);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // property binding
+        this.toAddTourName.textProperty().bindBidirectional(getViewModel().getNewTourName());
+        this.favoritesCheckbox.selectedProperty().bindBidirectional(getViewModel().getOnlyFavoriteTour());
         this.tourListView.setItems(this.getViewModel().getTourList());
-        this.tourListView.setCellFactory(tourListView -> new TourListCell(this::deleteTour));
+        this.tourListView.setCellFactory(tourListViewElm -> new TourListCell(this::deleteTour));
+
+        // register search observer
+        this.searchbarController.getViewModel().registerObserver(getViewModel());
     }
 
     public void onAddTour() {
-        String name = toAddTourName.getText();
-        if (!name.isEmpty()) {
-            this.getViewModel().addTour(toAddTourName.getText());
-            toAddTourName.setText("");
-        }
+        this.getViewModel().addTour();
     }
 
-    private void deleteTour(Long id) {
+    private void deleteTour(UUID id) {
         this.getViewModel().deleteTour(id);
     }
 }

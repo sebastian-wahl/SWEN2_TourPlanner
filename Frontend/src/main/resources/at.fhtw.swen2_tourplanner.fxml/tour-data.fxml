@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+
+    <VBox prefHeight="300.0" prefWidth="500.0">
+        <padding>
+            <Insets bottom="8" left="8" right="8" top="8" />
+        </padding>
+        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+            <Label minWidth="60.0" text="Name" />
+            <TextField fx:id="name" disable="true" prefHeight="25.0" prefWidth="548.0" />
+        </HBox>
+        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+            <Label minWidth="60.0" text="From" />
+            <TextField fx:id="begin" disable="true" prefHeight="25.0" prefWidth="479.0" />
+        </HBox>
+        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+            <Label minWidth="60.0" text="To" />
+            <TextField fx:id="destination" disable="true" prefHeight="25.0" prefWidth="451.0" />
+        </HBox>
+        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+            <Label minWidth="60.0" text="Distance" />
+            <Label fx:id="distance" prefHeight="30.0" prefWidth="431.0">
+                <padding>
+                    <Insets bottom="12" />
+                </padding>
+            </Label>
+        </HBox>
+        <HBox prefHeight="151.0" prefWidth="484.0" spacing="16.0">
+            <Label minWidth="60.0" text="Descripton" />
+            <TextArea fx:id="description" disable="true" prefHeight="151.0" prefWidth="483.0" />
+        </HBox>
+    </VBox>
+    <VBox alignment="TOP_CENTER" prefHeight="220.0" prefWidth="40.0" spacing="4.0" HBox.hgrow="ALWAYS">
+        <padding>
+            <Insets bottom="8" left="8" right="8" top="8" />
+        </padding>
+        <Button fx:id="exportButton" minWidth="80.0" mnemonicParsing="false" text="Export Tour" />
+        <Button fx:id="editSaveButton" minWidth="80.0" mnemonicParsing="false" text="Edit" />
+        <CheckBox fx:id="favorite" disable="true" text="Favorite">
+        </CheckBox>
+    </VBox>
+
+
+</HBox>

@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class App extends Application {
     static Logger logger = Logger.getLogger(App.class);
@@ -20,9 +21,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/at.fhtw.swen2_tourplanner.fxml/dashboard.fxml"));
-        Parent root = loader.load();
-        var scene = new Scene(root, 1280, 720);
+        Parent root = FXMLDependencyInjection.load("dashboard.fxml", Locale.GERMAN );  // Locale.GERMANY, Locale.ENGLISH
+
+        Scene scene = new Scene(root, 1280, 720);
         stage.setScene(scene);
         stage.show();
 

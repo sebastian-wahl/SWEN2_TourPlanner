@@ -9,6 +9,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 
 import java.io.IOException;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class TourListCell extends ListCell<TourDTO> {
@@ -21,9 +22,9 @@ public class TourListCell extends ListCell<TourDTO> {
 
     private FXMLLoader mLLoader;
 
-    private Consumer<Long> deleteTourConsumer;
+    private final Consumer<UUID> deleteTourConsumer;
 
-    public TourListCell(Consumer<Long> deleteTourConsumer) {
+    public TourListCell(Consumer<UUID> deleteTourConsumer) {
         this.deleteTourConsumer = deleteTourConsumer;
     }
 
