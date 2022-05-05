@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalTime;
+import java.util.UUID;
 
 
 //DataModel for Tour Database
@@ -19,7 +20,7 @@ import java.time.LocalTime;
 public class Tour {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private UUID id;
     @Column(name = "name", nullable = false)
     private String name;
     @Column(name = "tour_description")

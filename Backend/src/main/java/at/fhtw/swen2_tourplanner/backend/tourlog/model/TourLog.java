@@ -10,7 +10,7 @@ import java.time.LocalTime;
 
 @Entity
 @Data
-@Table(name = "tour_log")
+@Table(name = "tour_log", schema = "tour")
 public class TourLog {
     @Id
     private long id;
