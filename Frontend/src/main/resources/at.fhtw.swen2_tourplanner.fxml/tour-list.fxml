@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.*?>
 <VBox prefHeight="311.0" prefWidth="160.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.TourListController">
-    <fx:include fx:id="searchbar" source="searchbar.fxml"/>
+    <fx:include source="searchbar.fxml"/>
     <HBox prefHeight="24.0" prefWidth="166.0">
         <TextField fx:id="toAddTourName" promptText="Tour name" HBox.hgrow="ALWAYS"/>
         <Button maxHeight="1.5E308" maxWidth="95.0" mnemonicParsing="false" onAction="#onAddTour" text="Add Tour"

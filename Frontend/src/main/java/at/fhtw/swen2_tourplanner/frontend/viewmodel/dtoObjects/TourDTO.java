@@ -4,6 +4,7 @@ import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Data
@@ -13,13 +14,19 @@ public class TourDTO {
     // ToDo think about id
     private UUID id;
     private String name;
-
-    private boolean isFavorite;
+    private String start;
+    private String tourDescription;
+    private String goal;
+    private int transportType;
+    private long tourDistance;
+    private LocalTime estimatedTime;
+    private String routeInformation;
+    private boolean favorite;
 
     public TourDTO(String name) {
         this.id = UUID.randomUUID();
         this.name = name;
-        this.isFavorite = false;
+        this.favorite = false;
     }
 
     @Override

@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml">
-    <fx:include source="tour-data.fxml"/>
-    <TabPane prefHeight="200.0" prefWidth="250.0" fx:id="tabs">
-        <Tab text="Route" closable="false" fx:id="mapTab">
+<VBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.TourInfoController">
+    <fx:include source="tour-basic-data.fxml" />
+    <TabPane fx:id="tabs" prefHeight="200.0" prefWidth="250.0">
+        <Tab fx:id="logsTab" closable="false" text="Logs">
+
         </Tab>
-        <Tab text="Logs" closable="false" fx:id="logsTab">
+        <Tab fx:id="mapTab" closable="false" text="Route">
+
         </Tab>
     </TabPane>
 </VBox>

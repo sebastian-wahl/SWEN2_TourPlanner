@@ -9,12 +9,22 @@ public class ControllerFactory {
     private final TourInfo tourInfo;
     private final TourList tourList;
 
+    private final TourBasicData tourBasicData;
+
     public ControllerFactory() {
-        dashboard = new Dashboard();
         menubar = new Menubar();
         searchbar = new Searchbar();
-        tourInfo = new TourInfo();
+        tourBasicData = new TourBasicData();
         tourList = new TourList();
+        tourInfo = new TourInfo(tourBasicData);
+
+        // --- register observers ---
+        // search observer
+        searchbar.registerObserver(tourList);
+        // tourlist selection observer
+        tourList.registerObserver(tourInfo);
+
+        dashboard = new Dashboard(tourList, tourInfo);
     }
 
     //
@@ -30,7 +40,9 @@ public class ControllerFactory {
         } else if (controllerClass == TourInfoController.class) {
             return new TourInfoController(this.tourInfo);
         } else if (controllerClass == TourListController.class) {
-            return new TourListController(this.tourList);
+            return new TourListController(this.tourList, this.searchbar);
+        } else if (controllerClass == TourBasicDataController.class) {
+            return new TourBasicDataController(this.tourBasicData);
         }
         throw new IllegalArgumentException("Unknown controller class: " + controllerClass);
     }
@@ -39,7 +51,7 @@ public class ControllerFactory {
     //
     // Singleton-Pattern with early-binding
     //
-    private static ControllerFactory instance = new ControllerFactory();
+    private static final ControllerFactory instance = new ControllerFactory();
 
     public static ControllerFactory getInstance() {
         return instance;
