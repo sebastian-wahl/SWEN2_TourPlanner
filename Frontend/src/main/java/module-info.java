@@ -5,6 +5,7 @@ module at.fhtw.swen2_tourplanner.frontend {
     requires org.kordamp.bootstrapfx.core;
     requires log4j;
     requires lombok;
+    requires com.fasterxml.jackson.databind;
 
     opens at.fhtw.swen2_tourplanner.frontend.controller;
     exports at.fhtw.swen2_tourplanner.frontend.controller;
@@ -14,8 +15,10 @@ module at.fhtw.swen2_tourplanner.frontend {
     exports at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects;
     opens at.fhtw.swen2_tourplanner.frontend.cellObjects;
     exports at.fhtw.swen2_tourplanner.frontend.cellObjects;
-    opens at.fhtw.swen2_tourplanner.frontend.observers;
-    exports at.fhtw.swen2_tourplanner.frontend.observers;
+    opens at.fhtw.swen2_tourplanner.frontend.observer;
+    exports at.fhtw.swen2_tourplanner.frontend.observer;
+    opens at.fhtw.swen2_tourplanner.frontend.service;
+    exports at.fhtw.swen2_tourplanner.frontend.service;
     opens at.fhtw.swen2_tourplanner.frontend to javafx.fxml;
     exports at.fhtw.swen2_tourplanner.frontend;
 }

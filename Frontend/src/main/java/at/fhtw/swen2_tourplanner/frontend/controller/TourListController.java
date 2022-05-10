@@ -1,19 +1,15 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.TourListCell;
-import at.fhtw.swen2_tourplanner.frontend.observers.SearchObservable;
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.Searchbar;
+import at.fhtw.swen2_tourplanner.frontend.observer.SearchObservable;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourList;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.UUID;
 
 public class TourListController extends BaseController<TourList> {

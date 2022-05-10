@@ -1,6 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.observers.TourSelectObserver;
+import at.fhtw.swen2_tourplanner.frontend.observer.TourSelectObserver;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 
 public class TourInfo implements ViewModel, TourSelectObserver {

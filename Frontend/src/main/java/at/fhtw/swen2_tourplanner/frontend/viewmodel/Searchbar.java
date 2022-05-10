@@ -1,7 +1,8 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.observers.Observer;
-import at.fhtw.swen2_tourplanner.frontend.observers.SearchObservable;
+import at.fhtw.swen2_tourplanner.frontend.observer.Observer;
+import at.fhtw.swen2_tourplanner.frontend.observer.SearchObservable;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import lombok.Getter;
@@ -13,6 +14,9 @@ public class Searchbar implements ViewModel, SearchObservable {
     private List<Observer<String>> searchbarObservers = new ArrayList<>();
     @Getter
     private StringProperty searchText;
+
+    private final ObjectMapper o = new ObjectMapper();
+
 
     public Searchbar() {
         this.searchText = new SimpleStringProperty();

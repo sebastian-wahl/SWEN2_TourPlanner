@@ -1,8 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
-import at.fhtw.swen2_tourplanner.frontend.observers.TourSelectObserver;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourBasicData;
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 

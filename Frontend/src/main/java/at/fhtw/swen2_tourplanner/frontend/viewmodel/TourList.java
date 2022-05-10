@@ -1,9 +1,8 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.observers.Observable;
-import at.fhtw.swen2_tourplanner.frontend.observers.Observer;
-import at.fhtw.swen2_tourplanner.frontend.observers.SearchObserver;
-import at.fhtw.swen2_tourplanner.frontend.observers.TourSelectObservable;
+import at.fhtw.swen2_tourplanner.frontend.observer.Observer;
+import at.fhtw.swen2_tourplanner.frontend.observer.SearchObserver;
+import at.fhtw.swen2_tourplanner.frontend.observer.TourSelectObservable;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 import javafx.application.Platform;
 import javafx.beans.property.*;
@@ -12,10 +11,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.scene.control.FocusModel;
 import javafx.scene.control.MultipleSelectionModel;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;

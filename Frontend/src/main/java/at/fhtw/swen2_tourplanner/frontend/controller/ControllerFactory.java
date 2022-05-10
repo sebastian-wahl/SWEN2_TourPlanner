@@ -1,5 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
+import at.fhtw.swen2_tourplanner.frontend.service.TourLogService;
+import at.fhtw.swen2_tourplanner.frontend.service.TourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.*;
 
 public class ControllerFactory {
@@ -8,10 +10,16 @@ public class ControllerFactory {
     private final Searchbar searchbar;
     private final TourInfo tourInfo;
     private final TourList tourList;
-
     private final TourBasicData tourBasicData;
 
+    // services
+    private final TourService tourService;
+    private final TourLogService tourLogService;
+
     public ControllerFactory() {
+        tourService = new TourService();
+        tourLogService = new TourLogService();
+
         menubar = new Menubar();
         searchbar = new Searchbar();
         tourBasicData = new TourBasicData();

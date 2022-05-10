@@ -1,4 +1,4 @@
-package at.fhtw.swen2_tourplanner.frontend.observers;
+package at.fhtw.swen2_tourplanner.frontend.observer;
 
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 
