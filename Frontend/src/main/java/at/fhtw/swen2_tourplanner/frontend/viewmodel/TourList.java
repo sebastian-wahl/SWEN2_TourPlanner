@@ -3,9 +3,13 @@ package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 import at.fhtw.swen2_tourplanner.frontend.observer.Observer;
 import at.fhtw.swen2_tourplanner.frontend.observer.SearchObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.TourSelectObservable;
+import at.fhtw.swen2_tourplanner.frontend.service.TourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 import javafx.application.Platform;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -16,10 +20,13 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
 public class TourList implements ViewModel, SearchObserver, TourSelectObservable, ChangeListener<TourDTO> {
+    // services
+    private final TourService tourService;
 
     // View Properties
     @Getter
@@ -41,7 +48,8 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
     private final List<Observer<TourDTO>> listviewObserver;
     private TourDTO selectedTour;
 
-    public TourList() {
+    public TourList(TourService tourService) {
+        this.tourService = tourService;
         newTourName = new SimpleStringProperty();
         onlyFavoriteTour = new SimpleBooleanProperty();
 
@@ -49,10 +57,7 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
 
         listviewObserver = new ArrayList<>();
 
-
-        // ToDo BE call for tour lists
-        baseTourList = FXCollections.observableArrayList();
-        baseTourList.add(new TourDTO("Hallo"));
+        baseTourList = FXCollections.observableArrayList(tourService.getAllTours());
         tourList = new FilteredList<>(baseTourList);
         // default filtering -> no filters set
         tourList.setPredicate(null);
@@ -70,16 +75,21 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
     public void addTour() {
         if (this.newTourName.getValue() != null && !this.newTourName.getValue().isEmpty()) {
             TourDTO newTour = new TourDTO(newTourName.getValue());
-            baseTourList.add(newTour);
-            newTourName.setValue("");
-            listViewSelectionModel.select(newTour);
+            Optional<TourDTO> optionalTour = tourService.addTour(newTour);
+            if (optionalTour.isPresent()) {
+                baseTourList.add(optionalTour.get());
+                // reset input field and select newly added tour
+                newTourName.setValue("");
+                listViewSelectionModel.select(optionalTour.get());
+            }
+
         }
     }
 
     public void deleteTour(UUID id) {
         int index = findIndexOfTourById(id);
         if (index >= 0) {
-            baseTourList.remove(index);
+            tourService.deleteTour(baseTourList.remove(index));
         }
     }
 

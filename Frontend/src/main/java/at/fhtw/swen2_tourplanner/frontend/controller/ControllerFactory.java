@@ -5,13 +5,16 @@ import at.fhtw.swen2_tourplanner.frontend.service.TourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.*;
 
 public class ControllerFactory {
+    //
+    // Singleton-Pattern with early-binding
+    //
+    private static final ControllerFactory instance = new ControllerFactory();
     private final Dashboard dashboard;
     private final Menubar menubar;
     private final Searchbar searchbar;
     private final TourInfo tourInfo;
     private final TourList tourList;
     private final TourBasicData tourBasicData;
-
     // services
     private final TourService tourService;
     private final TourLogService tourLogService;
@@ -22,9 +25,9 @@ public class ControllerFactory {
 
         menubar = new Menubar();
         searchbar = new Searchbar();
-        tourBasicData = new TourBasicData();
-        tourList = new TourList();
-        tourInfo = new TourInfo(tourBasicData);
+        tourBasicData = new TourBasicData(tourService);
+        tourList = new TourList(tourService);
+        tourInfo = new TourInfo(tourBasicData, tourService);
 
         // --- register observers ---
         // search observer
@@ -33,6 +36,10 @@ public class ControllerFactory {
         tourList.registerObserver(tourInfo);
 
         dashboard = new Dashboard(tourList, tourInfo);
+    }
+
+    public static ControllerFactory getInstance() {
+        return instance;
     }
 
     //
@@ -53,15 +60,5 @@ public class ControllerFactory {
             return new TourBasicDataController(this.tourBasicData);
         }
         throw new IllegalArgumentException("Unknown controller class: " + controllerClass);
-    }
-
-
-    //
-    // Singleton-Pattern with early-binding
-    //
-    private static final ControllerFactory instance = new ControllerFactory();
-
-    public static ControllerFactory getInstance() {
-        return instance;
     }
 }

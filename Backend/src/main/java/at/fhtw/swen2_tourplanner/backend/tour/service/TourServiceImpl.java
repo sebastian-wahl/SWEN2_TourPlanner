@@ -4,6 +4,7 @@ import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
 import at.fhtw.swen2_tourplanner.backend.tour.repo.TourRepository;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,20 +22,20 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public void createTour(Tour tour) throws BusinessException {
+    public Tour createTour(Tour tour) throws BusinessException {
         if (tour.getId() == null) {
-            tourRepository.save(tour);
+            return tourRepository.save(tour);
         } else {
             throw new BusinessException("Tour already exists");
         }
     }
 
     @Override
-    public void updateTour(Tour tour) throws BusinessException {
+    public Tour updateTour(Tour tour) throws BusinessException {
         if (tour.getId() == null) {
             throw new BusinessException("No Tour Id supplied");
         } else if (tourRepository.findById(tour.getId()).isPresent()) {
-            tourRepository.save(tour);
+            return tourRepository.save(tour);
         } else {
             throw new BusinessException("Could not find tour");
         }
@@ -50,8 +51,13 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public void deleteTour(UUID id) {
-        tourRepository.deleteById(id);
+    public boolean deleteTour(UUID id) {
+        try {
+            tourRepository.deleteById(id);
+            return true;
+        } catch (EmptyResultDataAccessException ex) {
+            return false;
+        }
     }
 
     @Override

@@ -3,9 +3,10 @@ module at.fhtw.swen2_tourplanner.frontend {
     requires javafx.fxml;
 
     requires org.kordamp.bootstrapfx.core;
-    requires log4j;
     requires lombok;
+    requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
+    requires org.slf4j;
 
     opens at.fhtw.swen2_tourplanner.frontend.controller;
     exports at.fhtw.swen2_tourplanner.frontend.controller;

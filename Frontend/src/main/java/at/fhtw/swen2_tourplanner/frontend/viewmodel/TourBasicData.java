@@ -1,5 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
+import at.fhtw.swen2_tourplanner.frontend.service.TourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -10,6 +11,8 @@ import lombok.Getter;
 public class TourBasicData implements ViewModel {
     private static final String BUTTON_EDIT_TEXT = "Edit";
     private static final String BUTTON_SAVE_TEXT = "Save";
+    // Services
+    private final TourService tourService;
     @Getter
     private final StringProperty nameProperty;
     @Getter
@@ -41,7 +44,9 @@ public class TourBasicData implements ViewModel {
 
     private TourDTO currentTour;
 
-    public TourBasicData() {
+    public TourBasicData(TourService tourService) {
+        this.tourService = tourService;
+
         nameProperty = new SimpleStringProperty();
         nameDisableProperty = new SimpleBooleanProperty(true);
         fromProperty = new SimpleStringProperty();
@@ -99,7 +104,7 @@ public class TourBasicData implements ViewModel {
             if (editSaveButtonTextProperty.getValue().equals(BUTTON_SAVE_TEXT)) {
                 // save
                 this.setCurrentTourValues();
-                // todo call BE
+                this.tourService.updateTour(this.currentTour);
                 this.editSaveButtonTextProperty.setValue(BUTTON_EDIT_TEXT);
                 this.disableAllProperties();
             } else {
