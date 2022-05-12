@@ -9,12 +9,14 @@ public class ControllerFactory {
     // Singleton-Pattern with early-binding
     //
     private static final ControllerFactory instance = new ControllerFactory();
+    // ViewModels
     private final Dashboard dashboard;
     private final Menubar menubar;
     private final Searchbar searchbar;
     private final TourInfo tourInfo;
     private final TourList tourList;
     private final TourBasicData tourBasicData;
+    private final TourLogData tourLogData;
     // services
     private final TourService tourService;
     private final TourLogService tourLogService;
@@ -25,6 +27,7 @@ public class ControllerFactory {
 
         menubar = new Menubar();
         searchbar = new Searchbar();
+        tourLogData = new TourLogData();
         tourBasicData = new TourBasicData(tourService);
         tourList = new TourList(tourService);
         tourInfo = new TourInfo(tourBasicData, tourService);
@@ -58,6 +61,8 @@ public class ControllerFactory {
             return new TourListController(this.tourList, this.searchbar);
         } else if (controllerClass == TourBasicDataController.class) {
             return new TourBasicDataController(this.tourBasicData);
+        } else if (controllerClass == TourLogDataController.class) {
+            return new TourLogDataController(this.tourLogData);
         }
         throw new IllegalArgumentException("Unknown controller class: " + controllerClass);
     }

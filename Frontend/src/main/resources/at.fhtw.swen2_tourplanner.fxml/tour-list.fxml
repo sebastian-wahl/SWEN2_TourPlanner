@@ -13,7 +13,8 @@
     <fx:include source="searchbar.fxml"/>
     <HBox prefHeight="24.0" prefWidth="166.0">
         <TextField fx:id="toAddTourName" promptText="Tour name" HBox.hgrow="ALWAYS"/>
-        <Button maxHeight="1.5E308" maxWidth="95.0" mnemonicParsing="false" onAction="#onAddTour" text="Add Tour"
+        <Button fx:id="addTourButton" maxHeight="1.5E308" maxWidth="95.0" mnemonicParsing="false" onAction="#onAddTour"
+                text="Add Tour"
                 HBox.hgrow="ALWAYS">
             <graphic>
                 <ImageView>
