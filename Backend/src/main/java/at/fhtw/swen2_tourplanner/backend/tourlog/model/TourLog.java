@@ -1,10 +1,18 @@
 package at.fhtw.swen2_tourplanner.backend.tourlog.model;
 
+import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
+import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -28,5 +36,16 @@ public class TourLog {
     private LocalTime totalTime;
     @Column(name = "rating", nullable = false)
     private double rating;
-    //TODO: Add reference to tours
+    @ManyToOne
+    @JoinColumn(name = "tour_id", nullable = false)
+    private Tour tour;
+
+    public TourLog(TourLogDTO tourLogDto, Tour tour) {
+        this.dateTime = tourLogDto.getDateTime();
+        this.comment = tourLogDto.getComment();
+        this.difficulty = tourLogDto.getDifficulty();
+        this.totalTime = tourLogDto.getTotalTime();
+        this.rating = tourLogDto.getRating();
+        this.tour = tour;
+    }
 }
