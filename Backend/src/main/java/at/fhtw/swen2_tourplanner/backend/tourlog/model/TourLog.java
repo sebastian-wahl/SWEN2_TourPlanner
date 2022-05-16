@@ -48,4 +48,8 @@ public class TourLog {
         this.rating = tourLogDto.getRating();
         this.tour = tour;
     }
+
+    public TourLog() {
+
+    }
 }

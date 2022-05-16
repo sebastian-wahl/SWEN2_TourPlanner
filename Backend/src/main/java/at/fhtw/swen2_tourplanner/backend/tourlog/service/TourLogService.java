@@ -1,14 +1,16 @@
 package at.fhtw.swen2_tourplanner.backend.tourlog.service;
 
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
-import at.fhtw.swen2_tourplanner.backend.tourlog.model.TourLog;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface TourLogService {
-    TourLog createTourLog(TourLogDTO tourLogDto);
+    TourLogDTO createTourLog(TourLogDTO tourLogDto);
 
-    TourLog updateTourLog(TourLogDTO tourLogDto);
+    TourLogDTO updateTourLog(TourLogDTO tourLogDto);
 
     boolean deleteTourLog(UUID id);
+
+    List<TourLogDTO> getAllByTourId(UUID id);
 }
