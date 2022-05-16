@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TourLogServiceImpl implements TourLogService {
@@ -64,5 +66,11 @@ public class TourLogServiceImpl implements TourLogService {
         } catch (EmptyResultDataAccessException ex) {
             return false;
         }
+    }
+
+    @Override
+    public List<TourLogDTO> getAllByTourId(UUID id) {
+        List<TourLog> tourLogs = tourLogRepository.findByTourId(id);
+        return tourLogs.stream().map(TourLogDTO::new).collect(Collectors.toList());
     }
 }
