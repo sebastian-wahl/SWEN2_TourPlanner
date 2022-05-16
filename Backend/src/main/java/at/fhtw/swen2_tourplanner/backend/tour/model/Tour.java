@@ -1,7 +1,11 @@
 package at.fhtw.swen2_tourplanner.backend.tour.model;
 
+import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -14,7 +18,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "tour", schema = "tour")
 public class Tour {
@@ -41,6 +44,19 @@ public class Tour {
     private String routeInformation;
     @Column(name = "favorite", nullable = false, columnDefinition = "boolean default false")
     private boolean favorite;
+
+    public Tour(TourDTO tourDTO) {
+        this.id = tourDTO.getId();
+        this.name = tourDTO.getName();
+        this.tourDescription = tourDTO.getTourDescription();
+        this.start = tourDTO.getStart();
+        this.goal = tourDTO.getGoal();
+        this.transportType = tourDTO.getTransportType();
+        this.tourDistance = tourDTO.getTourDistance();
+        this.estimatedTime = tourDTO.getEstimatedTime();
+        this.routeInformation = tourDTO.getRouteInformation();
+        this.favorite = tourDTO.isFavorite();
+    }
 }
 
 /*

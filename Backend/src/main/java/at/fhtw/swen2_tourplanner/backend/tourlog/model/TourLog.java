@@ -3,22 +3,20 @@ package at.fhtw.swen2_tourplanner.backend.tourlog.model;
 import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "tour_log", schema = "tour")
 public class TourLog {
     @Id

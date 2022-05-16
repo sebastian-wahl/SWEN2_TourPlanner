@@ -1,14 +1,10 @@
 package at.fhtw.swen2_tourplanner.backend.tour.rest;
 
-import at.fhtw.swen2_tourplanner.backend.mapquest.service.MapQuestService;
 import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
-import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
 import at.fhtw.swen2_tourplanner.backend.tour.service.TourService;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +25,7 @@ public class TourController {
     @PostMapping(value = "/create")
     public ResponseEntity<Object> createTour(@RequestBody TourDTO tour) {
         try {
-            Tour addedTour = tourService.createTour(tour);
+            TourDTO addedTour = tourService.createTour(tour);
             return new ResponseEntity<>(addedTour, HttpStatus.OK);
 
         } catch (BusinessException e) {
@@ -40,7 +36,7 @@ public class TourController {
     @PutMapping(value = "/update")
     public ResponseEntity<Object> updateTour(@RequestBody TourDTO tour) {
         try {
-            Tour updatedTour = tourService.updateTour(tour);
+            TourDTO updatedTour = tourService.updateTour(tour);
             return new ResponseEntity<>(updatedTour, HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -49,7 +45,7 @@ public class TourController {
 
     @GetMapping(value = "/get")
     public ResponseEntity<Object> getAllTours() {
-        List<Tour> tours = tourService.getAllTours();
+        List<TourDTO> tours = tourService.getAllTours();
         if (!tours.isEmpty()) {
             return new ResponseEntity<>(tours, HttpStatus.OK);
         }
@@ -59,7 +55,7 @@ public class TourController {
     @GetMapping(value = "/get/{id}")
     public ResponseEntity<Object> getTour(@PathVariable("id") UUID id) {
         try {
-            Tour tour = tourService.getTour(id);
+            TourDTO tour = tourService.getTour(id);
             return new ResponseEntity<>(tour, HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

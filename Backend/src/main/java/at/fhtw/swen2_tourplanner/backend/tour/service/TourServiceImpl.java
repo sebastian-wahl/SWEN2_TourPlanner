@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 //Business Logic Executor
 @Service
@@ -23,30 +24,30 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public Tour createTour(TourDTO tour) throws BusinessException {
+    public TourDTO createTour(TourDTO tour) throws BusinessException {
         if (tour.getId() == null) {
-            return tourRepository.save(tour.toTour());
+            return new TourDTO(tourRepository.save(new Tour(tour)));
         } else {
             throw new BusinessException("Tour already exists");
         }
     }
 
     @Override
-    public Tour updateTour(TourDTO tour) throws BusinessException {
+    public TourDTO updateTour(TourDTO tour) throws BusinessException {
         if (tour.getId() == null) {
             throw new BusinessException("No Tour Id supplied");
         } else if (tourRepository.findById(tour.getId()).isPresent()) {
-            return tourRepository.save(tour.toTour());
+            return new TourDTO(tourRepository.save(new Tour(tour)));
         } else {
             throw new BusinessException("Could not find tour");
         }
     }
 
     @Override
-    public Tour getTour(UUID id) throws BusinessException {
+    public TourDTO getTour(UUID id) throws BusinessException {
         Optional<Tour> tour = tourRepository.findById(id);
         if (tour.isPresent()) {
-            return tour.get();
+            return new TourDTO(tour.get());
         }
         throw new BusinessException("Could not find tour");
     }
@@ -62,7 +63,7 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public List<Tour> getAllTours() {
-        return tourRepository.findAll();
+    public List<TourDTO> getAllTours() {
+        return tourRepository.findAll().stream().map(TourDTO::new).collect(Collectors.toList());
     }
 }
