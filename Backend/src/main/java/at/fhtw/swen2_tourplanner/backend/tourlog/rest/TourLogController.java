@@ -1,7 +1,6 @@
 package at.fhtw.swen2_tourplanner.backend.tourlog.rest;
 
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
-import at.fhtw.swen2_tourplanner.backend.tourlog.model.TourLog;
 import at.fhtw.swen2_tourplanner.backend.tourlog.service.TourLogService;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class TourLogController {
     @PostMapping(value = "/create")
     public ResponseEntity<Object> createTour(@RequestBody TourLogDTO tourLogDto) {
         try {
-            TourLog tourLog = tourLogService.createTourLog(tourLogDto);
+            TourLogDTO tourLog = tourLogService.createTourLog(tourLogDto);
             return new ResponseEntity<>(tourLog, HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
@@ -40,12 +39,13 @@ public class TourLogController {
     @PutMapping(value = "/update")
     public ResponseEntity<Object> updateTour(@RequestBody TourLogDTO tourLogDto) {
         try {
-            TourLog tourLog = tourLogService.updateTourLog(tourLogDto);
+            TourLogDTO tourLog = tourLogService.updateTourLog(tourLogDto);
             return new ResponseEntity<>(tourLog, HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
+
 
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<Object> deleteTour(@PathVariable("id") UUID id) {

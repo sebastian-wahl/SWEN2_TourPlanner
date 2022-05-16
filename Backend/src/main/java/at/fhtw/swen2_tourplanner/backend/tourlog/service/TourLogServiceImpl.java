@@ -25,7 +25,7 @@ public class TourLogServiceImpl implements TourLogService {
     }
 
     @Override
-    public TourLog createTourLog(TourLogDTO tourLogDto) {
+    public TourLogDTO createTourLog(TourLogDTO tourLogDto) {
         if (tourLogDto.getId() == null) {
             return saveTourLog(tourLogDto);
         } else {
@@ -34,7 +34,7 @@ public class TourLogServiceImpl implements TourLogService {
     }
 
     @Override
-    public TourLog updateTourLog(TourLogDTO tourLogDto) {
+    public TourLogDTO updateTourLog(TourLogDTO tourLogDto) {
         if (tourLogDto.getId() == null) {
             throw new BusinessException("No Id supplied");
         } else if (tourLogRepository.findById(tourLogDto.getId()).isPresent()) {
@@ -44,7 +44,7 @@ public class TourLogServiceImpl implements TourLogService {
         }
     }
 
-    private TourLog saveTourLog(TourLogDTO tourLogDto) {
+    private TourLogDTO saveTourLog(TourLogDTO tourLogDto) {
         Tour tour;
         try {
             tour = tourService.getTour(tourLogDto.getTour());
@@ -53,7 +53,7 @@ public class TourLogServiceImpl implements TourLogService {
         }
         TourLog tourLog = new TourLog(tourLogDto, tour);
         tourLogRepository.save(tourLog);
-        return tourLog;
+        return new TourLogDTO(tourLog);
     }
 
     @Override

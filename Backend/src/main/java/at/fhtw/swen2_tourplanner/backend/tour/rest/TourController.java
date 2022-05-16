@@ -75,7 +75,7 @@ public class TourController {
         if (tourService.deleteTour(id)) {
             return new ResponseEntity<>("Tour deleted successfully", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Tour deleted successfully", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Tour not deleted", HttpStatus.NOT_FOUND);
     }
 
     //Not functional Distance and Time Request

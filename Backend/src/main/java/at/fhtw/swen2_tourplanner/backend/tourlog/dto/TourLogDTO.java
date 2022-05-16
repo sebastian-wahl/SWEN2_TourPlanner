@@ -1,5 +1,6 @@
 package at.fhtw.swen2_tourplanner.backend.tourlog.dto;
 
+import at.fhtw.swen2_tourplanner.backend.tourlog.model.TourLog;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -25,4 +26,14 @@ public class TourLogDTO {
     private double rating;
     @JsonProperty("tour_id")
     private UUID tour;
+
+    public TourLogDTO(TourLog tourLog) {
+        this.id = tourLog.getId();
+        this.dateTime = tourLog.getDateTime();
+        this.comment = tourLog.getComment();
+        this.difficulty = tourLog.getDifficulty();
+        this.totalTime = tourLog.getTotalTime();
+        this.rating = tourLog.getRating();
+        this.tour = tourLog.getTour().getId();
+    }
 }
