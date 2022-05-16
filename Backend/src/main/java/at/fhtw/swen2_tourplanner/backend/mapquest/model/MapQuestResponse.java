@@ -7,8 +7,13 @@ import java.time.LocalTime;
 
 @Data
 public class MapQuestResponse {
-    @JsonProperty("distance")
-    public double distance;
-    @JsonProperty("formattedTime")
-    public LocalTime formattedTime;
+    @JsonProperty("route")
+    public Route route;
+
+    private static class Route {
+        @JsonProperty("distance")
+        public double distance;
+        @JsonProperty("formattedTime")
+        public LocalTime formattedTime;
+    }
 }

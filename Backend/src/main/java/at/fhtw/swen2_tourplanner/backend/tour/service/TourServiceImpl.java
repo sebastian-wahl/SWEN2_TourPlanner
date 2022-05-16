@@ -1,5 +1,6 @@
 package at.fhtw.swen2_tourplanner.backend.tour.service;
 
+import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
 import at.fhtw.swen2_tourplanner.backend.tour.repo.TourRepository;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
@@ -22,20 +23,20 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public Tour createTour(Tour tour) throws BusinessException {
+    public Tour createTour(TourDTO tour) throws BusinessException {
         if (tour.getId() == null) {
-            return tourRepository.save(tour);
+            return tourRepository.save(tour.toTour());
         } else {
             throw new BusinessException("Tour already exists");
         }
     }
 
     @Override
-    public Tour updateTour(Tour tour) throws BusinessException {
+    public Tour updateTour(TourDTO tour) throws BusinessException {
         if (tour.getId() == null) {
             throw new BusinessException("No Tour Id supplied");
         } else if (tourRepository.findById(tour.getId()).isPresent()) {
-            return tourRepository.save(tour);
+            return tourRepository.save(tour.toTour());
         } else {
             throw new BusinessException("Could not find tour");
         }

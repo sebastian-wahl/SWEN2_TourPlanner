@@ -1,21 +1,21 @@
 package at.fhtw.swen2_tourplanner.backend.tour.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.UUID;
 
 
 //DataModel for Tour Database
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "tour", schema = "tour")
 public class Tour {
     @Id

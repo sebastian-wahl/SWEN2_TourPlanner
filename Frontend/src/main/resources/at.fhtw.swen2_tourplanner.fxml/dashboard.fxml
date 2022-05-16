@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TextField?>
 <VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.DashboardController">
     <fx:include fx:id="menubar" source="menubar.fxml"/>
