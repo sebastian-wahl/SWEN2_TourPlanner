@@ -1,9 +1,13 @@
 package at.fhtw.swen2_tourplanner.backend.tourlog.model;
 
+import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -16,7 +20,6 @@ import java.util.UUID;
 @Setter
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "tour_log", schema = "tour")
 public class TourLog {
     @Id
@@ -38,13 +41,13 @@ public class TourLog {
     @JoinColumn(name = "tour_id", nullable = false)
     private Tour tour;
 
-    public TourLog(TourLogDTO tourLogDto, Tour tour) {
+    public TourLog(TourLogDTO tourLogDto, TourDTO tourDTO) {
         this.dateTime = tourLogDto.getDateTime();
         this.comment = tourLogDto.getComment();
         this.difficulty = tourLogDto.getDifficulty();
         this.totalTime = tourLogDto.getTotalTime();
         this.rating = tourLogDto.getRating();
-        this.tour = tour;
+        this.tour = new Tour(tourDTO);
     }
 
     public TourLog() {

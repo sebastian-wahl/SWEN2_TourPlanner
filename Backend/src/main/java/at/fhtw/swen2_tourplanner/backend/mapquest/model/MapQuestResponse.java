@@ -10,12 +10,13 @@ import java.time.LocalTime;
 @JsonRootName("route")
 public class MapQuestResponse {
     @JsonProperty("route")
-    public Route route;
+    private Route route;
 
+    @Data
     private static class Route {
         @JsonProperty("distance")
-        public double distance;
+        private double distance;
         @JsonProperty("formattedTime")
-        public LocalTime formattedTime;
+        private LocalTime formattedTime;
     }
 }

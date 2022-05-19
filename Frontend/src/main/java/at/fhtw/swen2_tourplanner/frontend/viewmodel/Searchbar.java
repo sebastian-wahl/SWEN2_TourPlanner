@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Searchbar implements ViewModel, SearchObservable {
+    private final ObjectMapper o = new ObjectMapper();
     private List<Observer<String>> searchbarObservers = new ArrayList<>();
     @Getter
     private StringProperty searchText;
-
-    private final ObjectMapper o = new ObjectMapper();
 
 
     public Searchbar() {
@@ -40,10 +39,11 @@ public class Searchbar implements ViewModel, SearchObservable {
     public void search() {
         this.notifyObservers();
     }
+
     @Override
     public void notifyObservers() {
         for (Observer<String> observer : this.searchbarObservers) {
-            observer.update(searchText.getValue());
+            observer.update(searchText.getValue(), this.getClass());
         }
     }
 }

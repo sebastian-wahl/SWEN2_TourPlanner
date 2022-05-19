@@ -3,14 +3,16 @@ package at.fhtw.swen2_tourplanner.backend.tour.dto;
 import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 import java.util.UUID;
 
 @Data
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TourDTO {
     @JsonProperty("id")
     private UUID id;
@@ -33,8 +35,12 @@ public class TourDTO {
     private String routeInformation;
     @JsonProperty("favorite")
     private boolean favorite;
+    @JsonProperty("routeImage")
+    private byte[] routeImage;
+    @JsonProperty("routeImagePath")
+    private String routeImagePath;
 
-    public TourDTO(Tour tour) {
+    public TourDTO(Tour tour, byte[] routeImage) {
         this.id = tour.getId();
         this.name = tour.getName();
         this.tourDescription = tour.getTourDescription();
@@ -45,5 +51,7 @@ public class TourDTO {
         this.estimatedTime = tour.getEstimatedTime();
         this.routeInformation = tour.getRouteInformation();
         this.favorite = tour.isFavorite();
+        this.routeImagePath = tour.getRouteImagePath();
+        this.routeImage = routeImage;
     }
 }

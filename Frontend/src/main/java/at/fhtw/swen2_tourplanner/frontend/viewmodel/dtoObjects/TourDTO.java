@@ -1,5 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -21,20 +22,25 @@ public class TourDTO {
     private String name;
     @JsonProperty("start")
     private String start;
-    @JsonProperty("tourDescription")
+    @JsonProperty("tour_description")
     private String tourDescription;
     @JsonProperty("goal")
     private String goal;
-    @JsonProperty("transportType")
+    @JsonProperty("transport_type")
     private int transportType;
-    @JsonProperty("tourDistance")
+    @JsonProperty("tour_distance")
     private long tourDistance;
-    @JsonProperty("estimatedTime")
+    @JsonProperty("estimated_time")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime estimatedTime;
-    @JsonProperty("routeInformation")
+    @JsonProperty("route_information")
     private String routeInformation;
     @JsonProperty("favorite")
     private boolean favorite;
+    @JsonProperty("routeImage")
+    private byte[] routeImage;
+    @JsonProperty("routeImagePath")
+    private String routeImagePath;
 
     public TourDTO(String name) {
         this.name = name;

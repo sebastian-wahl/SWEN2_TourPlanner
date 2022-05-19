@@ -1,6 +1,6 @@
 package at.fhtw.swen2_tourplanner.backend.tourlog.service;
 
-import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
+import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import at.fhtw.swen2_tourplanner.backend.tour.service.TourService;
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
 import at.fhtw.swen2_tourplanner.backend.tourlog.model.TourLog;
@@ -47,13 +47,13 @@ public class TourLogServiceImpl implements TourLogService {
     }
 
     private TourLogDTO saveTourLog(TourLogDTO tourLogDto) {
-        Tour tour;
+        TourDTO tourDTO;
         try {
-            tour = tourService.getTour(tourLogDto.getTour());
+            tourDTO = tourService.getTour(tourLogDto.getTour());
         } catch (Exception e) {
             throw e;
         }
-        TourLog tourLog = new TourLog(tourLogDto, tour);
+        TourLog tourLog = new TourLog(tourLogDto, tourDTO);
         tourLogRepository.save(tourLog);
         return new TourLogDTO(tourLog);
     }

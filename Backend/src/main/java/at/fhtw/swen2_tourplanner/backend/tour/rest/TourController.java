@@ -77,4 +77,5 @@ public class TourController {
         return new ResponseEntity<>(mapQuestService.getTimeAndDistance("Clarendon Blvd,Arlington,VA", "2400 S Glebe Rd, Arlington, VA"), HttpStatus.NOT_FOUND);
     }*/
 
+
 }

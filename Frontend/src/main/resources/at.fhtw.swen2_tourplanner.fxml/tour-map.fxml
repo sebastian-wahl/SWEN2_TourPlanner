@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16"
+      fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.TourMapController">
+    <ScrollPane fx:id="scrollPane" VBox.vgrow="ALWAYS" fitToWidth="true" fitToHeight="true">
+        <ImageView fx:id="imageView" preserveRatio="true" StackPane.alignment="CENTER"/>
+    </ScrollPane>
+</VBox>

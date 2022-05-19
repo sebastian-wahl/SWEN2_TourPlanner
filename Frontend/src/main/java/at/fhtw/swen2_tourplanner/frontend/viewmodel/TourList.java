@@ -34,18 +34,14 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
 
     @Getter
     private final BooleanProperty onlyFavoriteTour;
-
-    private MultipleSelectionModel<TourDTO> listViewSelectionModel;
-
-    private final ObservableList<TourDTO>  baseTourList;
+    private final ObservableList<TourDTO> baseTourList;
     @Getter
     private final FilteredList<TourDTO> tourList;
-
-    // for filtering
-    private String searchText = "";
-
     // list click observer list
     private final List<Observer<TourDTO>> listviewObserver;
+    private MultipleSelectionModel<TourDTO> listViewSelectionModel;
+    // for filtering
+    private String searchText = "";
     private TourDTO selectedTour;
 
     public TourList(TourService tourService) {
@@ -106,11 +102,10 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
      * @param s search text
      */
     @Override
-    public void update(String s) {
+    public void update(String s, Class<?> from) {
         if (s == null || s.isEmpty()) {
             this.searchText = "";
-        }
-        else {
+        } else {
             this.searchText = s;
         }
         this.updateFilteredListPredicate();
@@ -122,8 +117,7 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
         // set predicate filter list
         if (this.onlyFavoriteTour.get()) {
             tourList.setPredicate(tourPredicate1.and(tourPredicate2));
-        }
-        else {
+        } else {
             tourList.setPredicate(tourPredicate2);
         }
     }
@@ -147,7 +141,7 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
     @Override
     public void notifyObservers() {
         for (Observer<TourDTO> observer : listviewObserver) {
-            observer.update(this.selectedTour);
+            observer.update(this.selectedTour, this.getClass());
         }
     }
 }

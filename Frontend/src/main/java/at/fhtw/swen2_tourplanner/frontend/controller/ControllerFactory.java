@@ -1,5 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
+import at.fhtw.swen2_tourplanner.frontend.service.MapService;
 import at.fhtw.swen2_tourplanner.frontend.service.TourLogService;
 import at.fhtw.swen2_tourplanner.frontend.service.TourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.*;
@@ -17,26 +18,35 @@ public class ControllerFactory {
     private final TourList tourList;
     private final TourBasicData tourBasicData;
     private final TourLogData tourLogData;
+    private final TourMap tourMap;
+
     // services
     private final TourService tourService;
     private final TourLogService tourLogService;
+    private final MapService mapService;
 
     public ControllerFactory() {
+        // services
         tourService = new TourService();
         tourLogService = new TourLogService();
+        mapService = new MapService();
 
+        // views
+        tourMap = new TourMap();
         menubar = new Menubar();
         searchbar = new Searchbar();
         tourLogData = new TourLogData();
         tourBasicData = new TourBasicData(tourService);
         tourList = new TourList(tourService);
-        tourInfo = new TourInfo(tourBasicData, tourService);
+        tourInfo = new TourInfo(tourBasicData, tourMap);
 
         // --- register observers ---
         // search observer
         searchbar.registerObserver(tourList);
         // tourlist selection observer
         tourList.registerObserver(tourInfo);
+        // update tour observer (update details)
+        tourBasicData.registerObserver(tourInfo);
 
         dashboard = new Dashboard(tourList, tourInfo);
     }
@@ -63,6 +73,8 @@ public class ControllerFactory {
             return new TourBasicDataController(this.tourBasicData);
         } else if (controllerClass == TourLogDataController.class) {
             return new TourLogDataController(this.tourLogData);
+        } else if (controllerClass == TourMapController.class) {
+            return new TourMapController(this.tourMap);
         }
         throw new IllegalArgumentException("Unknown controller class: " + controllerClass);
     }

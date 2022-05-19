@@ -6,9 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -18,10 +16,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class TourService extends Service {
-    public static final String POST_METHODE = "POST";
-    public static final String DELETE_METHODE = "DELETE";
-    public static final String PUT_METHODE = "PUT";
-    private static final String GET_METHODE = "GET";
     private static final String TOUR_URL = REST_URL + "/tour";
     private final Logger logger = LoggerFactory.getLogger(TourService.class);
     private final ObjectMapper o = new ObjectMapper();
@@ -34,7 +28,8 @@ public class TourService extends Service {
             int status = con.getResponseCode();
             logger.info("Get all tours request, status: {}", status);
             if (status == HttpURLConnection.HTTP_OK) {
-                String content = extractBodyFromResponse(con);
+                String content = extractStringBodyFromResponse(con);
+                logger.debug("Request content: {}", content);
                 return o.readValue(content, new TypeReference<>() {
                 });
             }
@@ -56,7 +51,8 @@ public class TourService extends Service {
             int status = con.getResponseCode();
             logger.info("Get tour by id request, status: {}", status);
             if (status == HttpURLConnection.HTTP_OK) {
-                String content = extractBodyFromResponse(con);
+                String content = extractStringBodyFromResponse(con);
+                logger.debug("Request content: {}", content);
                 return Optional.of(o.readValue(content, TourDTO.class));
             }
             return Optional.empty();
@@ -69,20 +65,6 @@ public class TourService extends Service {
         }
     }
 
-    private String extractBodyFromResponse(HttpURLConnection con) throws IOException {
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder content = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
-        }
-
-        logger.info("Request content: {}", content);
-        in.close();
-        con.disconnect();
-        return content.toString();
-    }
 
     public boolean deleteTour(TourDTO tour) {
         try {
@@ -133,7 +115,7 @@ public class TourService extends Service {
             }
 
             if (status == HttpURLConnection.HTTP_OK) {
-                String content = extractBodyFromResponse(con);
+                String content = extractStringBodyFromResponse(con);
                 return Optional.of(o.readValue(content, TourDTO.class));
             }
             return Optional.empty();
