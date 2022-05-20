@@ -37,8 +37,8 @@ public class TourDTO {
     private boolean favorite;
     @JsonProperty("routeImage")
     private byte[] routeImage;
-    @JsonProperty("routeImagePath")
-    private String routeImagePath;
+    @JsonProperty("routeImageName")
+    private String routeImageName;
 
     public TourDTO(Tour tour, byte[] routeImage) {
         this.id = tour.getId();
@@ -51,7 +51,7 @@ public class TourDTO {
         this.estimatedTime = tour.getEstimatedTime();
         this.routeInformation = tour.getRouteInformation();
         this.favorite = tour.isFavorite();
-        this.routeImagePath = tour.getRouteImagePath();
+        this.routeImageName = tour.getRouteImageName();
         this.routeImage = routeImage;
     }
 }

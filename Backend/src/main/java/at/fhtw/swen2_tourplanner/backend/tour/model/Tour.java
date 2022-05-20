@@ -44,8 +44,8 @@ public class Tour {
     private String routeInformation;
     @Column(name = "favorite", nullable = false, columnDefinition = "boolean default false")
     private boolean favorite;
-    @Column(name = "routeImagePath")
-    private String routeImagePath;
+    @Column(name = "routeImageName")
+    private String routeImageName;
 
     public Tour(TourDTO tourDTO) {
         this.id = tourDTO.getId();
@@ -58,7 +58,7 @@ public class Tour {
         this.estimatedTime = tourDTO.getEstimatedTime();
         this.routeInformation = tourDTO.getRouteInformation();
         this.favorite = tourDTO.isFavorite();
-        this.routeImagePath = tourDTO.getRouteImagePath();
+        this.routeImageName = tourDTO.getRouteImageName();
     }
 }
 

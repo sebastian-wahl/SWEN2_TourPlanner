@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class TourServiceImpl implements TourService {
     // Map constants
-    private static String IMAGE_PATH = Paths.get("Backend", "src", "main", "resources", "images").toFile().getAbsolutePath(); //TourServiceImpl.class.getClassLoader().getResource("/images").getPath();
+    private static String ABSOLUTE_IMAGE_PATH = Paths.get("Backend", "src", "main", "resources", "images").toFile().getAbsolutePath();
     private static String IMAGE_NAME = "_image";
 
     private final Logger logger = LoggerFactory.getLogger(TourServiceImpl.class);
@@ -58,11 +58,7 @@ public class TourServiceImpl implements TourService {
         if (dbTour.isPresent()) {
             if (!tour.getStart().equals(dbTour.get().getStart()) || !tour.getGoal().equals(dbTour.get().getGoal())) {
                 // reload map
-                byte[] image = this.mapQuestService.getImage(tour.getStart(), tour.getGoal());
-                String imagePath = this.saveRouteImage(tour.getId(), image);
-                tour.setRouteImagePath(imagePath);
-                tour.setRouteImage(image);
-                logger.info("Route image path: {}", imagePath);
+                reloadTourMap(tour);
             }
             return new TourDTO(tourRepository.save(new Tour(tour)), tour.getRouteImage());
         } else {
@@ -70,9 +66,17 @@ public class TourServiceImpl implements TourService {
         }
     }
 
+    private void reloadTourMap(TourDTO tour) {
+        byte[] image = this.mapQuestService.getImage(tour.getStart(), tour.getGoal());
+        String imageName = this.saveRouteImage(tour.getId(), image);
+        tour.setRouteImageName(imageName);
+        tour.setRouteImage(image);
+        logger.info("Route image name: {}", imageName);
+    }
+
     public String saveRouteImage(UUID tourId, byte[] route) {
         String fileName = tourId.toString() + IMAGE_NAME;
-        File newFile = new File(IMAGE_PATH + "/" + fileName + ".jpg");
+        File newFile = new File(ABSOLUTE_IMAGE_PATH + "/" + fileName + ".jpg");
         logger.info("Saving route image to resources");
         try {
             if (!newFile.exists()) {
@@ -86,16 +90,16 @@ public class TourServiceImpl implements TourService {
             e.printStackTrace();
         }
 
-        return newFile.getPath();
+        return fileName;
     }
 
     public byte[] getImageFromFile(String path) {
         if (path != null) {
             try {
-                File file = new File(path);
+                File file = new File(ABSOLUTE_IMAGE_PATH + "/" + path);
                 return Files.readAllBytes(file.toPath());
             } catch (IOException e) {
-                logger.error("Error while loading the image from path '{}'", path);
+                logger.error("Error while loading the image from path '{}'", ABSOLUTE_IMAGE_PATH + "/" + path);
                 e.printStackTrace();
             }
         }
@@ -106,7 +110,7 @@ public class TourServiceImpl implements TourService {
     public TourDTO getTour(UUID id) throws BusinessException {
         Optional<Tour> tour = tourRepository.findById(id);
         if (tour.isPresent()) {
-            return new TourDTO(tour.get(), this.getImageFromFile(tour.get().getRouteImagePath()));
+            return new TourDTO(tour.get(), this.getImageFromFile(tour.get().getRouteImageName()));
         }
         throw new BusinessException("Could not find tour");
     }
@@ -123,6 +127,6 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public List<TourDTO> getAllTours() {
-        return tourRepository.findAll().stream().map(tour -> new TourDTO(tour, this.getImageFromFile(tour.getRouteImagePath()))).collect(Collectors.toList());
+        return tourRepository.findAll().stream().map(tour -> new TourDTO(tour, this.getImageFromFile(tour.getRouteImageName()))).collect(Collectors.toList());
     }
 }
