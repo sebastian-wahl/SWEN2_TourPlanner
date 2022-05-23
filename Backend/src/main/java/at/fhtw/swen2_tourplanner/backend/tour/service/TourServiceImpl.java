@@ -52,14 +52,19 @@ public class TourServiceImpl implements TourService {
         }
         Optional<Tour> dbTour = tourRepository.findById(tour.getId());
         if (dbTour.isPresent()) {
-            if (!tour.getStart().equals(dbTour.get().getStart()) || !tour.getGoal().equals(dbTour.get().getGoal())) {
+            if (locationChanged(tour, dbTour)) {
                 // reload map
                 reloadTourMap(tour);
+                // ToDo load distance
             }
             return new TourDTO(tourRepository.save(new Tour(tour)), tour.getRouteImage());
         } else {
             throw new BusinessException("Could not find tour");
         }
+    }
+
+    private boolean locationChanged(TourDTO tour, Optional<Tour> dbTour) {
+        return !tour.getStart().equals(dbTour.get().getStart()) || !tour.getGoal().equals(dbTour.get().getGoal());
     }
 
     private void reloadTourMap(TourDTO tour) {
