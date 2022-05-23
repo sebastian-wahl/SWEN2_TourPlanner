@@ -11,16 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 //Business Logic Executor
 @Service
@@ -75,8 +71,7 @@ public class TourServiceImpl implements TourService {
     }
 
     public String saveRouteImage(UUID tourId, byte[] route) {
-        String fileName = tourId.toString() + IMAGE_NAME;
-        File newFile = new File(ABSOLUTE_IMAGE_PATH + "/" + fileName + ".jpg");
+        File newFile = getImageFile(tourId);
         logger.info("Saving route image to resources");
         try {
             if (!newFile.exists()) {
@@ -90,17 +85,17 @@ public class TourServiceImpl implements TourService {
             e.printStackTrace();
         }
 
-        return fileName;
+        return newFile.getName();
     }
 
-    public byte[] getImageFromFile(String path) {
+    public byte[] getImageFromFile(String path) throws FileNotFoundException {
         if (path != null) {
             try {
-                File file = new File(ABSOLUTE_IMAGE_PATH + "/" + path);
+                File file = new File(ABSOLUTE_IMAGE_PATH + "\\" + path);
                 return Files.readAllBytes(file.toPath());
             } catch (IOException e) {
                 logger.error("Error while loading the image from path '{}'", ABSOLUTE_IMAGE_PATH + "/" + path);
-                e.printStackTrace();
+                throw new FileNotFoundException("Image File not found under path: " + ABSOLUTE_IMAGE_PATH + "/" + path);
             }
         }
         return new byte[0];
@@ -110,23 +105,41 @@ public class TourServiceImpl implements TourService {
     public TourDTO getTour(UUID id) throws BusinessException {
         Optional<Tour> tour = tourRepository.findById(id);
         if (tour.isPresent()) {
-            return new TourDTO(tour.get(), this.getImageFromFile(tour.get().getRouteImageName()));
+            return setRouteImageOrReloadImageIfNotPresent(tour.get());
         }
         throw new BusinessException("Could not find tour");
+    }
+
+    private TourDTO setRouteImageOrReloadImageIfNotPresent(Tour tour) {
+        TourDTO out = new TourDTO(tour, new byte[0]);
+        try {
+            out.setRouteImage(this.getImageFromFile(out.getRouteImageName()));
+        } catch (FileNotFoundException e) {
+            // reload and set image on the out object
+            this.reloadTourMap(out);
+        }
+        return out;
     }
 
     @Override
     public boolean deleteTour(UUID id) {
         try {
             tourRepository.deleteById(id);
+            File imageFile = getImageFile(id);
+            imageFile.delete();
             return true;
         } catch (EmptyResultDataAccessException ex) {
             return false;
         }
     }
 
+    private File getImageFile(UUID id) {
+        String fileName = id.toString() + IMAGE_NAME;
+        return new File(ABSOLUTE_IMAGE_PATH + "\\" + fileName + ".jpg");
+    }
+
     @Override
     public List<TourDTO> getAllTours() {
-        return tourRepository.findAll().stream().map(tour -> new TourDTO(tour, this.getImageFromFile(tour.getRouteImageName()))).collect(Collectors.toList());
+        return tourRepository.findAll().stream().map(this::setRouteImageOrReloadImageIfNotPresent).toList();
     }
 }
