@@ -4,6 +4,7 @@ import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapLocationResponse;
 import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapQuestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,11 +12,18 @@ import java.util.Optional;
 
 @Service
 public class MapQuestServiceImpl implements MapQuestService {
-    private static final String BASE_URL = "http://www.mapquestapi.com/";
-    private static final String KEY = "LHowJeyQWtehWyYnmQca5ODP0Sw8cj71";
-    private static final String ROUTE_URL = BASE_URL + "directions/v2/route?key=" + KEY;
-    private static final String IMAGE_URL = BASE_URL + "staticmap/v5/map?size=600,400@2x&key=" + KEY;
-    private final static String LOCATION_URL = BASE_URL + "geocoding/v1/address?key=" + KEY;
+
+    @Value("${mapquest.url}")
+    private String BASE_URL;
+    @Value("${mapquest.key}")
+    private String KEYL;
+    @Value("${mapquest.route}")
+    private String ROUTE_URL;
+    @Value("${mapquest.image}")
+    private String IMAGE_URL;
+    @Value("${mapquest.location}")
+    private String LOCATION_URL;
+
     private final Logger logger = LoggerFactory.getLogger(MapQuestServiceImpl.class);
 
 
