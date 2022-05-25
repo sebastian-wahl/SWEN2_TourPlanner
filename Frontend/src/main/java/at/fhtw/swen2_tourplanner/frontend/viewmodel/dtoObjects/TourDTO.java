@@ -39,8 +39,8 @@ public class TourDTO {
     private boolean favorite;
     @JsonProperty("routeImage")
     private byte[] routeImage;
-    @JsonProperty("routeImagePath")
-    private String routeImagePath;
+    @JsonProperty("routeImageName")
+    private String routeImageName;
 
     public TourDTO(String name) {
         this.name = name;

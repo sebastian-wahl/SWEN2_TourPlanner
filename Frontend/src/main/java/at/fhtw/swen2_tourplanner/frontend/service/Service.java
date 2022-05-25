@@ -1,5 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.service;
 
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,6 +10,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public abstract class Service {
     protected static final String REST_URL = "http://localhost:8080";

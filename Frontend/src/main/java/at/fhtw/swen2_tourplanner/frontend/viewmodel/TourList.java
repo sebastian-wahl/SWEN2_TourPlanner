@@ -1,9 +1,12 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.observer.Observer;
-import at.fhtw.swen2_tourplanner.frontend.observer.SearchObserver;
-import at.fhtw.swen2_tourplanner.frontend.observer.TourSelectObservable;
-import at.fhtw.swen2_tourplanner.frontend.service.TourService;
+import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
+import at.fhtw.swen2_tourplanner.frontend.observer.SearchBaseObserver;
+import at.fhtw.swen2_tourplanner.frontend.observer.TourSelectBaseObservable;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddUpdateSingleTourService;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.DeleteSingleTourService;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.GetMultipleToursService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -17,6 +20,8 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.MultipleSelectionModel;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +29,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class TourList implements ViewModel, SearchObserver, TourSelectObservable, ChangeListener<TourDTO> {
+public class TourList implements ViewModel, SearchBaseObserver, TourSelectBaseObservable, ChangeListener<TourDTO> {
+    // logger
+    private final Logger logger = LoggerFactory.getLogger(TourList.class);
+
     // services
     private final TourService tourService;
 
@@ -38,7 +46,7 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
     @Getter
     private final FilteredList<TourDTO> tourList;
     // list click observer list
-    private final List<Observer<TourDTO>> listviewObserver;
+    private final List<BaseObserver<TourDTO>> listviewBaseObserver;
     private MultipleSelectionModel<TourDTO> listViewSelectionModel;
     // for filtering
     private String searchText = "";
@@ -51,12 +59,24 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
 
         onlyFavoriteTour.addListener((observable, oldValue, newValue) -> this.updateFilteredListPredicate());
 
-        listviewObserver = new ArrayList<>();
+        listviewBaseObserver = new ArrayList<>();
+        baseTourList = FXCollections.observableArrayList();
+        this.setBaseTourList();
 
-        baseTourList = FXCollections.observableArrayList(tourService.getAllTours());
         tourList = new FilteredList<>(baseTourList);
         // default filtering -> no filters set
         tourList.setPredicate(null);
+    }
+
+    private void setBaseTourList() {
+        GetMultipleToursService getMultipleToursService = new GetMultipleToursService(tourService::getAllTours);
+        getMultipleToursService.valueProperty().addListener(new ChangeListener<List<TourDTO>>() {
+            @Override
+            public void changed(ObservableValue<? extends List<TourDTO>> observableValue, List<TourDTO> tourDTOS, List<TourDTO> newValues) {
+                baseTourList.addAll(newValues);
+            }
+        });
+        getMultipleToursService.start();
     }
 
     public void setListViewSelectionModel(MultipleSelectionModel<TourDTO> listViewSelectionModel) {
@@ -71,21 +91,29 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
     public void addTour() {
         if (this.newTourName.getValue() != null && !this.newTourName.getValue().isEmpty()) {
             TourDTO newTour = new TourDTO(newTourName.getValue());
-            Optional<TourDTO> optionalTour = tourService.addTour(newTour);
-            if (optionalTour.isPresent()) {
-                baseTourList.add(optionalTour.get());
-                // reset input field and select newly added tour
-                newTourName.setValue("");
-                listViewSelectionModel.select(optionalTour.get());
-            }
-
+            AddUpdateSingleTourService addUpdateSingleTourService = new AddUpdateSingleTourService(tourService::addTour, newTour);
+            addUpdateSingleTourService.valueProperty().addListener(new ChangeListener<Optional<TourDTO>>() {
+                @Override
+                public void changed(ObservableValue<? extends Optional<TourDTO>> observableValue, Optional<TourDTO> tourDTO, Optional<TourDTO> newValue) {
+                    if (newValue.isPresent()) {
+                        baseTourList.add(newValue.get());
+                        // reset input field and select newly added tour
+                        newTourName.setValue("");
+                        listViewSelectionModel.select(newValue.get());
+                    }
+                }
+            });
+            addUpdateSingleTourService.start();
         }
     }
 
     public void deleteTour(UUID id) {
         int index = findIndexOfTourById(id);
         if (index >= 0) {
-            tourService.deleteTour(baseTourList.remove(index));
+            TourDTO toRemove = baseTourList.remove(index);
+            DeleteSingleTourService deleteSingleTourService = new DeleteSingleTourService(tourService::deleteTour, toRemove);
+            // Maybe check result?
+            deleteSingleTourService.start();
         }
     }
 
@@ -102,7 +130,7 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
      * @param s search text
      */
     @Override
-    public void update(String s, Class<?> from) {
+    public void update(String s) {
         if (s == null || s.isEmpty()) {
             this.searchText = "";
         } else {
@@ -129,19 +157,19 @@ public class TourList implements ViewModel, SearchObserver, TourSelectObservable
     }
 
     @Override
-    public void registerObserver(Observer<TourDTO> observer) {
-        this.listviewObserver.add(observer);
+    public void registerObserver(BaseObserver<TourDTO> baseObserver) {
+        this.listviewBaseObserver.add(baseObserver);
     }
 
     @Override
-    public void removeObserver(Observer<TourDTO> observer) {
-        this.listviewObserver.remove(observer);
+    public void removeObserver(BaseObserver<TourDTO> baseObserver) {
+        this.listviewBaseObserver.remove(baseObserver);
     }
 
     @Override
     public void notifyObservers() {
-        for (Observer<TourDTO> observer : listviewObserver) {
-            observer.update(this.selectedTour, this.getClass());
+        for (BaseObserver<TourDTO> baseObserver : listviewBaseObserver) {
+            baseObserver.update(this.selectedTour);
         }
     }
 }

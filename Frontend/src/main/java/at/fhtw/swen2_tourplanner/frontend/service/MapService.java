@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MapService extends Service {
-    private static final String MAP_URL = REST_URL + "/map/image";
+    private static final String MAP_URL = REST_URL + "/validate/location";
 
     private final Logger logger = LoggerFactory.getLogger(MapService.class);
 

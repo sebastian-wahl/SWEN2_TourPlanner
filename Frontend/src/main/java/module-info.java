@@ -7,6 +7,7 @@ module at.fhtw.swen2_tourplanner.frontend {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.databind;
     requires org.slf4j;
+    requires io.reactivex.rxjava3;
 
     opens at.fhtw.swen2_tourplanner.frontend.controller;
     exports at.fhtw.swen2_tourplanner.frontend.controller;
@@ -22,4 +23,6 @@ module at.fhtw.swen2_tourplanner.frontend {
     exports at.fhtw.swen2_tourplanner.frontend.service;
     opens at.fhtw.swen2_tourplanner.frontend to javafx.fxml;
     exports at.fhtw.swen2_tourplanner.frontend;
+    exports at.fhtw.swen2_tourplanner.frontend.service.tour;
+    opens at.fhtw.swen2_tourplanner.frontend.service.tour;
 }

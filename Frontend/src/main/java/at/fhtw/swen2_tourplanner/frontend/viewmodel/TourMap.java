@@ -23,7 +23,10 @@ public class TourMap implements ViewModel {
         this.setUpImage();
     }
 
+
     private void setUpImage() {
-        this.imageProperty.setValue(new Image(new ByteArrayInputStream(this.currentTour.getRouteImage())));
+        if (this.currentTour != null) {
+            this.imageProperty.setValue(new Image(new ByteArrayInputStream(this.currentTour.getRouteImage())));
+        }
     }
 }

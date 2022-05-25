@@ -4,46 +4,63 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.TourBasicDataController">
+<HBox prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.TourBasicDataController">
     <VBox prefHeight="300.0" prefWidth="500.0">
-        <padding>
-            <Insets bottom="8" left="8" right="8" top="8" />
-        </padding>
         <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
-            <Label minWidth="60.0" text="Name" />
-            <TextField fx:id="name" disable="true" prefHeight="25.0" prefWidth="548.0" />
+            <Label minWidth="80.0" text="Name" />
+            <TextField fx:id="name" disable="true" prefHeight="25.0" prefWidth="548.0" text="Hallo" />
+         <padding>
+            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+         </padding>
         </HBox>
         <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
-            <Label minWidth="60.0" text="From" />
-            <TextField fx:id="from" disable="true" prefHeight="25.0" prefWidth="479.0" />
+            <Label minWidth="80.0" text="From" />
+            <TextField fx:id="from" disable="true" prefHeight="25.0" prefWidth="479.0" text="Test" />
+         <padding>
+            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+         </padding>
         </HBox>
         <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
-            <Label minWidth="60.0" text="To" />
+            <Label minWidth="80.0" text="To" />
             <TextField fx:id="to" disable="true" prefHeight="25.0" prefWidth="451.0" />
+         <padding>
+            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+         </padding>
         </HBox>
         <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
-            <Label minWidth="60.0" text="Distance" />
+            <Label minWidth="80.0" text="Distance" />
             <Label fx:id="distance" prefHeight="30.0" prefWidth="431.0">
                 <padding>
                     <Insets bottom="12" />
                 </padding>
             </Label>
+         <padding>
+            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+         </padding>
         </HBox>
-        <HBox prefHeight="151.0" prefWidth="484.0" spacing="16.0">
-            <Label minWidth="60.0" text="Descripton" />
-            <TextArea fx:id="description" disable="true" prefHeight="151.0" prefWidth="483.0" />
+        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+            <Label minWidth="80.0" text="Transport Type" />
+            <ComboBox fx:id="transportType" />
+         <padding>
+            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+         </padding>
+        </HBox>
+        <HBox prefHeight="70.0" prefWidth="484.0" spacing="16.0">
+            <Label minWidth="80.0" text="Descripton" />
+            <TextArea fx:id="description" disable="true" prefHeight="78.0" prefWidth="372.0" />
+         <padding>
+            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+         </padding>
         </HBox>
     </VBox>
-    <VBox alignment="TOP_CENTER" prefHeight="220.0" prefWidth="40.0" spacing="4.0" HBox.hgrow="ALWAYS">
+    <VBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="132.0" spacing="4.0" HBox.hgrow="ALWAYS">
         <padding>
             <Insets bottom="8" left="8" right="8" top="8" />
         </padding>
+        <Button onAction="#exportSummary" prefWidth="86.0" text="Export Tour Summary" />
         <Button fx:id="exportButton" minWidth="80.0" mnemonicParsing="false" text="Export Tour" />
-        <Button fx:id="editSaveButton" minWidth="80.0" mnemonicParsing="false" text="Edit" onMouseClicked="#onEditOrSave" />
+        <Button fx:id="editSaveButton" minWidth="80.0" mnemonicParsing="false" onMouseClicked="#onEditOrSave" text="Edit" />
         <CheckBox fx:id="favoriteCheckbox" disable="true" text="Favorite">
         </CheckBox>
     </VBox>
-
-
 </HBox>

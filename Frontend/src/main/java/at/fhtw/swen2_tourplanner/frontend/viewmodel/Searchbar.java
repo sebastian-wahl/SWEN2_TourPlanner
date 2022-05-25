@@ -1,7 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.observer.Observer;
-import at.fhtw.swen2_tourplanner.frontend.observer.SearchObservable;
+import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
+import at.fhtw.swen2_tourplanner.frontend.observer.SearchBaseObservable;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -10,9 +10,9 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Searchbar implements ViewModel, SearchObservable {
+public class Searchbar implements ViewModel, SearchBaseObservable {
     private final ObjectMapper o = new ObjectMapper();
-    private List<Observer<String>> searchbarObservers = new ArrayList<>();
+    private List<BaseObserver<String>> searchbarBaseObservers = new ArrayList<>();
     @Getter
     private StringProperty searchText;
 
@@ -27,13 +27,13 @@ public class Searchbar implements ViewModel, SearchObservable {
     }
 
     @Override
-    public void registerObserver(Observer<String> observer) {
-        this.searchbarObservers.add(observer);
+    public void registerObserver(BaseObserver<String> baseObserver) {
+        this.searchbarBaseObservers.add(baseObserver);
     }
 
     @Override
-    public void removeObserver(Observer<String> observer) {
-        this.searchbarObservers.remove(observer);
+    public void removeObserver(BaseObserver<String> baseObserver) {
+        this.searchbarBaseObservers.remove(baseObserver);
     }
 
     public void search() {
@@ -42,8 +42,8 @@ public class Searchbar implements ViewModel, SearchObservable {
 
     @Override
     public void notifyObservers() {
-        for (Observer<String> observer : this.searchbarObservers) {
-            observer.update(searchText.getValue(), this.getClass());
+        for (BaseObserver<String> baseObserver : this.searchbarBaseObservers) {
+            baseObserver.update(searchText.getValue());
         }
     }
 }

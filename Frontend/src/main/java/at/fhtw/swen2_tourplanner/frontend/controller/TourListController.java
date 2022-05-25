@@ -1,7 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.TourListCell;
-import at.fhtw.swen2_tourplanner.frontend.observer.SearchObservable;
+import at.fhtw.swen2_tourplanner.frontend.observer.SearchBaseObservable;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourList;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 import javafx.application.Platform;
@@ -21,8 +21,9 @@ public class TourListController extends BaseController<TourList> {
     private TextField toAddTourName;
 
 
-    public TourListController(TourList tourList, SearchObservable searchObservable) {
+    public TourListController(TourList tourList, SearchBaseObservable searchObservable) {
         super(tourList);
+        // ToDo do in create methode
         searchObservable.registerObserver(tourList);
     }
 

@@ -1,22 +1,27 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.observer.Observer;
-import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourObservable;
-import at.fhtw.swen2_tourplanner.frontend.service.TourService;
+import at.fhtw.swen2_tourplanner.frontend.enums.TransportTypeEnum;
+import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
+import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourBaseObservable;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddUpdateSingleTourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-public class TourBasicData implements ViewModel, UpdateTourObservable {
+public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
     private static final String BUTTON_EDIT_TEXT = "Edit";
     private static final String BUTTON_SAVE_TEXT = "Save";
+    // logger
+    private final Logger logger = LoggerFactory.getLogger(TourBasicData.class);
     // Services
     private final TourService tourService;
     // Properties
@@ -39,6 +44,8 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     @Getter
     private final BooleanProperty descriptionDisableProperty;
     @Getter
+    private final BooleanProperty favoriteCheckboxProperty;
+    @Getter
     private final BooleanProperty checkboxDisableProperty;
     @Getter
     private final StringProperty editSaveButtonTextProperty;
@@ -46,13 +53,20 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     private final BooleanProperty editSaveButtonDisableProperty;
     @Getter
     private final BooleanProperty exportButtonDisableProperty;
+
+    @Getter
+    private final BooleanProperty transportTypeDisableProperty;
+    @Getter
+    private final ObjectProperty<ObservableList<String>> transportTypeItemsProperty;
+    @Getter
+    private final ObjectProperty<String> transportTypeSelectedItemProperty;
     // observer list
-    private List<Observer<TourDTO>> updateTourObserverList;
+    private List<BaseObserver<TourDTO>> updateTourBaseObserverList;
     private TourDTO currentTour;
 
     public TourBasicData(TourService tourService) {
         this.tourService = tourService;
-        this.updateTourObserverList = new ArrayList<>();
+        this.updateTourBaseObserverList = new ArrayList<>();
 
         nameProperty = new SimpleStringProperty();
         nameDisableProperty = new SimpleBooleanProperty(true);
@@ -63,10 +77,20 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
         distanceProperty = new SimpleStringProperty();
         descriptionProperty = new SimpleStringProperty();
         descriptionDisableProperty = new SimpleBooleanProperty(true);
+        favoriteCheckboxProperty = new SimpleBooleanProperty(false);
         checkboxDisableProperty = new SimpleBooleanProperty(true);
         editSaveButtonTextProperty = new SimpleStringProperty(BUTTON_EDIT_TEXT);
-        editSaveButtonDisableProperty = new SimpleBooleanProperty(false);
-        exportButtonDisableProperty = new SimpleBooleanProperty(false);
+        editSaveButtonDisableProperty = new SimpleBooleanProperty(true);
+        exportButtonDisableProperty = new SimpleBooleanProperty(true);
+
+        transportTypeDisableProperty = new SimpleBooleanProperty(true);
+        transportTypeItemsProperty = new SimpleObjectProperty<>(
+                FXCollections.observableArrayList(
+                        Arrays.stream(TransportTypeEnum.values())
+                                .map(TransportTypeEnum::getName).toList()
+                )
+        );
+        transportTypeSelectedItemProperty = new SimpleObjectProperty<>();
     }
 
     public void setCurrentTour(TourDTO tour) {
@@ -77,6 +101,7 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
             this.toProperty.setValue(currentTour.getGoal());
             this.distanceProperty.setValue("" + currentTour.getTourDistance());
             this.descriptionProperty.setValue(currentTour.getTourDescription());
+            this.transportTypeSelectedItemProperty.setValue(TransportTypeEnum.valueOf(tour.getTransportType()).getName());
             this.enableEditSaveAndExportButtons();
         } else {
             this.nameProperty.setValue("");
@@ -84,9 +109,11 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
             this.toProperty.setValue("");
             this.distanceProperty.setValue("");
             this.descriptionProperty.setValue("");
+            this.transportTypeSelectedItemProperty.setValue("");
             this.disableEditSaveAndExportButtons();
         }
         this.disableAllProperties();
+        this.editSaveButtonTextProperty.setValue(BUTTON_EDIT_TEXT);
     }
 
     private void enableEditSaveAndExportButtons() {
@@ -104,25 +131,34 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
         this.currentTour.setStart(this.fromProperty.getValue());
         this.currentTour.setGoal(this.toProperty.getValue());
         this.currentTour.setTourDescription(this.descriptionProperty.getValue());
+        this.currentTour.setFavorite(this.favoriteCheckboxProperty.getValue());
     }
 
     public void editOrSaveTour() {
         if (currentTour != null) {
             if (editSaveButtonTextProperty.getValue().equals(BUTTON_SAVE_TEXT)) {
                 // save
-                this.setCurrentTourValues();
-                Optional<TourDTO> updatedTour = this.tourService.updateTour(this.currentTour);
-                if (updatedTour.isPresent()) {
-                    this.setCurrentTour(updatedTour.get());
-                    this.notifyObservers();
-                    this.editSaveButtonTextProperty.setValue(BUTTON_EDIT_TEXT);
-                }
+                saveCurrentTour();
             } else {
                 // edit
                 this.editSaveButtonTextProperty.setValue(BUTTON_SAVE_TEXT);
                 this.enableAllProperties();
             }
         }
+    }
+
+    private void saveCurrentTour() {
+        this.setCurrentTourValues();
+        AddUpdateSingleTourService addUpdateSingleTourService = new AddUpdateSingleTourService(tourService::updateTour, currentTour);
+        addUpdateSingleTourService.valueProperty().addListener((observableValue, tourDTO, newValue) -> {
+            if (newValue.isPresent()) {
+                setCurrentTour(newValue.get());
+                notifyObservers();
+                editSaveButtonTextProperty.setValue(BUTTON_EDIT_TEXT);
+            }
+        });
+        addUpdateSingleTourService.start();
+        this.disableAllProperties();
     }
 
     private void enableAllProperties() {
@@ -142,19 +178,19 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     }
 
     @Override
-    public void registerObserver(Observer<TourDTO> observer) {
-        this.updateTourObserverList.add(observer);
+    public void registerObserver(BaseObserver<TourDTO> baseObserver) {
+        this.updateTourBaseObserverList.add(baseObserver);
     }
 
     @Override
-    public void removeObserver(Observer<TourDTO> observer) {
-        this.updateTourObserverList.remove(observer);
+    public void removeObserver(BaseObserver<TourDTO> baseObserver) {
+        this.updateTourBaseObserverList.remove(baseObserver);
     }
 
     @Override
     public void notifyObservers() {
-        for (Observer<TourDTO> observer : this.updateTourObserverList) {
-            observer.update(this.currentTour, this.getClass());
+        for (BaseObserver<TourDTO> baseObserver : this.updateTourBaseObserverList) {
+            baseObserver.update(this.currentTour);
         }
     }
 }

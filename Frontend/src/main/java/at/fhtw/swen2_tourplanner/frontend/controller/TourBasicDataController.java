@@ -30,6 +30,9 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
     @FXML
     private CheckBox favoriteCheckbox;
 
+    @FXML
+    private ComboBox<String> transportType;
+
 
     public TourBasicDataController(TourBasicData viewModel) {
         super(viewModel);
@@ -46,19 +49,28 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
         this.to.textProperty().bindBidirectional(getViewModel().getToProperty());
         this.to.disableProperty().bind(getViewModel().getToDisableProperty());
 
-        this.distance.textProperty().bind(getViewModel().getDescriptionProperty());
+        this.distance.textProperty().bind(getViewModel().getDistanceProperty());
 
         this.description.textProperty().bindBidirectional(getViewModel().getDescriptionProperty());
         this.description.disableProperty().bind(getViewModel().getDescriptionDisableProperty());
 
         this.editSaveButton.textProperty().bind(getViewModel().getEditSaveButtonTextProperty());
         this.editSaveButton.disableProperty().bind(getViewModel().getEditSaveButtonDisableProperty());
+
+        this.favoriteCheckbox.selectedProperty().bindBidirectional(getViewModel().getFavoriteCheckboxProperty());
         this.favoriteCheckbox.disableProperty().bind(getViewModel().getCheckboxDisableProperty());
 
+        this.transportType.disableProperty().bindBidirectional(getViewModel().getTransportTypeDisableProperty());
+        this.transportType.itemsProperty().bindBidirectional(getViewModel().getTransportTypeItemsProperty());
+        this.transportType.valueProperty().bindBidirectional(getViewModel().getTransportTypeSelectedItemProperty());
         this.exportButton.disableProperty().bind(getViewModel().getExportButtonDisableProperty());
     }
 
     public void onEditOrSave() {
         getViewModel().editOrSaveTour();
+    }
+
+    public void exportSummary() {
+
     }
 }
