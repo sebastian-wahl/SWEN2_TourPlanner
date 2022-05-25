@@ -1,5 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.service;
 
+import at.fhtw.swen2_tourplanner.frontend.util.ConfigLoader;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 
 import java.io.BufferedReader;
@@ -14,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public abstract class Service {
-    protected static final String REST_URL = "http://localhost:8080";
+    protected static final String REST_URL = ConfigLoader.getValue("backend.url");
     protected static final String POST_METHODE = "POST";
     protected static final String DELETE_METHODE = "DELETE";
     protected static final String PUT_METHODE = "PUT";

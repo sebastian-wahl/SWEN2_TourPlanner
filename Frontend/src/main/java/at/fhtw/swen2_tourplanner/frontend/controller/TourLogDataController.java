@@ -69,10 +69,10 @@ public class TourLogDataController extends BaseController<TourLogData> {
     }
 
     public void addTourLog() {
-
+        getViewModel().addTourLog();
     }
 
-    public void deleteTourLog() {
-
+    public void deleteSelectedTourLog() {
+        getViewModel().deleteSelectedTourLog();
     }
 }

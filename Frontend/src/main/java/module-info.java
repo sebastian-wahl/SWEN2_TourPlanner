@@ -25,4 +25,6 @@ module at.fhtw.swen2_tourplanner.frontend {
     exports at.fhtw.swen2_tourplanner.frontend;
     exports at.fhtw.swen2_tourplanner.frontend.service.tour;
     opens at.fhtw.swen2_tourplanner.frontend.service.tour;
+    exports at.fhtw.swen2_tourplanner.frontend.service.tourlog;
+    opens at.fhtw.swen2_tourplanner.frontend.service.tourlog;
 }

@@ -7,11 +7,11 @@ import javafx.concurrent.Task;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class GetMultipleToursService extends Service<List<TourDTO>> {
+public class GetMultipleTourService extends Service<List<TourDTO>> {
 
     private final Supplier<List<TourDTO>> supplier;
 
-    public GetMultipleToursService(Supplier<List<TourDTO>> supplier) {
+    public GetMultipleTourService(Supplier<List<TourDTO>> supplier) {
         this.supplier = supplier;
     }
     @Override

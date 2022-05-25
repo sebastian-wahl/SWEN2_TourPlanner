@@ -22,21 +22,20 @@ import java.util.UUID;
 //Business Logic Executor
 @Service
 public class TourServiceImpl implements TourService {
-    @Value("${image.path.prefix}")
-    private String[] pathValues;
-    // Map constants
-    private final String ABSOLUTE_IMAGE_PATH = Paths.get(pathValues[0], pathValues[1], pathValues[2], pathValues[3], pathValues[4]).toFile().getAbsolutePath();
-    private static String IMAGE_NAME = "_image";
-
+    private final String IMAGE_NAME = "_image";
     private final Logger logger = LoggerFactory.getLogger(TourServiceImpl.class);
     private final TourRepository tourRepository;
     private final MapQuestService mapQuestService;
 
+    // Map constants
+    private final String ABSOLUTE_IMAGE_PATH;
+
     @Autowired
-    public TourServiceImpl(TourRepository tourRepository, MapQuestService mapQuestService) {
+    public TourServiceImpl(TourRepository tourRepository, MapQuestService mapQuestService, @Value("${image.path.prefix}") String[] pathValues) {
         this.tourRepository = tourRepository;
         this.mapQuestService = mapQuestService;
 
+        ABSOLUTE_IMAGE_PATH = Paths.get(pathValues[0], pathValues[1], pathValues[2], pathValues[3], pathValues[4]).toFile().getAbsolutePath();
     }
 
     @Override

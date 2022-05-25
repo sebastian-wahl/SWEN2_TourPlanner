@@ -67,7 +67,7 @@
                 </ImageView>
             </graphic>
         </Button>
-        <Button fx:id="deleteButton" onAction="#deleteTourLog" text="Delete Selected Log">
+        <Button fx:id="deleteButton" onAction="#deleteSelectedTourLog" text="Delete Selected Log">
             <graphic>
                 <ImageView>
                     <Image url="@../icons/icons8-remove-16.png" />

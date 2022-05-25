@@ -1,7 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
 import at.fhtw.swen2_tourplanner.frontend.service.MapService;
-import at.fhtw.swen2_tourplanner.frontend.service.TourLogService;
+import at.fhtw.swen2_tourplanner.frontend.service.tourlog.TourLogService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.*;
 
@@ -35,7 +35,7 @@ public class ControllerFactory {
         tourMap = new TourMap();
         menubar = new Menubar();
         searchbar = new Searchbar();
-        tourLogData = new TourLogData();
+        tourLogData = new TourLogData(tourLogService);
         tourBasicData = new TourBasicData(tourService);
         tourList = new TourList(tourService);
         tourInfo = new TourInfo(tourBasicData, tourMap);
@@ -45,6 +45,7 @@ public class ControllerFactory {
         searchbar.registerObserver(tourList);
         // tourlist selection observer
         tourList.registerObserver(tourInfo::updateFromTourList);
+        tourList.registerObserver(tourLogData::updateFromTourList);
         // update tour observer (update details)
         tourBasicData.registerObserver(tourInfo::updateFromTourEditOperation);
 

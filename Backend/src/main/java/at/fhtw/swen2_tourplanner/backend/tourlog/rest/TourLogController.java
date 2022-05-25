@@ -42,9 +42,9 @@ public class TourLogController {
     }
 
     @GetMapping(value = "/get/{id}")
-    public ResponseEntity<Object> getTourLogsForTour(@PathVariable("id") UUID id) {
+    public ResponseEntity<Object> getTourLogsForTour(@PathVariable("id") UUID tourId) {
         try {
-            List<TourLogDTO> tourLogs = tourLogService.getAllByTourId(id);
+            List<TourLogDTO> tourLogs = tourLogService.getAllByTourId(tourId);
             return new ResponseEntity<>(tourLogs, HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

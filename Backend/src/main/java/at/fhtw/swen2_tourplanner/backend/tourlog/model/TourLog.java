@@ -26,19 +26,19 @@ public class TourLog {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private UUID id;
-    @Column(name = "date_time", nullable = false)
+    @Column(name = "date_time")
     private LocalDateTime dateTime;
     @Column(name = "comment")
     private String comment;
-    @Column(name = "difficulty", nullable = false)
+    @Column(name = "difficulty")
     private int difficulty;
-    @Column(name = "total_time", nullable = false)
+    @Column(name = "total_time")
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime totalTime;
-    @Column(name = "rating", nullable = false)
+    @Column(name = "rating")
     private double rating;
     @ManyToOne
-    @JoinColumn(name = "tour_id", nullable = false)
+    @JoinColumn(name = "tour_id")
     private Tour tour;
 
     public TourLog(TourLogDTO tourLogDto, TourDTO tourDTO) {

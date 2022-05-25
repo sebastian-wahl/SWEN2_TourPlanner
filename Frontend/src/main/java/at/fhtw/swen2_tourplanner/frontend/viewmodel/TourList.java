@@ -2,11 +2,11 @@ package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.SearchBaseObserver;
-import at.fhtw.swen2_tourplanner.frontend.observer.TourSelectBaseObservable;
+import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourBaseObservable;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddUpdateSingleTourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.DeleteSingleTourService;
-import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.GetMultipleToursService;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.GetMultipleTourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -29,7 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class TourList implements ViewModel, SearchBaseObserver, TourSelectBaseObservable, ChangeListener<TourDTO> {
+public class TourList implements ViewModel, SearchBaseObserver, UpdateTourBaseObservable, ChangeListener<TourDTO> {
     // logger
     private final Logger logger = LoggerFactory.getLogger(TourList.class);
 
@@ -69,14 +69,14 @@ public class TourList implements ViewModel, SearchBaseObserver, TourSelectBaseOb
     }
 
     private void setBaseTourList() {
-        GetMultipleToursService getMultipleToursService = new GetMultipleToursService(tourService::getAllTours);
-        getMultipleToursService.valueProperty().addListener(new ChangeListener<List<TourDTO>>() {
+        GetMultipleTourService getMultipleTourService = new GetMultipleTourService(tourService::getAllTours);
+        getMultipleTourService.valueProperty().addListener(new ChangeListener<List<TourDTO>>() {
             @Override
             public void changed(ObservableValue<? extends List<TourDTO>> observableValue, List<TourDTO> tourDTOS, List<TourDTO> newValues) {
                 baseTourList.addAll(newValues);
             }
         });
-        getMultipleToursService.start();
+        getMultipleTourService.start();
     }
 
     public void setListViewSelectionModel(MultipleSelectionModel<TourDTO> listViewSelectionModel) {
