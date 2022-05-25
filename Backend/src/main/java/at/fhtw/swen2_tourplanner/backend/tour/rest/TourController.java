@@ -69,13 +69,4 @@ public class TourController {
         }
         return new ResponseEntity<>("Tour not deleted", HttpStatus.NOT_FOUND);
     }
-
-    //Not functional Distance and Time Request
-    /*@GetMapping(value = "test")
-    public ResponseEntity<Object> getTest() {
-        MapQuestService mapQuestService = new MapQuestService();
-        return new ResponseEntity<>(mapQuestService.getTimeAndDistance("Clarendon Blvd,Arlington,VA", "2400 S Glebe Rd, Arlington, VA"), HttpStatus.NOT_FOUND);
-    }*/
-
-
 }

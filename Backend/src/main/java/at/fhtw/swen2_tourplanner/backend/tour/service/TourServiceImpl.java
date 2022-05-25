@@ -8,6 +8,7 @@ import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,10 @@ import java.util.UUID;
 //Business Logic Executor
 @Service
 public class TourServiceImpl implements TourService {
+    @Value("${image.path.prefix}")
+    private String[] pathValues;
     // Map constants
-    private static String ABSOLUTE_IMAGE_PATH = Paths.get("Backend", "src", "main", "resources", "images").toFile().getAbsolutePath();
+    private final String ABSOLUTE_IMAGE_PATH = Paths.get(pathValues[0], pathValues[1], pathValues[2], pathValues[3], pathValues[4]).toFile().getAbsolutePath();
     private static String IMAGE_NAME = "_image";
 
     private final Logger logger = LoggerFactory.getLogger(TourServiceImpl.class);
