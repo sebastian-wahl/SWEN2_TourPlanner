@@ -6,14 +6,7 @@ import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +22,7 @@ public class TourLogController {
     }
 
     @PostMapping(value = "/create")
-    public ResponseEntity<Object> createTour(@RequestBody TourLogDTO tourLogDto) {
+    public ResponseEntity<Object> createTourLog(@RequestBody TourLogDTO tourLogDto) {
         try {
             TourLogDTO tourLog = tourLogService.createTourLog(tourLogDto);
             return new ResponseEntity<>(tourLog, HttpStatus.OK);
@@ -39,7 +32,7 @@ public class TourLogController {
     }
 
     @PutMapping(value = "/update")
-    public ResponseEntity<Object> updateTour(@RequestBody TourLogDTO tourLogDto) {
+    public ResponseEntity<Object> updateTourLog(@RequestBody TourLogDTO tourLogDto) {
         try {
             TourLogDTO tourLog = tourLogService.updateTourLog(tourLogDto);
             return new ResponseEntity<>(tourLog, HttpStatus.OK);
@@ -49,7 +42,7 @@ public class TourLogController {
     }
 
     @GetMapping(value = "/get/{id}")
-    public ResponseEntity<Object> getTour(@PathVariable("id") UUID id) {
+    public ResponseEntity<Object> getTourLogsForTour(@PathVariable("id") UUID id) {
         try {
             List<TourLogDTO> tourLogs = tourLogService.getAllByTourId(id);
             return new ResponseEntity<>(tourLogs, HttpStatus.OK);
@@ -59,7 +52,7 @@ public class TourLogController {
     }
 
     @DeleteMapping(value = "/delete/{id}")
-    public ResponseEntity<Object> deleteTour(@PathVariable("id") UUID id) {
+    public ResponseEntity<Object> deleteTourLog(@PathVariable("id") UUID id) {
         if (tourLogService.deleteTourLog(id)) {
             return new ResponseEntity<>("Tour Log deleted successfully", HttpStatus.OK);
         }

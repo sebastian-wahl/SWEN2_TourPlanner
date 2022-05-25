@@ -3,7 +3,10 @@ package at.fhtw.swen2_tourplanner.frontend.controller;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourLogData;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourLogDTO;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.time.LocalDateTime;
@@ -66,7 +69,6 @@ public class TourLogDataController extends BaseController<TourLogData> {
     }
 
     public void addTourLog() {
-        System.out.println("Test");
 
     }
 
