@@ -21,6 +21,7 @@ public class TourLogDTO {
     @JsonProperty("number")
     private int number;
     @JsonProperty("date_time")
+    @JsonFormat(pattern = "dd.MM.yyyy HH:mm")
     private LocalDateTime dateTime;
     @JsonProperty("comment")
     private String comment;

@@ -1,7 +1,9 @@
 package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
 
-public interface Converter<T> {
-    T fromString(String s);
+import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
 
-    String toString(T t);
+public interface Converter<T> {
+    T convertFromString(String s) throws ConverterException;
+
+    String convertToString(T t) throws ConverterException;
 }

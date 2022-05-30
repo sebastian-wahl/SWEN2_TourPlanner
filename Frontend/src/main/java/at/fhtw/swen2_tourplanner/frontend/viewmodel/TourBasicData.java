@@ -1,5 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
+import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.enums.TransportTypeEnum;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourBaseObservable;
@@ -13,6 +14,7 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +42,8 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
     @Getter
     private final StringProperty distanceProperty;
     @Getter
+    private final StringProperty estimatedTimeProperty;
+    @Getter
     private final StringProperty descriptionProperty;
     @Getter
     private final BooleanProperty descriptionDisableProperty;
@@ -53,6 +57,9 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
     private final BooleanProperty editSaveButtonDisableProperty;
     @Getter
     private final BooleanProperty exportButtonDisableProperty;
+
+    @Getter
+    private final BooleanProperty exportSummaryButtonDisableProperty;
 
     @Getter
     private final BooleanProperty transportTypeDisableProperty;
@@ -76,12 +83,14 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
         toDisableProperty = new SimpleBooleanProperty(true);
         distanceProperty = new SimpleStringProperty();
         descriptionProperty = new SimpleStringProperty();
+        estimatedTimeProperty = new SimpleStringProperty();
         descriptionDisableProperty = new SimpleBooleanProperty(true);
         favoriteCheckboxProperty = new SimpleBooleanProperty(false);
         checkboxDisableProperty = new SimpleBooleanProperty(true);
         editSaveButtonTextProperty = new SimpleStringProperty(BUTTON_EDIT_TEXT);
         editSaveButtonDisableProperty = new SimpleBooleanProperty(true);
         exportButtonDisableProperty = new SimpleBooleanProperty(true);
+        exportSummaryButtonDisableProperty = new SimpleBooleanProperty(true);
 
         transportTypeDisableProperty = new SimpleBooleanProperty(true);
         transportTypeItemsProperty = new SimpleObjectProperty<>(
@@ -101,6 +110,11 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
             this.toProperty.setValue(currentTour.getGoal());
             this.distanceProperty.setValue("" + currentTour.getTourDistance());
             this.descriptionProperty.setValue(currentTour.getTourDescription());
+            this.estimatedTimeProperty.setValue(currentTour.getEstimatedTime() != null ?
+                    currentTour.getEstimatedTime().format(DateTimeFormatter.ofPattern(CustomLocalTimeStringConverter.TIME_FORMAT))
+                    :
+                    "00:00:00");
+            this.favoriteCheckboxProperty.setValue(currentTour.isFavorite());
             this.transportTypeSelectedItemProperty.setValue(TransportTypeEnum.valueOf(tour.getTransportType()).getName());
             this.enableEditSaveAndExportButtons();
         } else {
@@ -109,6 +123,8 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
             this.toProperty.setValue("");
             this.distanceProperty.setValue("");
             this.descriptionProperty.setValue("");
+            this.estimatedTimeProperty.setValue("");
+            this.favoriteCheckboxProperty.setValue(false);
             this.transportTypeSelectedItemProperty.setValue("");
             this.disableEditSaveAndExportButtons();
         }
@@ -117,13 +133,17 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
     }
 
     private void enableEditSaveAndExportButtons() {
-        this.editSaveButtonDisableProperty.setValue(false);
-        this.exportButtonDisableProperty.setValue(false);
+        this.changeEditSaveAndExportButtons(false);
     }
 
     private void disableEditSaveAndExportButtons() {
-        this.editSaveButtonDisableProperty.setValue(true);
-        this.exportButtonDisableProperty.setValue(true);
+        this.changeEditSaveAndExportButtons(true);
+    }
+
+    private void changeEditSaveAndExportButtons(boolean disable) {
+        this.editSaveButtonDisableProperty.setValue(disable);
+        this.exportButtonDisableProperty.setValue(disable);
+        this.exportSummaryButtonDisableProperty.setValue(disable);
     }
 
     private void setCurrentTourValues() {

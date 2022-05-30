@@ -18,6 +18,7 @@ public class TourLogDTO {
     @JsonProperty("id")
     private UUID id;
     @JsonProperty("date_time")
+    @JsonFormat(pattern = "dd.MM.yyyy HH:mm")
     private LocalDateTime dateTime;
     @JsonProperty("comment")
     private String comment;

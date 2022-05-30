@@ -38,6 +38,17 @@
             <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
          </padding>
         </HBox>
+        <HBox prefHeight="43.0" prefWidth="500.0" spacing="16.0">
+            <Label minWidth="80.0" text="Estimated &#10;Time" />
+            <Label fx:id="estimatedTime" prefHeight="30.0" prefWidth="431.0">
+                <padding>
+                    <Insets bottom="12" />
+                </padding>
+            </Label>
+            <padding>
+                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+            </padding>
+        </HBox>
         <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
             <Label minWidth="80.0" text="Transport Type" />
             <ComboBox fx:id="transportType" />
@@ -53,13 +64,13 @@
          </padding>
         </HBox>
     </VBox>
-    <VBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="132.0" spacing="4.0" HBox.hgrow="ALWAYS">
+    <VBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="85.0" spacing="4.0" HBox.hgrow="ALWAYS">
         <padding>
             <Insets bottom="8" left="8" right="8" top="8" />
         </padding>
-        <Button onAction="#exportSummary" prefWidth="86.0" text="Export Tour Summary" />
-        <Button fx:id="exportButton" minWidth="80.0" mnemonicParsing="false" text="Export Tour" />
-        <Button fx:id="editSaveButton" minWidth="80.0" mnemonicParsing="false" onMouseClicked="#onEditOrSave" text="Edit" />
+        <Button fx:id="exportSummaryButton" minHeight="45.0" minWidth="85.0" onAction="#exportSummary" prefHeight="45.0" prefWidth="85.0" text="Export Tour &#10;Summary" textAlignment="CENTER" />
+        <Button fx:id="exportButton" minWidth="85.0" mnemonicParsing="false" onAction="#exportTour" prefWidth="85.0" text="Export Tour" textAlignment="CENTER" />
+        <Button fx:id="editSaveButton" minWidth="85.0" mnemonicParsing="false" onMouseClicked="#onEditOrSave" prefWidth="85.0" text="Edit" textAlignment="CENTER" />
         <CheckBox fx:id="favoriteCheckbox" disable="true" text="Favorite">
         </CheckBox>
     </VBox>

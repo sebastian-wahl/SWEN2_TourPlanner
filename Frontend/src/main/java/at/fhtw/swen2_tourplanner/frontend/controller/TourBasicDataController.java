@@ -19,7 +19,13 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
     private Label distance;
 
     @FXML
+    private Label estimatedTime;
+
+    @FXML
     private TextArea description;
+
+    @FXML
+    private Button exportSummaryButton;
 
     @FXML
     private Button exportButton;
@@ -51,6 +57,8 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
 
         this.distance.textProperty().bind(getViewModel().getDistanceProperty());
 
+        this.estimatedTime.textProperty().bind(getViewModel().getEstimatedTimeProperty());
+
         this.description.textProperty().bindBidirectional(getViewModel().getDescriptionProperty());
         this.description.disableProperty().bind(getViewModel().getDescriptionDisableProperty());
 
@@ -64,6 +72,7 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
         this.transportType.itemsProperty().bindBidirectional(getViewModel().getTransportTypeItemsProperty());
         this.transportType.valueProperty().bindBidirectional(getViewModel().getTransportTypeSelectedItemProperty());
         this.exportButton.disableProperty().bind(getViewModel().getExportButtonDisableProperty());
+        this.exportSummaryButton.disableProperty().bind(getViewModel().getExportSummaryButtonDisableProperty());
     }
 
     public void onEditOrSave() {
@@ -71,6 +80,11 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
     }
 
     public void exportSummary() {
+        // ToDo Context menu (filesystem) and save as pdf
+        // ToDo maybe with special things (don't know)
+    }
 
+    public void exportTour() {
+        // ToDo Context menu (filesystem) and save as json
     }
 }

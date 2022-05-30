@@ -54,6 +54,7 @@ public class TourLogServiceImpl implements TourLogService {
             throw e;
         }
         TourLog tourLog = new TourLog(tourLogDto, tourDTO);
+        tourLog.setId(tourLogDto.getId());
         tourLogRepository.save(tourLog);
         return new TourLogDTO(tourLog);
     }

@@ -1,5 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
 
+import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,24 +10,27 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class CustomLocalDateTimeStringConverter implements Converter<LocalDateTime> {
+    public static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm";
     private final Logger logger = LoggerFactory.getLogger(CustomLocalDateTimeStringConverter.class);
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
-    public String toString(LocalDateTime value) {
+    @Override
+    public String convertToString(LocalDateTime value) throws ConverterException {
         try {
             return formatter.format(value);
         } catch (DateTimeException e) {
             logger.error("Error when converting LocalDateTime to String: {}", e.getMessage());
-            throw e;
+            throw new ConverterException(e);
         }
     }
 
-    public LocalDateTime fromString(String string) {
+    @Override
+    public LocalDateTime convertFromString(String string) throws ConverterException {
         try {
             return LocalDateTime.parse(string, formatter);
         } catch (DateTimeParseException e) {
             logger.error("Error when converting String to LocalDateTime: {}", e.getMessage());
-            throw e;
+            throw new ConverterException(e);
         }
     }
 }

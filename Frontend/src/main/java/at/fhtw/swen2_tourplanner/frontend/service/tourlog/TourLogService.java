@@ -4,6 +4,10 @@ import at.fhtw.swen2_tourplanner.frontend.service.Service;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourLogDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +23,12 @@ import java.util.UUID;
 public class TourLogService extends Service {
     private static final String TOUR_LOG_URL = REST_URL + "/tour-log";
     private final Logger logger = LoggerFactory.getLogger(TourLogService.class);
-    private final ObjectMapper o = new ObjectMapper();
+    private final ObjectMapper o = JsonMapper.builder()
+            .addModule(new ParameterNamesModule())
+            .addModule(new Jdk8Module())
+            .addModule(new JavaTimeModule())
+            .build();
+
 
     public List<TourLogDTO> getAllLogs(UUID tourId) {
         try {
@@ -44,7 +53,7 @@ public class TourLogService extends Service {
         }
     }
 
-    public boolean deleteTour(TourLogDTO tourLog) {
+    public boolean deleteTourLog(TourLogDTO tourLog) {
         try {
             HttpURLConnection con = getConnection(TOUR_LOG_URL + "/delete/" + tourLog.getId().toString());
             con.setRequestMethod(DELETE_METHODE);
@@ -64,15 +73,15 @@ public class TourLogService extends Service {
         }
     }
 
-    public Optional<TourLogDTO> addTour(TourLogDTO tourLog) {
-        return addOrUpdateTour(tourLog, POST_METHODE, TOUR_LOG_URL + "/create");
+    public Optional<TourLogDTO> addTourLog(TourLogDTO tourLog) {
+        return addOrUpdateTourLog(tourLog, POST_METHODE, TOUR_LOG_URL + "/create");
     }
 
-    public Optional<TourLogDTO> updateTour(TourLogDTO tourLog) {
-        return addOrUpdateTour(tourLog, PUT_METHODE, TOUR_LOG_URL + "/update");
+    public Optional<TourLogDTO> updateTourLog(TourLogDTO tourLog) {
+        return addOrUpdateTourLog(tourLog, PUT_METHODE, TOUR_LOG_URL + "/update");
     }
 
-    private Optional<TourLogDTO> addOrUpdateTour(TourLogDTO tourLog, String putMethode, String url) {
+    private Optional<TourLogDTO> addOrUpdateTourLog(TourLogDTO tourLog, String putMethode, String url) {
         try {
             HttpURLConnection con = getConnection(url);
             con.setRequestMethod(putMethode);
