@@ -13,7 +13,7 @@ public class MapQuestResponse {
     private Route route;
 
     @Data
-    private static class Route {
+    public class Route {
         @JsonProperty("distance")
         private double distance;
         @JsonProperty("formattedTime")

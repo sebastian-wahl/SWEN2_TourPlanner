@@ -81,10 +81,9 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
 
     public void exportSummary() {
         // ToDo Context menu (filesystem) and save as pdf
-        // ToDo maybe with special things (don't know)
     }
 
     public void exportTour() {
-        // ToDo Context menu (filesystem) and save as json
+        // ToDo Context menu (filesystem) and save as pdf
     }
 }

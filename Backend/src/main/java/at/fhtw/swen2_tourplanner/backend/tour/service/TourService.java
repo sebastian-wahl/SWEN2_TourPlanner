@@ -17,4 +17,8 @@ public interface TourService {
     boolean deleteTour(UUID id);
 
     List<TourDTO> getAllTours();
+
+    boolean getTourReport();
+
+    boolean getSummaryReport();
 }
