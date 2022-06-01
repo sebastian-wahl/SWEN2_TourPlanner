@@ -5,11 +5,13 @@ import at.fhtw.swen2_tourplanner.backend.tour.service.TourService;
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
 import at.fhtw.swen2_tourplanner.backend.tourlog.model.TourLog;
 import at.fhtw.swen2_tourplanner.backend.tourlog.repo.TourLogRepository;
+import at.fhtw.swen2_tourplanner.backend.tourlog.util.TourLogPdfHelper;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -20,10 +22,13 @@ public class TourLogServiceImpl implements TourLogService {
     private final TourLogRepository tourLogRepository;
     private final TourService tourService;
 
+    private final TourLogPdfHelper tourLogPdfHelper;
+
     @Autowired
-    public TourLogServiceImpl(TourLogRepository tourLogRepository, TourService tourService) {
+    public TourLogServiceImpl(TourLogRepository tourLogRepository, TourService tourService, TourLogPdfHelper tourLogPdfHelper) {
         this.tourLogRepository = tourLogRepository;
         this.tourService = tourService;
+        this.tourLogPdfHelper = tourLogPdfHelper;
     }
 
     @Override
@@ -73,5 +78,33 @@ public class TourLogServiceImpl implements TourLogService {
     public List<TourLogDTO> getAllByTourId(UUID id) {
         List<TourLog> tourLogs = tourLogRepository.findByTourId(id);
         return tourLogs.stream().map(TourLogDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean getTourReport(UUID id) {
+        try {
+            TourDTO tour = tourService.getTour(id);
+            List<TourLogDTO> tourLogs = tourLogRepository.findByTourId(id).stream().map(TourLogDTO::new).collect(Collectors.toList());
+            tourLogPdfHelper.createTourReport(tour, tourLogs);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean getSummaryReport() {
+        try {
+            List<TourDTO> tours = tourService.getAllTours();
+            HashMap<TourDTO, List<TourLogDTO>> allToursAndLogs = new HashMap<>();
+            for (TourDTO tour : tours) {
+                List<TourLogDTO> tourLogs = tourLogRepository.findByTourId(tour.getId()).stream().map(TourLogDTO::new).collect(Collectors.toList());
+                allToursAndLogs.put(tour, tourLogs);
+            }
+            tourLogPdfHelper.createSummaryReport(allToursAndLogs);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

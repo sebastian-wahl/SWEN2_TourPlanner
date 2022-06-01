@@ -1,14 +1,11 @@
 package at.fhtw.swen2_tourplanner.backend.tour.service;
 
-import at.fhtw.swen2_tourplanner.backend.mapquest.service.MapQuestService;
 import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
 import at.fhtw.swen2_tourplanner.backend.tour.repo.TourRepository;
 import at.fhtw.swen2_tourplanner.backend.tour.util.TourMapQuestHelper;
-import at.fhtw.swen2_tourplanner.backend.tour.util.TourPdfHelper;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +19,11 @@ import java.util.UUID;
 public class TourServiceImpl implements TourService {
     private final TourRepository tourRepository;
     private final TourMapQuestHelper tourMapQuestHelper;
-    private final TourPdfHelper tourPdfHelper;
 
     @Autowired
-    public TourServiceImpl(TourRepository tourRepository, TourMapQuestHelper tourMapQuestHelper, TourPdfHelper tourPdfHelper) {
+    public TourServiceImpl(TourRepository tourRepository, TourMapQuestHelper tourMapQuestHelper) {
         this.tourRepository = tourRepository;
         this.tourMapQuestHelper = tourMapQuestHelper;
-        this.tourPdfHelper = tourPdfHelper;
     }
 
     @Override
@@ -78,16 +73,4 @@ public class TourServiceImpl implements TourService {
     public List<TourDTO> getAllTours() {
         return tourRepository.findAll().stream().map(tourMapQuestHelper::setRouteImageOrReloadImageIfNotPresent).toList();
     }
-
-    @Override
-    public boolean getTourReport() {
-        return false;
-    }
-
-    @Override
-    public boolean getSummaryReport() {
-        return false;
-    }
-
-
 }
