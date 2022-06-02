@@ -29,6 +29,7 @@ public class TourServiceImpl implements TourService {
     @Override
     public TourDTO createTour(TourDTO tour) throws BusinessException {
         if (tour.getId() == null) {
+            tourMapQuestHelper.setMapQuestData(tour);
             return new TourDTO(tourRepository.save(new Tour(tour)), new byte[0]);
         } else {
             throw new BusinessException("Tour already exists");
@@ -42,18 +43,21 @@ public class TourServiceImpl implements TourService {
         }
         Optional<Tour> dbTour = tourRepository.findById(tour.getId());
         if (dbTour.isPresent()) {
-            tourMapQuestHelper.updateTour(dbTour.get(), tour);
+            if (locationChanged(tour, dbTour.get())) {
+                tourMapQuestHelper.setMapQuestData(tour);
+            }
             return new TourDTO(tourRepository.save(new Tour(tour)), tour.getRouteImage());
         } else {
             throw new BusinessException("Could not find tour");
         }
+
     }
 
     @Override
     public TourDTO getTour(UUID id) throws BusinessException {
         Optional<Tour> tour = tourRepository.findById(id);
         if (tour.isPresent()) {
-            return tourMapQuestHelper.setRouteImageOrReloadImageIfNotPresent(tour.get());
+            return tourMapQuestHelper.setRouteImage(tour.get());
         }
         throw new BusinessException("Could not find tour");
     }
@@ -71,6 +75,10 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public List<TourDTO> getAllTours() {
-        return tourRepository.findAll().stream().map(tourMapQuestHelper::setRouteImageOrReloadImageIfNotPresent).toList();
+        return tourRepository.findAll().stream().map(tourMapQuestHelper::setRouteImage).toList();
+    }
+
+    private boolean locationChanged(TourDTO tour, Tour dbTour) {
+        return !tour.getStart().equals(dbTour.getStart()) || !tour.getGoal().equals(dbTour.getGoal());
     }
 }

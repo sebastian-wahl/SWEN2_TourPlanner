@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Component
@@ -63,7 +64,7 @@ public class TourMapQuestHelper {
         return new byte[0];
     }
 
-    public TourDTO setRouteImageOrReloadImageIfNotPresent(Tour tour) {
+    public TourDTO setRouteImage(Tour tour) {
         TourDTO out = new TourDTO(tour, new byte[0]);
         try {
             out.setRouteImage(this.getImageFromFile(out.getRouteImageName()));
@@ -78,15 +79,9 @@ public class TourMapQuestHelper {
         return new File(ABSOLUTE_IMAGE_PATH + "\\" + fileName + ".jpg");
     }
 
-    public void updateTour(Tour dbTour, TourDTO tour) {
-        if (locationChanged(tour, dbTour)) {
-            setTourMapImage(tour);
-            setTourDistance(tour);
-        }
-    }
-
-    private boolean locationChanged(TourDTO tour, Tour dbTour) {
-        return !tour.getStart().equals(dbTour.getStart()) || !tour.getGoal().equals(dbTour.getGoal());
+    public void setMapQuestData(TourDTO tour) {
+        setTourMapImage(tour);
+        setTourDistanceAndTime(tour);
     }
 
     private void setTourMapImage(TourDTO tour) {
@@ -97,11 +92,14 @@ public class TourMapQuestHelper {
         logger.info("Route image name: {}", imageName);
     }
 
-    private void setTourDistance(TourDTO tour) {
+    private void setTourDistanceAndTime(TourDTO tour) {
         MapQuestResponse response = mapQuestService.getTimeAndDistance(tour.getStart(), tour.getGoal());
         final long distance = (long) response.getRoute().getDistance();
+        final LocalTime time = response.getRoute().getFormattedTime();
         tour.setTourDistance(distance);
+        tour.setEstimatedTime(time);
         logger.info("New Distance: {}", distance);
+        logger.info("New Time: {}", time);
     }
 
 }
