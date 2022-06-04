@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane prefWidth="421.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.InfoLineController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="70.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints minHeight="20.0" prefHeight="20.0" maxHeight="20" vgrow="SOMETIMES" />
+    </rowConstraints>
+    <Label fx:id="infoLabel" GridPane.columnIndex="0" />
+    <ProgressBar fx:id="progressBar" prefHeight="18.0" prefWidth="689.0" GridPane.columnIndex="1">
+        <padding>
+            <Insets left="8.0" />
+        </padding>
+    </ProgressBar>
+</GridPane>

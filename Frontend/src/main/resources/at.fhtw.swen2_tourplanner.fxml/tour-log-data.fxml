@@ -17,6 +17,10 @@
                 <Label minWidth="72.0" text="Time Spent"/>
                 <Label fx:id="totalTimeLabel"/>
             </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+                <Label minWidth="72.0" text="Distance"/>
+                <Label fx:id="distanceLabel"/>
+            </HBox>
             <padding>
                 <Insets bottom="8" left="8.0" right="8.0" top="8.0"/>
             </padding>
@@ -73,7 +77,7 @@
                 </ImageView>
             </graphic>
         </Button>
-        <fx:include fx:id="searchBar" source="searchbar.fxml" HBox.hgrow="ALWAYS"/>
+        <fx:include source="searchbar-tour-log.fxml" HBox.hgrow="ALWAYS"/>
     </HBox>
     <TableView fx:id="logTableView" editable="true" prefHeight="200.0" prefWidth="200.0" tableMenuButtonVisible="true"
                VBox.vgrow="ALWAYS">
@@ -82,6 +86,8 @@
                          text="Start Date and Time"/>
             <TableColumn fx:id="totalTimeCol" minWidth="-Infinity" prefWidth="120.0" sortType="DESCENDING"
                          sortable="false" text="Time Spent"/>
+            <TableColumn fx:id="distanceCol" minWidth="-Infinity" prefWidth="120.0" sortType="DESCENDING" sortable="false"
+                         text="Distance"/>
             <TableColumn fx:id="difficultyCol" minWidth="-Infinity" prefWidth="120.0" sortType="DESCENDING"
                          sortable="false" text="Difficulty"/>
             <TableColumn fx:id="ratingCol" minWidth="-Infinity" prefWidth="120.0" sortType="DESCENDING" sortable="false"

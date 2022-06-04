@@ -1,7 +1,7 @@
 package guitest;
 
 import at.fhtw.swen2_tourplanner.frontend.FXMLDependencyInjection;
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -47,7 +47,7 @@ class TourPlannerGuiTest {
     @Test
     void testAddTour(FxRobot robot) {
         TextField tourNameField = robot.lookup("#toAddTourName").queryAs(TextField.class);
-        ListView<TourDTO> tourListView = robot.lookup("#tourListView").queryAs(ListView.class);
+        ListView<Tour> tourListView = robot.lookup("#tourListView").queryAs(ListView.class);
         int startSize = tourListView.getItems().size();
         tourNameField.setText("New Tour");
         robot.clickOn("#addTourButton");

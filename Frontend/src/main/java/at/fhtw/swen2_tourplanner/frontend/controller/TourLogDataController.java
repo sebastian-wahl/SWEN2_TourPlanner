@@ -1,7 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourLogData;
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourLogDTO;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -13,17 +13,20 @@ import java.time.LocalTime;
 public class TourLogDataController extends BaseController<TourLogData> {
     // Table and Columns
     @FXML
-    TableColumn<TourLogDTO, Integer> numberCol;
+    TableColumn<TourLog, Integer> numberCol;
     @FXML
-    TableColumn<TourLogDTO, LocalDateTime> dateCol;
+    TableColumn<TourLog, LocalDateTime> dateCol;
     @FXML
-    TableColumn<TourLogDTO, LocalTime> totalTimeCol;
+    TableColumn<TourLog, LocalTime> totalTimeCol;
     @FXML
-    TableColumn<TourLogDTO, Integer> difficultyCol;
+    TableColumn<TourLog, Integer> difficultyCol;
     @FXML
-    TableColumn<TourLogDTO, Double> ratingCol;
+    TableColumn<TourLog, Double> ratingCol;
+
     @FXML
-    private TableView<TourLogDTO> logTableView;
+    TableColumn<TourLog, Long> distanceCol;
+    @FXML
+    private TableView<TourLog> logTableView;
 
     @FXML
     private TextArea commentInput;
@@ -39,6 +42,8 @@ public class TourLogDataController extends BaseController<TourLogData> {
     private Label difficultyLabel;
     @FXML
     private Label totalTimeLabel;
+    @FXML
+    private Label distanceLabel;
     @FXML
     private Label dateLabel;
 
@@ -57,23 +62,23 @@ public class TourLogDataController extends BaseController<TourLogData> {
         logTableView.setItems(getViewModel().getTourLogList());
         getViewModel().setTableSelectionModel(logTableView.getSelectionModel());
 
-        Tooltip tooltip = new Tooltip("Double click to edit, Enter to save, ESC to exit");
+        Tooltip tooltip = new Tooltip("Double click to edit, ESC to save");
         Tooltip.install(toolTipHBox, tooltip);
 
         toolTipHBox.setOnMouseClicked(getViewModel()::commentMouseClickHandler);
-        //getViewModel().setCommentObservableList(commentInput.getParagraphs());
         commentInput.textProperty().bindBidirectional(getViewModel().getCommentTextProperty());
         commentInput.setOnKeyReleased(getViewModel()::commentKeyHandler);
 
-        commentInput.disableProperty().bindBidirectional(getViewModel().getCommentInputDisableProperty());
-        addLogButton.disableProperty().bindBidirectional(getViewModel().getAddLogButtonDisableProperty());
-        deleteButton.disableProperty().bindBidirectional(getViewModel().getDeleteLogButtonDisableProperty());
-        logTableView.disableProperty().bindBidirectional(getViewModel().getTableDisableProperty());
+        commentInput.disableProperty().bind(getViewModel().getCommentInputDisableProperty());
+        addLogButton.disableProperty().bind(getViewModel().getAddLogButtonDisableProperty());
+        deleteButton.disableProperty().bind(getViewModel().getDeleteLogButtonDisableProperty());
+        logTableView.disableProperty().bind(getViewModel().getTableDisableProperty());
 
-        dateLabel.textProperty().bindBidirectional(getViewModel().getDateLabelProperty());
-        totalTimeLabel.textProperty().bindBidirectional(getViewModel().getTimeLabelProperty());
-        difficultyLabel.textProperty().bindBidirectional(getViewModel().getDifficultyLabelProperty());
-        ratingLabel.textProperty().bindBidirectional(getViewModel().getRatingLabelProperty());
+        dateLabel.textProperty().bind(getViewModel().getDateLabelProperty());
+        totalTimeLabel.textProperty().bind(getViewModel().getTimeLabelProperty());
+        distanceLabel.textProperty().bind(getViewModel().getDistanceLabelProperty());
+        difficultyLabel.textProperty().bind(getViewModel().getDifficultyLabelProperty());
+        ratingLabel.textProperty().bind(getViewModel().getRatingLabelProperty());
 
         this.setupTable();
     }
@@ -98,6 +103,9 @@ public class TourLogDataController extends BaseController<TourLogData> {
         ratingCol.setCellValueFactory(new PropertyValueFactory<>("rating"));
         ratingCol.setOnEditCommit(getViewModel()::onEditCommitRating);
         ratingCol.cellFactoryProperty().bindBidirectional(getViewModel().getRatingColCellFactoryProperty());
+        distanceCol.setCellValueFactory(new PropertyValueFactory<>("distance"));
+        distanceCol.setOnEditCommit(getViewModel()::onEditCommitDistance);
+        distanceCol.cellFactoryProperty().bindBidirectional(getViewModel().getDistanceColCellFactoryProperty());
     }
 
     public void addTourLog() {

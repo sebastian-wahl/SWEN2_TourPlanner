@@ -1,8 +1,8 @@
 package at.fhtw.swen2_tourplanner.frontend.util;
 
 import at.fhtw.swen2_tourplanner.frontend.service.MapService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.util.Objects;
 
 public class ConfigLoader {
-    static Logger logger = LoggerFactory.getLogger(MapService.class);
+    static Logger logger = LogManager.getLogger(MapService.class);
 
     public static String getValue(String name) {
         if (name == null || name.equals("")) {

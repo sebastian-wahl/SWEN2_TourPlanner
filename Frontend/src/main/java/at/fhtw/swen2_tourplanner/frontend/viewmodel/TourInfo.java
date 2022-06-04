@@ -1,6 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 
 public class TourInfo implements ViewModel {
     // services
@@ -13,12 +13,12 @@ public class TourInfo implements ViewModel {
         this.tourMap = tourMap;
     }
 
-    public void updateFromTourEditOperation(TourDTO tourDTO) {
-        tourMap.setCurrentTour(tourDTO);
+    public void updateFromTourEditOperation(Tour tour) {
+        tourMap.setCurrentTour(tour);
     }
 
-    public void updateFromTourList(TourDTO tourDTO) {
-        tourBasicData.setCurrentTour(tourDTO);
-        tourMap.setCurrentTour(tourDTO);
+    public void updateFromTourList(Tour tour) {
+        tourBasicData.setCurrentTour(tour);
+        tourMap.setCurrentTour(tour);
     }
 }

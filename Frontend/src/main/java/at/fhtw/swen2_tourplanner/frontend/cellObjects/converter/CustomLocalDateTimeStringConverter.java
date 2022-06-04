@@ -1,8 +1,8 @@
 package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import java.time.format.DateTimeParseException;
 
 public class CustomLocalDateTimeStringConverter implements Converter<LocalDateTime> {
     public static final String DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm";
-    private final Logger logger = LoggerFactory.getLogger(CustomLocalDateTimeStringConverter.class);
+    private final Logger logger = LogManager.getLogger(CustomLocalDateTimeStringConverter.class);
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
 
     @Override

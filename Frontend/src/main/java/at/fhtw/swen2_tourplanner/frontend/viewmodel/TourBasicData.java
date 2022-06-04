@@ -5,14 +5,15 @@ import at.fhtw.swen2_tourplanner.frontend.enums.TransportTypeEnum;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourBaseObservable;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.TourServiceImpl;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddUpdateSingleTourService;
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
     private static final String BUTTON_EDIT_TEXT = "Edit";
     private static final String BUTTON_SAVE_TEXT = "Save";
     // logger
-    private final Logger logger = LoggerFactory.getLogger(TourBasicData.class);
+    private final Logger logger = LogManager.getLogger(TourBasicData.class);
     // Services
     private final TourService tourService;
     // Properties
@@ -68,8 +69,8 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
     @Getter
     private final ObjectProperty<String> transportTypeSelectedItemProperty;
     // observer list
-    private List<BaseObserver<TourDTO>> updateTourBaseObserverList;
-    private TourDTO currentTour;
+    private List<BaseObserver<Tour>> updateTourBaseObserverList;
+    private Tour currentTour;
 
     public TourBasicData(TourService tourService) {
         this.tourService = tourService;
@@ -102,7 +103,7 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
         transportTypeSelectedItemProperty = new SimpleObjectProperty<>();
     }
 
-    public void setCurrentTour(TourDTO tour) {
+    public void setCurrentTour(Tour tour) {
         if (tour != null) {
             this.currentTour = tour;
             this.nameProperty.setValue(currentTour.getName());
@@ -198,18 +199,18 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
     }
 
     @Override
-    public void registerObserver(BaseObserver<TourDTO> baseObserver) {
+    public void registerObserver(BaseObserver<Tour> baseObserver) {
         this.updateTourBaseObserverList.add(baseObserver);
     }
 
     @Override
-    public void removeObserver(BaseObserver<TourDTO> baseObserver) {
+    public void removeObserver(BaseObserver<Tour> baseObserver) {
         this.updateTourBaseObserverList.remove(baseObserver);
     }
 
     @Override
     public void notifyObservers() {
-        for (BaseObserver<TourDTO> baseObserver : this.updateTourBaseObserverList) {
+        for (BaseObserver<Tour> baseObserver : this.updateTourBaseObserverList) {
             baseObserver.update(this.currentTour);
         }
     }

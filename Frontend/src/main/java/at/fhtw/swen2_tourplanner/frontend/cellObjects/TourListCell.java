@@ -1,6 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.cellObjects;
 
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class TourListCell extends ListCell<TourDTO> {
+public class TourListCell extends ListCell<Tour> {
     @FXML
     private Label nameLabel;
     @FXML
@@ -29,7 +29,7 @@ public class TourListCell extends ListCell<TourDTO> {
     }
 
     @Override
-    protected void updateItem(TourDTO tour, boolean empty) {
+    protected void updateItem(Tour tour, boolean empty) {
         super.updateItem(tour, empty);
 
         if (empty || tour == null) {

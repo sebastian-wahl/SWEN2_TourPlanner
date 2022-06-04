@@ -9,15 +9,19 @@ module at.fhtw.swen2_tourplanner.frontend {
     requires com.fasterxml.jackson.datatype.jdk8;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.module.paramnames;
-    requires org.slf4j;
+    requires org.apache.logging.log4j;
+    requires org.apache.logging.log4j.core;
+    requires org.apache.logging.log4j.slf4j;
     requires io.reactivex.rxjava3;
+    requires retrofit2;
+    requires retrofit2.converter.jackson;
 
     opens at.fhtw.swen2_tourplanner.frontend.controller;
     exports at.fhtw.swen2_tourplanner.frontend.controller;
     opens at.fhtw.swen2_tourplanner.frontend.viewmodel;
     exports at.fhtw.swen2_tourplanner.frontend.viewmodel;
-    opens at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects;
-    exports at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects;
+    opens at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects;
+    exports at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects;
     opens at.fhtw.swen2_tourplanner.frontend.cellObjects;
     exports at.fhtw.swen2_tourplanner.frontend.cellObjects;
     opens at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;

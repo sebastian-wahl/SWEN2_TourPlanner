@@ -3,7 +3,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16"
+<VBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.TourInfoController">
     <fx:include source="tour-basic-data.fxml"/>
     <TabPane fx:id="tabs" VBox.vgrow="ALWAYS">
@@ -14,4 +14,5 @@
             <fx:include source="tour-map.fxml"/>
         </Tab>
     </TabPane>
+    <fx:include source="info-line.fxml"/>
 </VBox>

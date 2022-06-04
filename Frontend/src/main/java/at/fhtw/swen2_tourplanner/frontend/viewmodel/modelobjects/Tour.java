@@ -1,4 +1,4 @@
-package at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects;
+package at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,8 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TourDTO {
-
+public class Tour {
     @JsonProperty("id")
     private UUID id;
     @JsonProperty("name")
@@ -42,7 +41,7 @@ public class TourDTO {
     @JsonProperty("routeImageName")
     private String routeImageName;
 
-    public TourDTO(String name) {
+    public Tour(String name) {
         this.name = name;
         this.favorite = false;
         this.start = "";

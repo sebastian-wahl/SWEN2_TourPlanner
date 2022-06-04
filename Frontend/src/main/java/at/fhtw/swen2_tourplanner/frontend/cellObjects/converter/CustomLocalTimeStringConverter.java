@@ -1,8 +1,8 @@
 package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -10,7 +10,7 @@ import java.time.format.DateTimeParseException;
 
 public class CustomLocalTimeStringConverter implements Converter<LocalTime> {
     public static final String TIME_FORMAT = "HH:mm:ss";
-    private final Logger logger = LoggerFactory.getLogger(CustomLocalTimeStringConverter.class);
+    private final Logger logger = LogManager.getLogger(CustomLocalTimeStringConverter.class);
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
 
     @Override

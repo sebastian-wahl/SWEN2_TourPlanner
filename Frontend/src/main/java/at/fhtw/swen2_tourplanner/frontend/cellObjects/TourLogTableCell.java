@@ -2,19 +2,19 @@ package at.fhtw.swen2_tourplanner.frontend.cellObjects;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.Converter;
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourLogDTO;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.TextAlignment;
 
-public class TourLogTableCell<T> extends TableCell<TourLogDTO, T> {
+public class TourLogTableCell<T> extends TableCell<TourLog, T> {
     private final Converter<T> converter;
     private final String hint;
     private TextField textField;
 
     private boolean escapePressed = false;
-    private TablePosition<TourLogDTO, T> tablePos = null;
+    private TablePosition<TourLog, T> tablePos = null;
 
     public TourLogTableCell(Converter<T> converter) {
         this(converter, null);
@@ -40,8 +40,8 @@ public class TourLogTableCell<T> extends TableCell<TourLogDTO, T> {
             }
             escapePressed = false;
             startEdit(textField);
-            final TableView<TourLogDTO> table = getTableView();
-            tablePos = (TablePosition<TourLogDTO, T>) table.getEditingCell();
+            final TableView<TourLog> table = getTableView();
+            tablePos = (TablePosition<TourLog, T>) table.getEditingCell();
         }
     }
 
@@ -50,10 +50,10 @@ public class TourLogTableCell<T> extends TableCell<TourLogDTO, T> {
         if (!isEditing())
             return;
 
-        final TableView<TourLogDTO> table = getTableView();
+        final TableView<TourLog> table = getTableView();
         if (table != null) {
             // Inform the TableView of the edit being ready to be committed.
-            TableColumn.CellEditEvent<TourLogDTO, T> editEvent = new TableColumn.CellEditEvent<TourLogDTO, T>(
+            TableColumn.CellEditEvent<TourLog, T> editEvent = new TableColumn.CellEditEvent<TourLog, T>(
                     table,
                     tablePos,
                     TableColumn.editCommitEvent(),

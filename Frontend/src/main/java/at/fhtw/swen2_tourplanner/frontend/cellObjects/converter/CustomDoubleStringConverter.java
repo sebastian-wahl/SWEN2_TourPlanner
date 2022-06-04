@@ -2,11 +2,11 @@ package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
 import javafx.util.converter.DoubleStringConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CustomDoubleStringConverter extends DoubleStringConverter implements Converter<Double> {
-    private final Logger logger = LoggerFactory.getLogger(CustomDoubleStringConverter.class);
+    private final Logger logger = LogManager.getLogger(CustomDoubleStringConverter.class);
 
     @Override
     public Double fromString(String s) throws NumberFormatException {

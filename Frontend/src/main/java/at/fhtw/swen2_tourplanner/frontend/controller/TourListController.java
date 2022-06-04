@@ -1,9 +1,8 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.TourListCell;
-import at.fhtw.swen2_tourplanner.frontend.observer.SearchBaseObservable;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourList;
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -16,15 +15,13 @@ public class TourListController extends BaseController<TourList> {
     @FXML
     private CheckBox favoritesCheckbox;
     @FXML
-    private ListView<TourDTO> tourListView;
+    private ListView<Tour> tourListView;
     @FXML
     private TextField toAddTourName;
 
 
-    public TourListController(TourList tourList, SearchBaseObservable searchObservable) {
+    public TourListController(TourList tourList) {
         super(tourList);
-        // ToDo do in create methode
-        searchObservable.registerObserver(tourList);
     }
 
     @FXML

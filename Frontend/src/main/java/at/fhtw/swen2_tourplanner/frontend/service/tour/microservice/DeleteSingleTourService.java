@@ -1,16 +1,16 @@
 package at.fhtw.swen2_tourplanner.frontend.service.tour.microservice;
 
-import at.fhtw.swen2_tourplanner.frontend.viewmodel.dtoObjects.TourDTO;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 import java.util.function.Function;
 
 public class DeleteSingleTourService extends Service<Boolean> {
-    private final Function<TourDTO, Boolean> function;
-    private final TourDTO parameter;
+    private final Function<Tour, Boolean> function;
+    private final Tour parameter;
 
-    public DeleteSingleTourService(Function<TourDTO, Boolean> function, TourDTO parameter) {
+    public DeleteSingleTourService(Function<Tour, Boolean> function, Tour parameter) {
         this.function = function;
         this.parameter = parameter;
     }
