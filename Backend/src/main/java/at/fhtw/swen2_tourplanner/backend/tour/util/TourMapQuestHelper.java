@@ -2,7 +2,6 @@ package at.fhtw.swen2_tourplanner.backend.tour.util;
 
 import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapQuestResponse;
 import at.fhtw.swen2_tourplanner.backend.mapquest.service.MapQuestService;
-import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,7 @@ import java.util.UUID;
 
 @Component
 public class TourMapQuestHelper {
-    private final String IMAGE_NAME = "_image";
+    private final String IMAGE_SUFFIX = "_image.jpg";
     private final Logger logger = LoggerFactory.getLogger(TourMapQuestHelper.class);
     private final MapQuestService mapQuestService;
     private final String ABSOLUTE_IMAGE_PATH;
@@ -54,7 +53,7 @@ public class TourMapQuestHelper {
     public byte[] getImageFromFile(String path) throws FileNotFoundException {
         if (path != null) {
             try {
-                File file = new File(ABSOLUTE_IMAGE_PATH + "\\" + path);
+                File file = new File(ABSOLUTE_IMAGE_PATH + '\\' + path + IMAGE_SUFFIX);
                 return Files.readAllBytes(file.toPath());
             } catch (IOException e) {
                 logger.error("Error while loading the image from path '{}'", ABSOLUTE_IMAGE_PATH + "/" + path);
@@ -64,35 +63,33 @@ public class TourMapQuestHelper {
         return new byte[0];
     }
 
-    public TourDTO setRouteImage(Tour tour) {
-        TourDTO out = new TourDTO(tour, new byte[0]);
+    public void setRouteImage(Tour tour) {
         try {
-            out.setRouteImage(this.getImageFromFile(out.getRouteImageName()));
+            tour.setImage(this.getImageFromFile(tour.getRouteImageName()));
         } catch (FileNotFoundException e) {
-            this.setTourMapImage(out);
+            this.setTourMapImage(tour);
         }
-        return out;
     }
 
     public File getImageFile(UUID id) {
-        String fileName = id.toString() + IMAGE_NAME;
-        return new File(ABSOLUTE_IMAGE_PATH + "\\" + fileName + ".jpg");
+        String fileName = id.toString() + IMAGE_SUFFIX;
+        return new File(ABSOLUTE_IMAGE_PATH + '\\' + fileName);
     }
 
-    public void setMapQuestData(TourDTO tour) {
+    public void setMapQuestData(Tour tour) {
         setTourMapImage(tour);
         setTourDistanceAndTime(tour);
     }
 
-    private void setTourMapImage(TourDTO tour) {
+    private void setTourMapImage(Tour tour) {
         byte[] image = this.mapQuestService.getImage(tour.getStart(), tour.getGoal());
         String imageName = this.saveRouteImage(tour.getId(), image);
         tour.setRouteImageName(imageName);
-        tour.setRouteImage(image);
+        tour.setImage(image);
         logger.info("Route image name: {}", imageName);
     }
 
-    private void setTourDistanceAndTime(TourDTO tour) {
+    private void setTourDistanceAndTime(Tour tour) {
         MapQuestResponse response = mapQuestService.getTimeAndDistance(tour.getStart(), tour.getGoal());
         final long distance = (long) response.getRoute().getDistance();
         final LocalTime time = response.getRoute().getFormattedTime();

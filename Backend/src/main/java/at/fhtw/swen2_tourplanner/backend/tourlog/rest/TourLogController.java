@@ -58,4 +58,14 @@ public class TourLogController {
         }
         return new ResponseEntity<>("Tour Log not deleted", HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping(value = "/get-summary-report")
+    public ResponseEntity<Object> getSummaryReport() {
+        try {
+            tourLogService.getSummaryReport();
+            return new ResponseEntity<>("Report created", HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

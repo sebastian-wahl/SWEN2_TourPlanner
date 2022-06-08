@@ -39,11 +39,21 @@ public class TourLogPdfHelper {
         PdfWriter writer = new PdfWriter(ABSOLUTE_PDF_PATH + SUMMARY_REPORT_NAME + PDF_SUFFIX);
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
-        // Iterating HashMap through for loop
+
         for (Map.Entry<TourDTO, List<TourLogDTO>> set : allToursAndLogs.entrySet()) {
-            // Printing all elements of a Map
-            System.out.println(set.getKey() + " = " + set.getValue());
+            TourDTO tour = set.getKey();
+            List<TourLogDTO> tourLogs = set.getValue();
+
+            final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime().getHour() * 60 + a.getDateTime().getMinute()).average().orElse(0);
+            final double avgDistance = tourLogs.stream().mapToLong(a -> a.getDistance()).average().orElse(0);
+            final double avgRating = tourLogs.stream().mapToDouble(a -> a.getRating()).average().orElse(0);
+
+            Paragraph tourInfo = new Paragraph("Average Time: " + avgTime / 60.0 + "\nAverage Distance: " + avgDistance + "\nAverage Rating" + avgRating);
+
+            Paragraph average = new Paragraph("Average Time: " + avgTime / 60.0 + "\nAverage Distance: " + avgDistance + "\nAverage Rating" + avgRating);
+            document.add(average);
         }
+
         document.close();
     }
 

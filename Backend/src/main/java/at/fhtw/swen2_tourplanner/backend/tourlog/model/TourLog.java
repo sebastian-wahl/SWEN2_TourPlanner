@@ -10,7 +10,13 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -32,6 +38,10 @@ public class TourLog {
     private String comment;
     @Column(name = "difficulty")
     private int difficulty;
+
+    @Column(name = "distance")
+    private long distance;
+
     @Column(name = "total_time")
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime totalTime;

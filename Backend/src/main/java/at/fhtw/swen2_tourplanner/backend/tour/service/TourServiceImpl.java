@@ -10,6 +10,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,8 +31,9 @@ public class TourServiceImpl implements TourService {
     @Override
     public TourDTO createTour(TourDTO tour) throws BusinessException {
         if (tour.getId() == null) {
-            tourMapQuestHelper.setMapQuestData(tour);
-            return new TourDTO(tourRepository.save(new Tour(tour)), new byte[0]);
+            Tour dbTour = tourRepository.save(new Tour(tour));
+            tourMapQuestHelper.setMapQuestData(dbTour);
+            return new TourDTO(dbTour);
         } else {
             throw new BusinessException("Tour already exists");
         }
@@ -41,12 +44,13 @@ public class TourServiceImpl implements TourService {
         if (tour.getId() == null) {
             throw new BusinessException("No Tour Id supplied");
         }
-        Optional<Tour> dbTour = tourRepository.findById(tour.getId());
-        if (dbTour.isPresent()) {
-            if (locationChanged(tour, dbTour.get())) {
-                tourMapQuestHelper.setMapQuestData(tour);
+        Tour dbTour = new Tour(tour);
+        Optional<Tour> oldTour = tourRepository.findById(tour.getId());
+        if (oldTour.isPresent()) {
+            if (locationChanged(tour, oldTour.get())) {
+                tourMapQuestHelper.setMapQuestData(dbTour);
             }
-            return new TourDTO(tourRepository.save(new Tour(tour)), tour.getRouteImage());
+            return new TourDTO(tourRepository.save(dbTour));
         } else {
             throw new BusinessException("Could not find tour");
         }
@@ -57,7 +61,8 @@ public class TourServiceImpl implements TourService {
     public TourDTO getTour(UUID id) throws BusinessException {
         Optional<Tour> tour = tourRepository.findById(id);
         if (tour.isPresent()) {
-            return tourMapQuestHelper.setRouteImage(tour.get());
+            tourMapQuestHelper.setRouteImage(tour.get());
+            return new TourDTO(tour.get());
         }
         throw new BusinessException("Could not find tour");
     }
@@ -75,7 +80,16 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public List<TourDTO> getAllTours() {
-        return tourRepository.findAll().stream().map(tourMapQuestHelper::setRouteImage).toList();
+        List<Tour> tours = tourRepository.findAll();
+        List<TourDTO> tourDTOS = new ArrayList<>();
+        tours.forEach(tour -> {
+            try {
+                tourDTOS.add(new TourDTO(tour, Files.readAllBytes(tourMapQuestHelper.getImageFile(tour.getId()).toPath())));
+            } catch (Exception e) {
+                throw new BusinessException("Could not find Image");
+            }
+        });
+        return tourDTOS;
     }
 
     private boolean locationChanged(TourDTO tour, Tour dbTour) {

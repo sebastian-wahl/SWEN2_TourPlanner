@@ -47,6 +47,10 @@ public class Tour {
     @Column(name = "routeImageName")
     private String routeImageName;
 
+    @Transient
+    private byte[] image;
+
+
     public Tour(TourDTO tourDTO) {
         this.id = tourDTO.getId();
         this.name = tourDTO.getName();

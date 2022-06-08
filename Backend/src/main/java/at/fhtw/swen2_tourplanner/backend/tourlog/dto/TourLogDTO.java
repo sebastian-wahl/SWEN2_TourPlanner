@@ -24,6 +24,10 @@ public class TourLogDTO {
     private String comment;
     @JsonProperty("difficulty")
     private int difficulty;
+
+    @JsonProperty("distance")
+    private long distance;
+
     @JsonProperty("total_time")
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime totalTime;

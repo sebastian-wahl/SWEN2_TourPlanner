@@ -40,7 +40,7 @@ public class TourDTO {
     @JsonProperty("routeImageName")
     private String routeImageName;
 
-    public TourDTO(Tour tour, byte[] routeImage) {
+    public TourDTO(Tour tour) {
         this.id = tour.getId();
         this.name = tour.getName();
         this.tourDescription = tour.getTourDescription();
@@ -52,6 +52,21 @@ public class TourDTO {
         this.routeInformation = tour.getRouteInformation();
         this.favorite = tour.isFavorite();
         this.routeImageName = tour.getRouteImageName();
-        this.routeImage = routeImage;
+        this.routeImage = tour.getImage();
+    }
+
+    public TourDTO(Tour tour, byte[] image) {
+        this.id = tour.getId();
+        this.name = tour.getName();
+        this.tourDescription = tour.getTourDescription();
+        this.start = tour.getStart();
+        this.goal = tour.getGoal();
+        this.transportType = tour.getTransportType();
+        this.tourDistance = tour.getTourDistance();
+        this.estimatedTime = tour.getEstimatedTime();
+        this.routeInformation = tour.getRouteInformation();
+        this.favorite = tour.isFavorite();
+        this.routeImageName = tour.getRouteImageName();
+        this.routeImage = image;
     }
 }
