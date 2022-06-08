@@ -2,36 +2,48 @@ package at.fhtw.swen2_tourplanner.backend.tourlog.util;
 
 import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Component
 public class TourLogPdfHelper {
 
     private final String ABSOLUTE_PDF_PATH;
+
+    public final String ABSOLUTE_IMAGE_PATH;
     private final String PDF_SUFFIX = ".pdf";
     private final String SUMMARY_REPORT_NAME = "summary_report";
 
-    public TourLogPdfHelper(@Value("${pdf.path.prefix}") String[] pathValues) {
+    public TourLogPdfHelper(@Value("${pdf.path.prefix}") String[] pathValues, @Value("${image.path.prefix}") String[] imagePathValues) {
         ABSOLUTE_PDF_PATH = Paths.get(pathValues[0], pathValues[1], pathValues[2], pathValues[3], pathValues[4]).toFile().getAbsolutePath() + "\\";
+        ABSOLUTE_IMAGE_PATH = Paths.get(imagePathValues[0], imagePathValues[1], imagePathValues[2], imagePathValues[3], imagePathValues[4]).toFile().getAbsolutePath() + "\\";
     }
 
     public void createTourReport(TourDTO tour, List<TourLogDTO> tourLogs) throws FileNotFoundException {
         PdfWriter writer = new PdfWriter(ABSOLUTE_PDF_PATH + tour.getName() + PDF_SUFFIX);
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
-        document.add(new Paragraph("Hello World!"));
+        try {
+            tourSummary(document, tour);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
         document.close();
     }
 
@@ -45,19 +57,45 @@ public class TourLogPdfHelper {
             List<TourLogDTO> tourLogs = set.getValue();
 
             final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime().getHour() * 60 + a.getDateTime().getMinute()).average().orElse(0);
-            final double avgDistance = tourLogs.stream().mapToLong(a -> a.getDistance()).average().orElse(0);
-            final double avgRating = tourLogs.stream().mapToDouble(a -> a.getRating()).average().orElse(0);
+            final double avgDistance = tourLogs.stream().mapToLong(TourLogDTO::getDistance).average().orElse(0);
+            final double avgRating = tourLogs.stream().mapToDouble(TourLogDTO::getRating).average().orElse(0);
 
-            Paragraph tourInfo = new Paragraph("Average Time: " + avgTime / 60.0 + "\nAverage Distance: " + avgDistance + "\nAverage Rating" + avgRating);
+            tourSummary(document, tour);
 
-            Paragraph average = new Paragraph("Average Time: " + avgTime / 60.0 + "\nAverage Distance: " + avgDistance + "\nAverage Rating" + avgRating);
+            Paragraph average = new Paragraph("Average Time: " + avgTime / 60.0 + "\nAverage Distance: " + avgDistance + "\nAverage Rating: " + avgRating);
             document.add(average);
         }
 
         document.close();
     }
 
-    public void addTourContent(Document document, TourDTO tour, List<TourLogDTO> tourLogs) throws IOException {
-        document.add(new Paragraph("Hello World!"));
+    private void tourSummary(Document doc, TourDTO tour) throws MalformedURLException {
+        final String name = "Name: " + tour.getName() + "\n";
+        final String start = "Start: " + tour.getStart() + "\n";
+        final String goal = "Goal: " + tour.getGoal() + "\n";
+        final String desc = "Description: " + tour.getTourDescription() + "\n";
+        final String time = "Estimated Time: " + tour.getEstimatedTime() + "\n";
+        final String type = "Transport Type: " + getTransportType(tour.getTransportType()) + "\n";
+        final String distance = "Distance: " + tour.getTourDistance();
+        ImageData data = ImageDataFactory.create(ABSOLUTE_IMAGE_PATH + tour.getId() + "_image.jpg");
+        final Image image = new Image(data);
+        Paragraph tourSummary = new Paragraph(name + start + goal + desc + time + type + distance);
+        doc.add(tourSummary);
+        doc.add(image);
+    }
+
+    private String getTransportType(int type) {
+        switch (type) {
+            case 0 -> {
+                return "Foot";
+            }
+            case 1 -> {
+                return "Car";
+            }
+            case 2 -> {
+                return "Skateboard";
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        }
     }
 }

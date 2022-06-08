@@ -21,10 +21,10 @@ import java.util.UUID;
 
 @Component
 public class TourMapQuestHelper {
-    private final String IMAGE_SUFFIX = "_image.jpg";
+    public final String IMAGE_SUFFIX = "_image.jpg";
     private final Logger logger = LoggerFactory.getLogger(TourMapQuestHelper.class);
     private final MapQuestService mapQuestService;
-    private final String ABSOLUTE_IMAGE_PATH;
+    public final String ABSOLUTE_IMAGE_PATH;
 
     @Autowired
     public TourMapQuestHelper(MapQuestService mapQuestService, @Value("${image.path.prefix}") String[] pathValues) {
@@ -38,6 +38,7 @@ public class TourMapQuestHelper {
         try {
             if (!newFile.exists()) {
                 logger.info("File does not exists, create a new one");
+                new File(ABSOLUTE_IMAGE_PATH).mkdirs();
                 newFile.createNewFile();
             }
             try (OutputStream outputStream = new FileOutputStream(newFile)) {

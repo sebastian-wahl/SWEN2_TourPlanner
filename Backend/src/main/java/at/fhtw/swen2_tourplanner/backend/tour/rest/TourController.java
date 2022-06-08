@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,7 +70,7 @@ public class TourController {
     }
 
     @DeleteMapping(value = "/delete/{id}")
-    public ResponseEntity<Object> deleteTour(@PathVariable("id") UUID id) {
+    public ResponseEntity<Object> deleteTour(@PathVariable("id") UUID id) throws IOException {
         if (tourService.deleteTour(id)) {
             return new ResponseEntity<>("Tour deleted successfully", HttpStatus.OK);
         }

@@ -3,6 +3,7 @@ package at.fhtw.swen2_tourplanner.backend.tour.service;
 import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ public interface TourService {
     //Service Method declarations
     TourDTO getTour(UUID id) throws BusinessException;
 
-    boolean deleteTour(UUID id);
+    boolean deleteTour(UUID id) throws IOException;
 
     List<TourDTO> getAllTours();
 }

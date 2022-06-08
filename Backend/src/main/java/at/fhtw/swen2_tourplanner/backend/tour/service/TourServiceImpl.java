@@ -10,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class TourServiceImpl implements TourService {
         if (tour.getId() == null) {
             Tour dbTour = tourRepository.save(new Tour(tour));
             tourMapQuestHelper.setMapQuestData(dbTour);
-            return new TourDTO(dbTour);
+            return new TourDTO(tourRepository.save(dbTour));
         } else {
             throw new BusinessException("Tour already exists");
         }
@@ -68,11 +69,11 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public boolean deleteTour(UUID id) {
+    public boolean deleteTour(UUID id) throws IOException {
         try {
             tourRepository.deleteById(id);
             File imageFile = tourMapQuestHelper.getImageFile(id);
-            return imageFile.delete();
+            return Files.deleteIfExists(imageFile.toPath());
         } catch (EmptyResultDataAccessException ex) {
             return false;
         }
