@@ -57,8 +57,8 @@ public class TourMapQuestHelper {
                 File file = new File(ABSOLUTE_IMAGE_PATH + '\\' + path + IMAGE_SUFFIX);
                 return Files.readAllBytes(file.toPath());
             } catch (IOException e) {
-                logger.error("Error while loading the image from path '{}'", ABSOLUTE_IMAGE_PATH + "/" + path);
-                throw new FileNotFoundException("Image File not found under path: " + ABSOLUTE_IMAGE_PATH + "/" + path);
+                logger.error("Error while loading the image from path '{}'", ABSOLUTE_IMAGE_PATH + "\\" + path);
+                throw new FileNotFoundException("Image File not found under path: " + ABSOLUTE_IMAGE_PATH + "\\" + path);
             }
         }
         return new byte[0];
