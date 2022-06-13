@@ -4,7 +4,9 @@ import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
 import at.fhtw.swen2_tourplanner.backend.tourlog.service.TourLogService;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,8 +71,10 @@ public class TourLogController {
     @GetMapping(value = "/get-summary-report")
     public ResponseEntity<Object> getSummaryReport() {
         try {
-            tourLogService.getSummaryReport();
-            return new ResponseEntity<>("Report created", HttpStatus.OK);
+            final byte[] pdfFile = tourLogService.getSummaryReport();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            return new ResponseEntity<>(pdfFile, headers, HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -79,8 +83,10 @@ public class TourLogController {
     @GetMapping(value = "/get-tour-report/{id}")
     public ResponseEntity<Object> getTourReport(@PathVariable("id") UUID id) {
         try {
-            tourLogService.getTourReport(id);
-            return new ResponseEntity<>("Report created", HttpStatus.OK);
+            final byte[] pdfFile = tourLogService.getTourReport(id);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            return new ResponseEntity<>(pdfFile, headers, HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
