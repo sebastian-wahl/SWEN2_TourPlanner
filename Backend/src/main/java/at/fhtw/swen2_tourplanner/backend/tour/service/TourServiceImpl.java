@@ -33,11 +33,21 @@ public class TourServiceImpl implements TourService {
     public TourDTO createTour(TourDTO tour) throws BusinessException {
         if (tour.getId() == null) {
             Tour dbTour = tourRepository.save(new Tour(tour));
-            tourMapQuestHelper.setMapQuestData(dbTour);
+            if (isStartAndGoalPresent(tour)) {
+                tourMapQuestHelper.setMapQuestData(dbTour);
+            }
             return new TourDTO(tourRepository.save(dbTour), dbTour.getImage());
         } else {
             throw new BusinessException("Tour already exists");
         }
+    }
+
+    private boolean isStartAndGoalPresent(TourDTO tour) {
+        return tour.getStart() != null && !tour.getStart().isEmpty() && tour.getGoal() != null && !tour.getGoal().isEmpty();
+    }
+
+    private boolean isStartAndGoalPresent(Tour tour) {
+        return tour.getStart() != null && !tour.getStart().isEmpty() && tour.getGoal() != null && !tour.getGoal().isEmpty();
     }
 
     @Override
@@ -73,7 +83,8 @@ public class TourServiceImpl implements TourService {
         try {
             tourRepository.deleteById(id);
             File imageFile = tourMapQuestHelper.getImageFile(id);
-            return Files.deleteIfExists(imageFile.toPath());
+            Files.deleteIfExists(imageFile.toPath());
+            return true;
         } catch (EmptyResultDataAccessException ex) {
             return false;
         }
@@ -92,7 +103,10 @@ public class TourServiceImpl implements TourService {
 
     private TourDTO createTDOReadImageFile(Tour tour, final boolean secondIteration) {
         try {
-            return new TourDTO(tour, Files.readAllBytes(tourMapQuestHelper.getImageFile(tour.getId()).toPath()));
+            if (this.isStartAndGoalPresent(tour)) {
+                return new TourDTO(tour, Files.readAllBytes(tourMapQuestHelper.getImageFile(tour.getId()).toPath()));
+            }
+            return new TourDTO(tour);
         } catch (IOException ex) {
             if (secondIteration) {
                 throw new BusinessException("Could not find Image");

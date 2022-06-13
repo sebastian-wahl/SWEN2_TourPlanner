@@ -28,7 +28,7 @@ public class Tour {
     @JsonProperty("transport_type")
     private int transportType;
     @JsonProperty("tour_distance")
-    private long tourDistance;
+    private double tourDistance;
     @JsonProperty("estimated_time")
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime estimatedTime;

@@ -24,7 +24,7 @@ public class TourMap implements ViewModel {
     }
 
     private void setUpImage() {
-        if (this.currentTour != null) {
+        if (this.currentTour != null && this.currentTour.getRouteImage() != null) {
             this.imageProperty.setValue(new Image(new ByteArrayInputStream(this.currentTour.getRouteImage())));
         } else {
             this.imageProperty.setValue(null);

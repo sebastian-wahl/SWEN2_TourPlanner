@@ -1,16 +1,19 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.TourLogTableCell;
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.*;
-import at.fhtw.swen2_tourplanner.frontend.observer.SearchBaseObserver;
+import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomDoubleStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomIntegerStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalDateTimeStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.listener.AddListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.DeleteListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.TourLogGetListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.UpdateListener;
+import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
 import at.fhtw.swen2_tourplanner.frontend.service.tourlog.TourLogService;
-import at.fhtw.swen2_tourplanner.frontend.service.tourlog.microservice.AddUpdateSingleLogService;
-import at.fhtw.swen2_tourplanner.frontend.service.tourlog.microservice.DeleteSingleLogService;
-import at.fhtw.swen2_tourplanner.frontend.service.tourlog.microservice.GetMultipleLogService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,16 +37,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
 
-public class TourLogData implements ViewModel, SearchBaseObserver {
+public class TourLogData implements ViewModel, StringObserver {
     // other view models
     private final Searchbar tourLogSearchbar;
 
     // services
     private final TourLogService tourLogService;
-
     @Getter
     private final FilteredList<TourLog> tourLogList;
     @Getter
@@ -55,25 +56,18 @@ public class TourLogData implements ViewModel, SearchBaseObserver {
     @Getter
     private final ObjectProperty<Callback<TableColumn<TourLog, Double>, TableCell<TourLog, Double>>> ratingColCellFactoryProperty;
     @Getter
-    private final ObjectProperty<Callback<TableColumn<TourLog, Long>, TableCell<TourLog, Long>>> distanceColCellFactoryProperty;
-
+    private final ObjectProperty<Callback<TableColumn<TourLog, Double>, TableCell<TourLog, Double>>> distanceColCellFactoryProperty;
     // label properties
     @Getter
     private final ObjectProperty<String> dateLabelProperty;
-
     @Getter
     private final ObjectProperty<String> timeLabelProperty;
-
     @Getter
     private final ObjectProperty<String> distanceLabelProperty;
-
     @Getter
     private final ObjectProperty<String> ratingLabelProperty;
-
     @Getter
     private final ObjectProperty<String> difficultyLabelProperty;
-
-
     @Getter
     private final StringProperty commentTextProperty;
     // disable properties
@@ -83,11 +77,18 @@ public class TourLogData implements ViewModel, SearchBaseObserver {
     private final BooleanProperty addLogButtonDisableProperty;
     @Getter
     private final BooleanProperty deleteLogButtonDisableProperty;
-
     @Getter
     private final BooleanProperty tableDisableProperty;
     private final ObservableList<TourLog> baseList;
-
+    // single listeners
+    @Setter
+    private TourLogGetListener getTourLogListener;
+    @Setter
+    private AddListener<TourLog> addTourLogListener;
+    @Setter
+    private UpdateListener<TourLog> updateTourLogListener;
+    @Setter
+    private DeleteListener<TourLog> deleteTourLogListener;
     private Tour currentTour;
     private TourLog selectedTourLog;
 
@@ -124,7 +125,7 @@ public class TourLogData implements ViewModel, SearchBaseObserver {
         ratingColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomDoubleStringConverter()));
 
         distanceColCellFactoryProperty = new SimpleObjectProperty<>();
-        distanceColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomLongStringConverter()));
+        distanceColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomDoubleStringConverter()));
 
         commentInputDisableProperty = new SimpleBooleanProperty(true);
         addLogButtonDisableProperty = new SimpleBooleanProperty(true);
@@ -215,8 +216,8 @@ public class TourLogData implements ViewModel, SearchBaseObserver {
         this.updateTourLog(this.baseList.get(row));
     }
 
-    public void onEditCommitDistance(TableColumn.CellEditEvent<TourLog, Long> event) {
-        TablePosition<TourLog, Long> position = event.getTablePosition();
+    public void onEditCommitDistance(TableColumn.CellEditEvent<TourLog, Double> event) {
+        TablePosition<TourLog, Double> position = event.getTablePosition();
         int row = position.getRow();
         // update log element & update tour
         this.baseList.get(row).setDistance(event.getNewValue());
@@ -233,7 +234,7 @@ public class TourLogData implements ViewModel, SearchBaseObserver {
         if (this.currentTour != null) {
             this.activateFields();
             this.tourLogSearchbar.enableSearchbar();
-            this.setBaseTourLogList();
+            this.getAllLogs();
         } else {
             this.deactivateFields();
             this.tourLogSearchbar.disableSearchbar();
@@ -257,18 +258,6 @@ public class TourLogData implements ViewModel, SearchBaseObserver {
         addLogButtonDisableProperty.setValue(disabled);
         deleteLogButtonDisableProperty.setValue(disabled);
         tableDisableProperty.setValue(disabled);
-    }
-
-    private void setBaseTourLogList() {
-        GetMultipleLogService getMultipleLogService = new GetMultipleLogService(tourLogService::getAllLogs, currentTour.getId());
-        getMultipleLogService.valueProperty().addListener(new ChangeListener<List<TourLog>>() {
-            @Override
-            public void changed(ObservableValue<? extends List<TourLog>> observableValue, List<TourLog> tourDTOS, List<TourLog> newValues) {
-                baseList.clear();
-                baseList.addAll(newValues);
-            }
-        });
-        getMultipleLogService.start();
     }
 
     public void selectionChanged(ObservableValue<? extends TourLog> observableValue, TourLog oldValue, TourLog newValue) {
@@ -337,53 +326,47 @@ public class TourLogData implements ViewModel, SearchBaseObserver {
 
     /* ----------------------------------------- API request methods ------------------------------------------------- */
 
+    private void getAllLogs() {
+        this.getTourLogListener.get(currentTour.getId());
+    }
+
+    public void getAllLogsSuccessful(List<TourLog> tourLogList) {
+        baseList.clear();
+        baseList.addAll(tourLogList);
+    }
+
     public void addTourLog() {
         TourLog toAdd = new TourLog(currentTour);
         toAdd.setDistance(currentTour.getTourDistance());
-        AddUpdateSingleLogService addUpdateSingleLogService = new AddUpdateSingleLogService(tourLogService::addTourLog, new TourLog(currentTour));
-        addUpdateSingleLogService.valueProperty().addListener(new ChangeListener<Optional<TourLog>>() {
-            @Override
-            public void changed(ObservableValue<? extends Optional<TourLog>> observableValue, Optional<TourLog> tourLog, Optional<TourLog> newValue) {
-                newValue.ifPresent(newTourLog -> {
-                    baseList.add(newTourLog);
-                    tableSelectionModel.select(newTourLog);
-                });
-            }
-        });
-        addUpdateSingleLogService.start();
+        this.addTourLogListener.addTour(toAdd);
     }
 
-    public void updateTourLog(TourLog toUpdate) {
-        AddUpdateSingleLogService addUpdateSingleLogService = new AddUpdateSingleLogService(tourLogService::updateTourLog, toUpdate);
-        addUpdateSingleLogService.valueProperty().addListener(new ChangeListener<Optional<TourLog>>() {
-            @Override
-            public void changed(ObservableValue<? extends Optional<TourLog>> observableValue, Optional<TourLog> tourLog, Optional<TourLog> newValue) {
-                newValue.ifPresent(updatedTourLog -> {
+    public void addTourLogSuccessful(TourLog addedTourLog) {
+        baseList.add(addedTourLog);
+        tableSelectionModel.select(addedTourLog);
+    }
 
-                    int oldIndex = baseList.indexOf(toUpdate);
-                    baseList.remove(toUpdate);
-                    if (updatedTourLog.getDateTime() == null) {
-                        baseList.add(oldIndex, updatedTourLog);
-                    } else {
-                        baseList.add(updatedTourLog);
-                    }
-                    tableSelectionModel.select(updatedTourLog);
-                });
-            }
-        });
-        addUpdateSingleLogService.start();
+    private void updateTourLog(TourLog toUpdate) {
+        this.updateTourLogListener.updateTour(toUpdate);
+    }
+
+    public void updateTourLogSuccessful(TourLog oldTourLog, TourLog updatedTour) {
+        int oldIndex = baseList.indexOf(oldTourLog);
+        baseList.remove(oldIndex);
+        if (updatedTour.getDateTime() == null) {
+            baseList.add(oldIndex, updatedTour);
+        } else {
+            baseList.add(updatedTour);
+        }
+        tableSelectionModel.select(updatedTour);
     }
 
     public void deleteSelectedTourLog() {
-        DeleteSingleLogService deleteSingleLogService = new DeleteSingleLogService(tourLogService::deleteTourLog, this.selectedTourLog);
-        deleteSingleLogService.valueProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean success) {
-                if (success) {
-                    baseList.remove(selectedTourLog);
-                }
-            }
-        });
-        deleteSingleLogService.start();
+        this.deleteTourLogListener.deleteTour(this.selectedTourLog);
     }
+
+    public void deleteTourLogSuccessful() {
+        this.baseList.remove(this.selectedTourLog);
+    }
+
 }

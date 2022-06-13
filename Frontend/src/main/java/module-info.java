@@ -32,6 +32,10 @@ module at.fhtw.swen2_tourplanner.frontend {
     exports at.fhtw.swen2_tourplanner.frontend.observer;
     opens at.fhtw.swen2_tourplanner.frontend.service;
     exports at.fhtw.swen2_tourplanner.frontend.service;
+    opens at.fhtw.swen2_tourplanner.frontend.service.exceptions;
+    exports at.fhtw.swen2_tourplanner.frontend.service.exceptions;
+    opens at.fhtw.swen2_tourplanner.frontend.listener;
+    exports at.fhtw.swen2_tourplanner.frontend.listener;
     opens at.fhtw.swen2_tourplanner.frontend to javafx.fxml;
     exports at.fhtw.swen2_tourplanner.frontend;
     exports at.fhtw.swen2_tourplanner.frontend.service.tour;

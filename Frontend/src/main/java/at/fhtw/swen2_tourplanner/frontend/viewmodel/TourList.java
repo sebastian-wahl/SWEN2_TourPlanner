@@ -1,12 +1,12 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
+import at.fhtw.swen2_tourplanner.frontend.listener.AddListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.DeleteListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.TourGetListener;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
-import at.fhtw.swen2_tourplanner.frontend.observer.SearchBaseObserver;
-import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourBaseObservable;
+import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
+import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourObservable;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
-import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddUpdateSingleTourService;
-import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.DeleteSingleTourService;
-import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.GetMultipleTourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -20,21 +20,29 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.MultipleSelectionModel;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class TourList implements ViewModel, SearchBaseObserver, UpdateTourBaseObservable, ChangeListener<Tour> {
+public class TourList implements ViewModel, StringObserver, UpdateTourObservable, ChangeListener<Tour> {
     // logger
     private final Logger logger = LogManager.getLogger(TourList.class);
 
     // services
     private final TourService tourService;
+
+    // single Listeners
+    @Setter
+    private DeleteListener<Tour> tourDeleteListener;
+    @Setter
+    private AddListener<Tour> tourAddListener;
+
+    private TourGetListener tourGetListener;
 
     // View Properties
     @Getter
@@ -52,6 +60,11 @@ public class TourList implements ViewModel, SearchBaseObserver, UpdateTourBaseOb
     private String searchText = "";
     private Tour selectedTour;
 
+    public void setTourGetListener(TourGetListener tourGetListener) {
+        this.tourGetListener = tourGetListener;
+        this.getTours();
+    }
+
     public TourList(TourService tourService) {
         this.tourService = tourService;
         newTourName = new SimpleStringProperty();
@@ -61,22 +74,18 @@ public class TourList implements ViewModel, SearchBaseObserver, UpdateTourBaseOb
 
         listviewBaseObserver = new ArrayList<>();
         baseTourList = FXCollections.observableArrayList();
-        this.setBaseTourList();
 
         tourList = new FilteredList<>(baseTourList);
         // default filtering -> no filters set
         tourList.setPredicate(null);
     }
 
-    private void setBaseTourList() {
-        GetMultipleTourService getMultipleTourService = new GetMultipleTourService(tourService::getAllTours);
-        getMultipleTourService.valueProperty().addListener(new ChangeListener<List<Tour>>() {
-            @Override
-            public void changed(ObservableValue<? extends List<Tour>> observableValue, List<Tour> tours, List<Tour> newValues) {
-                baseTourList.addAll(newValues);
-            }
-        });
-        getMultipleTourService.start();
+    private void getTours() {
+        this.tourGetListener.get();
+    }
+
+    public void getTourSuccessful(List<Tour> tourList) {
+        baseTourList.addAll(tourList);
     }
 
     public void setListViewSelectionModel(MultipleSelectionModel<Tour> listViewSelectionModel) {
@@ -91,29 +100,32 @@ public class TourList implements ViewModel, SearchBaseObserver, UpdateTourBaseOb
     public void addTour() {
         if (this.newTourName.getValue() != null && !this.newTourName.getValue().isEmpty()) {
             Tour newTour = new Tour(newTourName.getValue());
-            AddUpdateSingleTourService addUpdateSingleTourService = new AddUpdateSingleTourService(tourService::addTour, newTour);
-            addUpdateSingleTourService.valueProperty().addListener(new ChangeListener<Optional<Tour>>() {
-                @Override
-                public void changed(ObservableValue<? extends Optional<Tour>> observableValue, Optional<Tour> tourDTO, Optional<Tour> newValue) {
-                    if (newValue.isPresent()) {
-                        baseTourList.add(newValue.get());
-                        // reset input field and select newly added tour
-                        newTourName.setValue("");
-                        listViewSelectionModel.select(newValue.get());
-                    }
-                }
-            });
-            addUpdateSingleTourService.start();
+            this.tourAddListener.addTour(newTour);
+            newTourName.setValue("");
         }
+    }
+
+    public void addTourSuccessful(Tour addedTour) {
+        this.baseTourList.add(addedTour);
+        this.listViewSelectionModel.select(addedTour);
+    }
+
+    public void updateTourSuccessful(Tour updatedTour) {
+        int index = findIndexOfTourById(updatedTour.getId());
+        this.baseTourList.remove(index);
+        this.baseTourList.add(index, updatedTour);
+        this.listViewSelectionModel.select(updatedTour);
+    }
+
+    public void deleteTourSuccessful(Tour tour) {
+        int index = findIndexOfTourById(tour.getId());
+        baseTourList.remove(index);
     }
 
     public void deleteTour(UUID id) {
         int index = findIndexOfTourById(id);
         if (index >= 0) {
-            Tour toRemove = baseTourList.remove(index);
-            DeleteSingleTourService deleteSingleTourService = new DeleteSingleTourService(tourService::deleteTour, toRemove);
-            // Maybe check result?
-            deleteSingleTourService.start();
+            this.tourDeleteListener.deleteTour(baseTourList.get(index));
         }
     }
 

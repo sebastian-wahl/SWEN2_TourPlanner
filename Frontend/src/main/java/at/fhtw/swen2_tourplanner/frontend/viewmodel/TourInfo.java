@@ -1,17 +1,33 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
+import at.fhtw.swen2_tourplanner.frontend.observer.StringBooleanObservable;
+import at.fhtw.swen2_tourplanner.frontend.observer.StringBooleanObserver;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 
-public class TourInfo implements ViewModel {
-    // services
-    private final TourBasicData tourBasicData;
+import java.util.ArrayList;
+import java.util.List;
 
+public class TourInfo implements ViewModel, StringBooleanObservable {
+    // services
+    private final TourService tourService;
+    // models
+    private final TourBasicData tourBasicData;
     private final TourMap tourMap;
 
-    public TourInfo(TourBasicData tourBasicData, TourMap tourMap) {
+    private final List<StringBooleanObserver> observerList;
+
+    public TourInfo(TourBasicData tourBasicData, TourMap tourMap, TourService tourService) {
         this.tourBasicData = tourBasicData;
         this.tourMap = tourMap;
+
+        this.observerList = new ArrayList<>();
+
+        this.tourService = tourService;
+
+
     }
+
 
     public void updateFromTourEditOperation(Tour tour) {
         tourMap.setCurrentTour(tour);
@@ -20,5 +36,22 @@ public class TourInfo implements ViewModel {
     public void updateFromTourList(Tour tour) {
         tourBasicData.setCurrentTour(tour);
         tourMap.setCurrentTour(tour);
+    }
+
+    @Override
+    public void registerObserver(StringBooleanObserver observer) {
+        this.observerList.add(observer);
+    }
+
+    @Override
+    public void removeObserver(StringBooleanObserver observer) {
+        this.observerList.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (StringBooleanObserver observer : this.observerList) {
+            observer.notify();
+        }
     }
 }

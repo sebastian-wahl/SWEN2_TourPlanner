@@ -26,7 +26,7 @@ public class TourLog {
     @JsonProperty("comment")
     private String comment;
     @JsonProperty("distance")
-    private long distance;
+    private double distance;
     @JsonProperty("difficulty")
     private int difficulty;
     @JsonProperty("total_time")

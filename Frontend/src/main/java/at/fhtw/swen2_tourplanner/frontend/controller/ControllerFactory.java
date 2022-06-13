@@ -41,10 +41,12 @@ public class ControllerFactory {
         searchbarTour = new Searchbar();
         searchbarTourLog = new Searchbar();
         tourLogData = new TourLogData(searchbarTourLog, tourLogService);
-        tourBasicData = new TourBasicData(tourService);
-        tourList = new TourList(tourService);
-        tourInfo = new TourInfo(tourBasicData, tourMap);
+        tourBasicData = new TourBasicData();
+        tourInfo = new TourInfo(tourBasicData, tourMap, tourService);
         infoLine = new InfoLine();
+        tourList = new TourList(tourService);
+        dashboard = new Dashboard(tourList, tourBasicData, tourMap, tourLogData, infoLine, tourService, tourLogService);
+
 
         // --- register observers ---
         // search observer
@@ -55,8 +57,9 @@ public class ControllerFactory {
         tourList.registerObserver(tourLogData::updateFromTourList);
         // update tour observer (update details)
         tourBasicData.registerObserver(tourInfo::updateFromTourEditOperation);
+        // string boolean observer (for updating the info line)
 
-        dashboard = new Dashboard(tourList, tourInfo);
+
     }
 
     public static ControllerFactory getInstance() {

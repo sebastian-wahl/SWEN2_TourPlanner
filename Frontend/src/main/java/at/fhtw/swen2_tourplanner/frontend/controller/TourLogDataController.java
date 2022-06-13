@@ -24,7 +24,7 @@ public class TourLogDataController extends BaseController<TourLogData> {
     TableColumn<TourLog, Double> ratingCol;
 
     @FXML
-    TableColumn<TourLog, Long> distanceCol;
+    TableColumn<TourLog, Double> distanceCol;
     @FXML
     private TableView<TourLog> logTableView;
 

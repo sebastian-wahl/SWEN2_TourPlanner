@@ -2,16 +2,15 @@ package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.enums.TransportTypeEnum;
+import at.fhtw.swen2_tourplanner.frontend.listener.UpdateListener;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
-import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourBaseObservable;
-import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
-import at.fhtw.swen2_tourplanner.frontend.service.tour.TourServiceImpl;
-import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddUpdateSingleTourService;
+import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourObservable;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,13 +19,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
+public class TourBasicData implements ViewModel, UpdateTourObservable {
+
     private static final String BUTTON_EDIT_TEXT = "Edit";
     private static final String BUTTON_SAVE_TEXT = "Save";
     // logger
     private final Logger logger = LogManager.getLogger(TourBasicData.class);
     // Services
-    private final TourService tourService;
     // Properties
     @Getter
     private final StringProperty nameProperty;
@@ -69,11 +68,14 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
     @Getter
     private final ObjectProperty<String> transportTypeSelectedItemProperty;
     // observer list
-    private List<BaseObserver<Tour>> updateTourBaseObserverList;
+    private final List<BaseObserver<Tour>> updateTourBaseObserverList;
+
+    // single Listeners
+    @Setter
+    private UpdateListener<Tour> tourUpdateListener;
     private Tour currentTour;
 
-    public TourBasicData(TourService tourService) {
-        this.tourService = tourService;
+    public TourBasicData() {
         this.updateTourBaseObserverList = new ArrayList<>();
 
         nameProperty = new SimpleStringProperty();
@@ -109,12 +111,9 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
             this.nameProperty.setValue(currentTour.getName());
             this.fromProperty.setValue(currentTour.getStart());
             this.toProperty.setValue(currentTour.getGoal());
-            this.distanceProperty.setValue("" + currentTour.getTourDistance());
+            this.distanceProperty.setValue("" + currentTour.getTourDistance() + " km");
             this.descriptionProperty.setValue(currentTour.getTourDescription());
-            this.estimatedTimeProperty.setValue(currentTour.getEstimatedTime() != null ?
-                    currentTour.getEstimatedTime().format(DateTimeFormatter.ofPattern(CustomLocalTimeStringConverter.TIME_FORMAT))
-                    :
-                    "00:00:00");
+            this.estimatedTimeProperty.setValue(getTimeString() + " (HH:MM:SS)");
             this.favoriteCheckboxProperty.setValue(currentTour.isFavorite());
             this.transportTypeSelectedItemProperty.setValue(TransportTypeEnum.valueOf(tour.getTransportType()).getName());
             this.enableEditSaveAndExportButtons();
@@ -131,6 +130,13 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
         }
         this.disableAllProperties();
         this.editSaveButtonTextProperty.setValue(BUTTON_EDIT_TEXT);
+    }
+
+    private String getTimeString() {
+        return currentTour.getEstimatedTime() != null ?
+                currentTour.getEstimatedTime().format(DateTimeFormatter.ofPattern(CustomLocalTimeStringConverter.TIME_FORMAT))
+                :
+                "00:00:00";
     }
 
     private void enableEditSaveAndExportButtons() {
@@ -170,16 +176,17 @@ public class TourBasicData implements ViewModel, UpdateTourBaseObservable {
 
     private void saveCurrentTour() {
         this.setCurrentTourValues();
-        AddUpdateSingleTourService addUpdateSingleTourService = new AddUpdateSingleTourService(tourService::updateTour, currentTour);
-        addUpdateSingleTourService.valueProperty().addListener((observableValue, tourDTO, newValue) -> {
-            if (newValue.isPresent()) {
-                setCurrentTour(newValue.get());
-                notifyObservers();
-                editSaveButtonTextProperty.setValue(BUTTON_EDIT_TEXT);
-            }
-        });
-        addUpdateSingleTourService.start();
+        this.tourUpdateListener.updateTour(currentTour);
         this.disableAllProperties();
+        this.editSaveButtonDisableProperty.setValue(true);
+    }
+
+    public void updateTourSuccessful(Tour newValue) {
+        this.editSaveButtonDisableProperty.setValue(false);
+        setCurrentTour(newValue);
+        // update map
+        notifyObservers();
+        editSaveButtonTextProperty.setValue(BUTTON_EDIT_TEXT);
     }
 
     private void enableAllProperties() {
