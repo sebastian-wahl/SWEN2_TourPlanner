@@ -14,7 +14,7 @@ public interface TourLogService {
 
     List<TourLogDTO> getAllByTourId(UUID id);
 
-    boolean getTourReport(UUID id);
+    byte[] getTourReport(UUID id);
 
-    boolean getSummaryReport();
+    byte[] getSummaryReport();
 }

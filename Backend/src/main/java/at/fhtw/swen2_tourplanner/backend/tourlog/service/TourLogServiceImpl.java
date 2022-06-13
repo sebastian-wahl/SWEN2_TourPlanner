@@ -21,8 +21,9 @@ public class TourLogServiceImpl implements TourLogService {
 
     private final TourLogRepository tourLogRepository;
     private final TourService tourService;
-
     private final TourLogPdfHelper tourLogPdfHelper;
+
+    private final String SUMMARY_REPORT_NAME = "summary_report";
 
     @Autowired
     public TourLogServiceImpl(TourLogRepository tourLogRepository, TourService tourService, TourLogPdfHelper tourLogPdfHelper) {
@@ -81,19 +82,19 @@ public class TourLogServiceImpl implements TourLogService {
     }
 
     @Override
-    public boolean getTourReport(UUID id) {
+    public byte[] getTourReport(UUID id) {
         try {
             TourDTO tour = tourService.getTour(id);
             List<TourLogDTO> tourLogs = tourLogRepository.findByTourId(id).stream().map(TourLogDTO::new).collect(Collectors.toList());
             tourLogPdfHelper.createTourReport(tour, tourLogs);
-            return true;
+            return tourLogPdfHelper.getPdfFile(String.valueOf(tour.getId()));
         } catch (Exception e) {
-            return false;
+            throw new BusinessException("Could not create report");
         }
     }
 
     @Override
-    public boolean getSummaryReport() {
+    public byte[] getSummaryReport() {
         try {
             List<TourDTO> tours = tourService.getAllTours();
             HashMap<TourDTO, List<TourLogDTO>> allToursAndLogs = new HashMap<>();
@@ -102,9 +103,9 @@ public class TourLogServiceImpl implements TourLogService {
                 allToursAndLogs.put(tour, tourLogs);
             }
             tourLogPdfHelper.createSummaryReport(allToursAndLogs);
-            return true;
+            return tourLogPdfHelper.getPdfFile(SUMMARY_REPORT_NAME);
         } catch (Exception e) {
-            return false;
+            throw new BusinessException("Could not create report");
         }
     }
 }

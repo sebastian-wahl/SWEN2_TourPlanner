@@ -12,9 +12,11 @@ import com.itextpdf.layout.element.Paragraph;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -36,11 +38,11 @@ public class TourLogPdfHelper {
     }
 
     public void createTourReport(TourDTO tour, List<TourLogDTO> tourLogs) throws FileNotFoundException {
-        PdfWriter writer = new PdfWriter(ABSOLUTE_PDF_PATH + tour.getName() + PDF_SUFFIX);
+        PdfWriter writer = new PdfWriter(ABSOLUTE_PDF_PATH + tour.getId() + PDF_SUFFIX);
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
         try {
-            tourSummary(document, tour);
+            generateTourReport(tour, tourLogs, document);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -56,17 +58,33 @@ public class TourLogPdfHelper {
             TourDTO tour = set.getKey();
             List<TourLogDTO> tourLogs = set.getValue();
 
-            final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime().getHour() * 60 + a.getDateTime().getMinute()).average().orElse(0);
-            final double avgDistance = tourLogs.stream().mapToDouble(TourLogDTO::getDistance).average().orElse(0);
-            final double avgRating = tourLogs.stream().mapToDouble(TourLogDTO::getRating).average().orElse(0);
-
-            tourSummary(document, tour);
-
-            Paragraph average = new Paragraph("Average Time: " + avgTime / 60.0 + "\nAverage Distance: " + avgDistance + "\nAverage Rating: " + avgRating);
-            document.add(average);
+            generateTourReport(tour, tourLogs, document);
         }
 
         document.close();
+    }
+
+    public byte[] getPdfFile(String filename) throws FileNotFoundException {
+        if (filename != null) {
+            try {
+                File file = new File(ABSOLUTE_PDF_PATH + '\\' + filename + PDF_SUFFIX);
+                return Files.readAllBytes(file.toPath());
+            } catch (IOException e) {
+                throw new FileNotFoundException("PDF File not found under path: " + ABSOLUTE_IMAGE_PATH + "\\" + filename + PDF_SUFFIX);
+            }
+        }
+        return new byte[0];
+    }
+
+    private void generateTourReport(TourDTO tour, List<TourLogDTO> tourLogs, Document document) throws MalformedURLException {
+        final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime().getHour() * 60 + a.getDateTime().getMinute()).average().orElse(0);
+        final double avgDistance = tourLogs.stream().mapToDouble(TourLogDTO::getDistance).average().orElse(0);
+        final double avgRating = tourLogs.stream().mapToDouble(TourLogDTO::getRating).average().orElse(0);
+
+        tourSummary(document, tour);
+
+        Paragraph average = new Paragraph("Amount of tours: " + tourLogs.size() + "\nAverage Time: " + avgTime / 60.0 + "\nAverage Distance: " + avgDistance + "\nAverage Rating: " + avgRating);
+        document.add(average);
     }
 
     private void tourSummary(Document doc, TourDTO tour) throws MalformedURLException {
