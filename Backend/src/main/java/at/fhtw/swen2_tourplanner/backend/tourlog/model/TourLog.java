@@ -40,7 +40,7 @@ public class TourLog {
     private int difficulty;
 
     @Column(name = "distance")
-    private long distance;
+    private double distance;
 
     @Column(name = "total_time")
     @JsonFormat(pattern = "HH:mm:ss")

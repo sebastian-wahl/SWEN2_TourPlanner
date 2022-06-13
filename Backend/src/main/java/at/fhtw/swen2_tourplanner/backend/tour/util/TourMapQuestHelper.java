@@ -88,7 +88,7 @@ public class TourMapQuestHelper {
 
     private void setTourDistanceAndTime(Tour tour) {
         MapQuestResponse response = mapQuestService.getTimeAndDistance(tour.getStart(), tour.getGoal());
-        final long distance = (long) response.getRoute().getDistance();
+        final double distance = response.getRoute().getDistance();
         final LocalTime time = response.getRoute().getFormattedTime();
         tour.setTourDistance(distance);
         tour.setEstimatedTime(time);

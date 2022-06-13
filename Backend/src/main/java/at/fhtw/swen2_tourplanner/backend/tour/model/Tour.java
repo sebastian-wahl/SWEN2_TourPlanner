@@ -36,7 +36,7 @@ public class Tour {
     @Column(name = "transport_type", nullable = false)
     private int transportType;
     @Column(name = "tour_distance", nullable = false)
-    private long tourDistance;
+    private double tourDistance;
     @Column(name = "estimated_time")
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime estimatedTime;
