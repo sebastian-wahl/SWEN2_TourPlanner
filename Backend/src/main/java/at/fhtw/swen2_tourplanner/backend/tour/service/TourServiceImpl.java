@@ -84,13 +84,25 @@ public class TourServiceImpl implements TourService {
         List<Tour> tours = tourRepository.findAll();
         List<TourDTO> tourDTOS = new ArrayList<>();
         tours.forEach(tour -> {
-            try {
-                tourDTOS.add(new TourDTO(tour, Files.readAllBytes(tourMapQuestHelper.getImageFile(tour.getId()).toPath())));
-            } catch (Exception e) {
-                throw new BusinessException("Could not find Image");
-            }
+            tourDTOS.add(this.createTDOReadImageFile(tour));
         });
         return tourDTOS;
+    }
+
+    private TourDTO createTDOReadImageFile(Tour tour) {
+        return createTDOReadImageFileIteration(tour, false);
+    }
+
+    private TourDTO createTDOReadImageFileIteration(Tour tour, boolean it) {
+        try {
+            return new TourDTO(tour, Files.readAllBytes(tourMapQuestHelper.getImageFile(tour.getId()).toPath()));
+        } catch (IOException ex) {
+            if (it) {
+                throw new BusinessException("Could not find Image");
+            }
+            tourMapQuestHelper.setMapQuestData(tour);
+            return this.createTDOReadImageFileIteration(tour, true);
+        }
     }
 
     private boolean locationChanged(TourDTO tour, Tour dbTour) {
