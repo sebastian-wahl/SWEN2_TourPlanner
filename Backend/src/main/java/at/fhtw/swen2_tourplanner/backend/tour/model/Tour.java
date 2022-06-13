@@ -29,13 +29,13 @@ public class Tour {
     private String name;
     @Column(name = "tour_description")
     private String tourDescription;
-    @Column(name = "start", nullable = false)
+    @Column(name = "start")
     private String start;
-    @Column(name = "goal", nullable = false)
+    @Column(name = "goal")
     private String goal;
-    @Column(name = "transport_type", nullable = false)
+    @Column(name = "transport_type", nullable = false, columnDefinition = "integer default 0")
     private int transportType;
-    @Column(name = "tour_distance", nullable = false)
+    @Column(name = "tour_distance", nullable = false, columnDefinition = "float8 default 0")
     private double tourDistance;
     @Column(name = "estimated_time")
     @JsonFormat(pattern = "HH:mm:ss")
