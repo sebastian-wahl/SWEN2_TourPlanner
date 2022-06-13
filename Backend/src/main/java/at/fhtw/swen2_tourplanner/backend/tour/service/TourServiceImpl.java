@@ -34,7 +34,7 @@ public class TourServiceImpl implements TourService {
         if (tour.getId() == null) {
             Tour dbTour = tourRepository.save(new Tour(tour));
             tourMapQuestHelper.setMapQuestData(dbTour);
-            return new TourDTO(tourRepository.save(dbTour));
+            return new TourDTO(tourRepository.save(dbTour), dbTour.getImage());
         } else {
             throw new BusinessException("Tour already exists");
         }
@@ -51,7 +51,7 @@ public class TourServiceImpl implements TourService {
             if (locationChanged(tour, oldTour.get())) {
                 tourMapQuestHelper.setMapQuestData(dbTour);
             }
-            return new TourDTO(tourRepository.save(dbTour));
+            return new TourDTO(tourRepository.save(dbTour), dbTour.getImage());
         } else {
             throw new BusinessException("Could not find tour");
         }
