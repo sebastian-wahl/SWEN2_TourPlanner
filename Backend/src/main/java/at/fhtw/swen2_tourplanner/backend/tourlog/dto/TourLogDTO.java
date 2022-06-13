@@ -26,7 +26,7 @@ public class TourLogDTO {
     private int difficulty;
 
     @JsonProperty("distance")
-    private long distance;
+    private double distance;
 
     @JsonProperty("total_time")
     @JsonFormat(pattern = "HH:mm:ss")
