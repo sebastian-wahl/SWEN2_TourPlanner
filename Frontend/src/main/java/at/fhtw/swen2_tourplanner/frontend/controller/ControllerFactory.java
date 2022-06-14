@@ -39,12 +39,12 @@ public class ControllerFactory {
         tourMap = new TourMap();
         menubar = new Menubar();
         searchbarTour = new Searchbar();
-        searchbarTourLog = new Searchbar();
-        tourLogData = new TourLogData(searchbarTourLog, tourLogService);
         tourBasicData = new TourBasicData();
-        tourInfo = new TourInfo(tourBasicData, tourMap, tourService);
+        tourInfo = new TourInfo(tourBasicData, tourMap);
         infoLine = new InfoLine();
-        tourList = new TourList(tourService);
+        searchbarTourLog = new Searchbar();
+        tourLogData = new TourLogData(searchbarTourLog, infoLine);
+        tourList = new TourList();
         dashboard = new Dashboard(tourList, tourBasicData, tourMap, tourLogData, infoLine, tourService, tourLogService);
 
 

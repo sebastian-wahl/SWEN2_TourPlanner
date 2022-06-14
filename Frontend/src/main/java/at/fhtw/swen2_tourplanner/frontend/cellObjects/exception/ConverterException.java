@@ -1,7 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.cellObjects.exception;
 
 public class ConverterException extends Exception {
-    public ConverterException(Exception e) {
-        super(e);
+    public ConverterException(String m) {
+        super(m);
     }
 }

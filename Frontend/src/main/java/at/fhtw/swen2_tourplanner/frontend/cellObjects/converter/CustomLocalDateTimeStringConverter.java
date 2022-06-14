@@ -20,7 +20,7 @@ public class CustomLocalDateTimeStringConverter implements Converter<LocalDateTi
             return formatter.format(value);
         } catch (DateTimeException e) {
             logger.error("Error when converting LocalDateTime to String: {}", e.getMessage());
-            throw new ConverterException(e);
+            throw new ConverterException("Could not convert Date \"" + value.toString() + "\" to a formatted string.");
         }
     }
 
@@ -30,7 +30,7 @@ public class CustomLocalDateTimeStringConverter implements Converter<LocalDateTi
             return LocalDateTime.parse(string, formatter);
         } catch (DateTimeParseException e) {
             logger.error("Error when converting String to LocalDateTime: {}", e.getMessage());
-            throw new ConverterException(e);
+            throw new ConverterException("Could not convert string \"" + string + "\" to a Date object. Please use format: \"" + DATE_TIME_FORMAT.toUpperCase() + "\".");
         }
     }
 }

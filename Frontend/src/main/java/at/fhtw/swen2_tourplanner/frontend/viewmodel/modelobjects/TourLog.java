@@ -39,6 +39,8 @@ public class TourLog {
     private UUID tour;
 
     public TourLog(Tour tour) {
+        this.difficulty = 1;
+        this.rating = 1;
         this.tour = tour.getId();
     }
 }

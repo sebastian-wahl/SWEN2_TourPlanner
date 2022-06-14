@@ -52,6 +52,11 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
         this.tourLogData.setAddTourLogListener(this::addTourLog);
         this.tourLogData.setUpdateTourLogListener(this::updateTourLog);
         this.tourLogData.setDeleteTourLogListener(this::deleteTourLog);
+        this.tourLogData.setUpdateInfoTextListener(this::updateInfoText);
+    }
+
+    private void updateInfoText(String text) {
+        this.infoLine.setInfoText(text);
     }
 
     /* --------------------- Tour API calls ---------------------------- */

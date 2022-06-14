@@ -5,12 +5,8 @@ import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomDoubleStri
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomIntegerStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalDateTimeStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
-import at.fhtw.swen2_tourplanner.frontend.listener.AddListener;
-import at.fhtw.swen2_tourplanner.frontend.listener.DeleteListener;
-import at.fhtw.swen2_tourplanner.frontend.listener.TourLogGetListener;
-import at.fhtw.swen2_tourplanner.frontend.listener.UpdateListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.*;
 import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
-import at.fhtw.swen2_tourplanner.frontend.service.tourlog.TourLogService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import javafx.beans.property.*;
@@ -42,9 +38,8 @@ import java.util.function.Predicate;
 public class TourLogData implements ViewModel, StringObserver {
     // other view models
     private final Searchbar tourLogSearchbar;
+    private final InfoLine infoLine;
 
-    // services
-    private final TourLogService tourLogService;
     @Getter
     private final FilteredList<TourLog> tourLogList;
     @Getter
@@ -89,15 +84,18 @@ public class TourLogData implements ViewModel, StringObserver {
     private UpdateListener<TourLog> updateTourLogListener;
     @Setter
     private DeleteListener<TourLog> deleteTourLogListener;
+    @Setter
+    private UpdateInfoTextListener updateInfoTextListener;
+
     private Tour currentTour;
     private TourLog selectedTourLog;
 
     @Setter
     private TableView.TableViewSelectionModel<TourLog> tableSelectionModel;
 
-    public TourLogData(Searchbar tourLogSearchbar, TourLogService tourLogService) {
+    public TourLogData(Searchbar tourLogSearchbar, InfoLine infoLine) {
         this.tourLogSearchbar = tourLogSearchbar;
-        this.tourLogService = tourLogService;
+        this.infoLine = infoLine;
 
         // default disable tourlog searchbar
         this.tourLogSearchbar.disableSearchbar();
@@ -112,20 +110,20 @@ public class TourLogData implements ViewModel, StringObserver {
 
         // Properties
         dateColCellFactoryProperty = new SimpleObjectProperty<>();
-        dateColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomLocalDateTimeStringConverter(), CustomLocalDateTimeStringConverter.DATE_TIME_FORMAT.toUpperCase()));
+        dateColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomLocalDateTimeStringConverter(), this::updateInfoLine, CustomLocalDateTimeStringConverter.DATE_TIME_FORMAT.toUpperCase()));
 
 
         timeColCellFactoryProperty = new SimpleObjectProperty<>();
-        timeColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomLocalTimeStringConverter(), CustomLocalTimeStringConverter.TIME_FORMAT.toUpperCase()));
+        timeColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomLocalTimeStringConverter(), this::updateInfoLine, CustomLocalTimeStringConverter.TIME_FORMAT.toUpperCase()));
 
         difficultyColCellFactoryProperty = new SimpleObjectProperty<>();
-        difficultyColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomIntegerStringConverter()));
+        difficultyColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomIntegerStringConverter(1, 3), this::updateInfoLine, "1 - 3"));
 
         ratingColCellFactoryProperty = new SimpleObjectProperty<>();
-        ratingColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomDoubleStringConverter()));
+        ratingColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomDoubleStringConverter(1.0, 10.0, 1), this::updateInfoLine, "1.0 - 10.0"));
 
         distanceColCellFactoryProperty = new SimpleObjectProperty<>();
-        distanceColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomDoubleStringConverter()));
+        distanceColCellFactoryProperty.setValue(col -> new TourLogTableCell<>(new CustomDoubleStringConverter(), this::updateInfoLine));
 
         commentInputDisableProperty = new SimpleBooleanProperty(true);
         addLogButtonDisableProperty = new SimpleBooleanProperty(true);
@@ -140,6 +138,10 @@ public class TourLogData implements ViewModel, StringObserver {
         ratingLabelProperty = new SimpleObjectProperty<>();
 
         commentTextProperty = new SimpleStringProperty();
+    }
+
+    private void updateInfoLine(String text) {
+        this.infoLine.setInfoText(text);
     }
 
     private SortedList<TourLog> setUpSortedList() {
@@ -185,43 +187,53 @@ public class TourLogData implements ViewModel, StringObserver {
     }
 
     public void onEditCommitDate(TableColumn.CellEditEvent<TourLog, LocalDateTime> event) {
-        TablePosition<TourLog, LocalDateTime> position = event.getTablePosition();
-        int row = position.getRow();
-        // update log element & update tour
-        this.baseList.get(row).setDateTime(event.getNewValue());
-        this.updateTourLog(this.baseList.get(row));
+        if (event.getNewValue() != null) {
+            TablePosition<TourLog, LocalDateTime> position = event.getTablePosition();
+            int row = position.getRow();
+            // update log element & update tour
+            this.baseList.get(row).setDateTime(event.getNewValue());
+            this.updateTourLog(this.baseList.get(row));
+        }
     }
 
     public void onEditCommitTime(TableColumn.CellEditEvent<TourLog, LocalTime> event) {
-        TablePosition<TourLog, LocalTime> position = event.getTablePosition();
-        int row = position.getRow();
-        // update log element & update tour
-        this.baseList.get(row).setTotalTime(event.getNewValue());
-        this.updateTourLog(this.baseList.get(row));
+        if (event.getNewValue() != null) {
+            TablePosition<TourLog, LocalTime> position = event.getTablePosition();
+            int row = position.getRow();
+            // update log element & update tour
+            this.baseList.get(row).setTotalTime(event.getNewValue());
+            this.updateTourLog(this.baseList.get(row));
+        }
     }
 
     public void onEditCommitDifficulty(TableColumn.CellEditEvent<TourLog, Integer> event) {
-        TablePosition<TourLog, Integer> position = event.getTablePosition();
-        int row = position.getRow();
-        // update log element & update tour
-        this.baseList.get(row).setDifficulty(event.getNewValue());
-        this.updateTourLog(this.baseList.get(row));
+        if (event.getNewValue() != null) {
+            TablePosition<TourLog, Integer> position = event.getTablePosition();
+            int row = position.getRow();
+            // update log element & update tour
+            this.baseList.get(row).setDifficulty(event.getNewValue());
+            this.updateTourLog(this.baseList.get(row));
+        }
     }
 
     public void onEditCommitRating(TableColumn.CellEditEvent<TourLog, Double> event) {
-        TablePosition<TourLog, Double> position = event.getTablePosition();
-        int row = position.getRow();
-        // update log element & update tour
-        this.baseList.get(row).setRating(event.getNewValue());
-        this.updateTourLog(this.baseList.get(row));
+        if (event.getNewValue() != null) {
+            TablePosition<TourLog, Double> position = event.getTablePosition();
+            int row = position.getRow();
+            // update log element & update tour
+            this.baseList.get(row).setRating(event.getNewValue());
+            this.updateTourLog(this.baseList.get(row));
+        }
     }
 
     public void onEditCommitDistance(TableColumn.CellEditEvent<TourLog, Double> event) {
-        TablePosition<TourLog, Double> position = event.getTablePosition();
-        int row = position.getRow();
-        // update log element & update tour
-        this.baseList.get(row).setDistance(event.getNewValue());
-        this.updateTourLog(this.baseList.get(row));
+        if (event.getNewValue() != null) {
+            TablePosition<TourLog, Double> position = event.getTablePosition();
+            int row = position.getRow();
+            // update log element & update tour
+            this.baseList.get(row).setDistance(event.getNewValue());
+            this.updateTourLog(this.baseList.get(row));
+        }
     }
 
     public void updateFromTourList(Tour tour) {
@@ -275,8 +287,8 @@ public class TourLogData implements ViewModel, StringObserver {
         timeLabelProperty.setValue(selectedTourLog.getTotalTime() != null ?
                 selectedTourLog.getTotalTime().format(DateTimeFormatter.ofPattern(CustomLocalTimeStringConverter.TIME_FORMAT)) : "00:00:00");
         distanceLabelProperty.setValue("" + selectedTourLog.getDistance());
-        difficultyLabelProperty.setValue(selectedTourLog.getDifficulty() + "");
-        ratingLabelProperty.setValue(selectedTourLog.getRating() + "");
+        difficultyLabelProperty.setValue(selectedTourLog.getDifficulty() + "/3");
+        ratingLabelProperty.setValue(selectedTourLog.getRating() + "/10.0");
         commentTextProperty.setValue(Objects.requireNonNullElse(selectedTourLog.getComment(), ""));
     }
 

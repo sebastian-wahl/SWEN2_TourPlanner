@@ -19,7 +19,7 @@ public class CustomLocalTimeStringConverter implements Converter<LocalTime> {
             return LocalTime.parse(s, formatter);
         } catch (DateTimeParseException e) {
             logger.error("Error when converting String to LocalDateTime: {}", e.getMessage());
-            throw new ConverterException(e);
+            throw new ConverterException("Could not convert string \"" + s + "\" to a Time object. Please use format: \"" + TIME_FORMAT.toUpperCase() + "\".");
         }
     }
 
@@ -29,7 +29,7 @@ public class CustomLocalTimeStringConverter implements Converter<LocalTime> {
             return formatter.format(localTime);
         } catch (DateTimeParseException e) {
             logger.error("Error when converting LocalDateTime to String: {}", e.getMessage());
-            throw new ConverterException(e);
+            throw new ConverterException("Could not convert Time \"" + localTime.toString() + "\" to a formatted string.");
         }
     }
 }

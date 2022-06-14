@@ -38,8 +38,8 @@
             <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
          </padding>
         </HBox>
-        <HBox prefHeight="43.0" prefWidth="500.0" spacing="16.0">
-            <Label minWidth="80.0" text="Estimated &#10;Time" />
+        <HBox prefHeight="48.0" prefWidth="500.0" spacing="16.0">
+            <Label minWidth="80.0" prefWidth="80.0" text="Estimated &#10;Time" />
             <Label fx:id="estimatedTime" prefHeight="30.0" prefWidth="431.0">
                 <padding>
                     <Insets bottom="12" />

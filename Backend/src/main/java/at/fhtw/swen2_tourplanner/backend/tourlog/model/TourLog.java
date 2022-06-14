@@ -10,13 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -57,6 +51,7 @@ public class TourLog {
         this.difficulty = tourLogDto.getDifficulty();
         this.totalTime = tourLogDto.getTotalTime();
         this.rating = tourLogDto.getRating();
+        this.distance = tourLogDto.getDistance();
         this.tour = new Tour(tourDTO);
     }
 

@@ -44,5 +44,6 @@ public class TourLogDTO {
         this.totalTime = tourLog.getTotalTime();
         this.rating = tourLog.getRating();
         this.tour = tourLog.getTour().getId();
+        this.distance = tourLog.getDistance();
     }
 }

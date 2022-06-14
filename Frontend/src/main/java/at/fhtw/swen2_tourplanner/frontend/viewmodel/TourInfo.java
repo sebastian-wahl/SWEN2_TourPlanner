@@ -9,23 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TourInfo implements ViewModel, StringBooleanObservable {
-    // services
-    private final TourService tourService;
     // models
     private final TourBasicData tourBasicData;
     private final TourMap tourMap;
 
     private final List<StringBooleanObserver> observerList;
 
-    public TourInfo(TourBasicData tourBasicData, TourMap tourMap, TourService tourService) {
+    public TourInfo(TourBasicData tourBasicData, TourMap tourMap) {
         this.tourBasicData = tourBasicData;
         this.tourMap = tourMap;
 
         this.observerList = new ArrayList<>();
-
-        this.tourService = tourService;
-
-
     }
 
 

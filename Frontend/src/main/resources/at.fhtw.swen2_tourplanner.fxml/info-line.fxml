@@ -19,7 +19,7 @@
             <Insets left="8.0" right="8.0"/>
         </padding>
         <font>
-            <Font name="System Bold" size="14.0"/>
+            <Font name="System Bold" size="10.0"/>
         </font>
     </Label>
     <ProgressBar fx:id="progressBar" prefHeight="18.0" prefWidth="689.0" GridPane.columnIndex="1">

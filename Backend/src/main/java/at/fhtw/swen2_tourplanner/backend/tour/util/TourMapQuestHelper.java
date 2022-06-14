@@ -50,7 +50,7 @@ public class TourMapQuestHelper {
     public byte[] getImageFromFile(String path) throws FileNotFoundException {
         if (path != null) {
             try {
-                File file = new File(ABSOLUTE_IMAGE_PATH + '\\' + path + IMAGE_SUFFIX);
+                File file = new File(ABSOLUTE_IMAGE_PATH + '\\' + path);
                 return Files.readAllBytes(file.toPath());
             } catch (IOException e) {
                 logger.error("Error while loading the image from path '{}'", ABSOLUTE_IMAGE_PATH + "\\" + path);

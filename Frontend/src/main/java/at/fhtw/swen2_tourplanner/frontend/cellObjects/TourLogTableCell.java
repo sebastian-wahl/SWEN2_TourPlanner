@@ -2,6 +2,7 @@ package at.fhtw.swen2_tourplanner.frontend.cellObjects;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.Converter;
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
+import at.fhtw.swen2_tourplanner.frontend.listener.UpdateInfoTextListener;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import javafx.event.Event;
 import javafx.scene.control.*;
@@ -9,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.text.TextAlignment;
 
 public class TourLogTableCell<T> extends TableCell<TourLog, T> {
+    private final UpdateInfoTextListener updateInfoTextListener;
     private final Converter<T> converter;
     private final String hint;
     private TextField textField;
@@ -16,11 +18,12 @@ public class TourLogTableCell<T> extends TableCell<TourLog, T> {
     private boolean escapePressed = false;
     private TablePosition<TourLog, T> tablePos = null;
 
-    public TourLogTableCell(Converter<T> converter) {
-        this(converter, null);
+    public TourLogTableCell(Converter<T> converter, UpdateInfoTextListener updateInfoTextListener) {
+        this(converter, updateInfoTextListener, null);
     }
 
-    public TourLogTableCell(Converter<T> converter, String hint) {
+    public TourLogTableCell(Converter<T> converter, UpdateInfoTextListener updateInfoTextListener, String hint) {
+        this.updateInfoTextListener = updateInfoTextListener;
         this.converter = converter;
         this.hint = hint;
     }
@@ -91,7 +94,9 @@ public class TourLogTableCell<T> extends TableCell<TourLog, T> {
                     converted = converter.convertFromString(textField.getText());
                 }
             } catch (ConverterException ex) {
-                // ToDo maybe message
+                textField.setText(getItemText());
+                converted = getItem();
+                this.updateInfoTextListener.updateInfoText(ex.getMessage());
             }
             // commit the new text to the model
             this.commitEdit(converted);
@@ -121,8 +126,10 @@ public class TourLogTableCell<T> extends TableCell<TourLog, T> {
                 if (!textField.getText().isEmpty()) {
                     converted = converter.convertFromString(textField.getText());
                 }
-            } catch (ConverterException e) {
-                // ToDo maybe message
+            } catch (ConverterException ex) {
+                textField.setText(getItemText());
+                converted = getItem();
+                this.updateInfoTextListener.updateInfoText(ex.getMessage());
             }
             this.commitEdit(converted);
             event.consume();

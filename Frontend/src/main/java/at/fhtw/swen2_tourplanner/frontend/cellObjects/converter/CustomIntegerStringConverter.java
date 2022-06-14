@@ -9,14 +9,38 @@ import org.apache.logging.log4j.Logger;
 public class CustomIntegerStringConverter extends IntegerStringConverter implements Converter<Integer> {
     private final Logger logger = LogManager.getLogger(CustomIntegerStringConverter.class);
 
+    private final int lowerBound;
+    private final int upperBound;
+
+    public CustomIntegerStringConverter(int lower, int upper) {
+        this.lowerBound = lower;
+        this.upperBound = upper;
+    }
+
     @Override
     public Integer convertFromString(String s) throws ConverterException {
         try {
-            return super.fromString(s);
+            int number = super.fromString(s);
+            if (isBoundsActive()) {
+                if (isNumberInBound(number)) {
+                    return number;
+                } else {
+                    return number > upperBound ? upperBound : lowerBound;
+                }
+            }
+            return number;
         } catch (NumberFormatException e) {
             logger.error("Error when converting String to Integer: {}", e.getMessage());
-            throw new ConverterException(e);
+            throw new ConverterException("Could not convert string \"" + s + "\" to a number.");
         }
+    }
+
+    private boolean isNumberInBound(int number) {
+        return lowerBound <= number && upperBound >= number;
+    }
+
+    private boolean isBoundsActive() {
+        return lowerBound > 0 && upperBound > 0;
     }
 
     @Override
@@ -25,7 +49,7 @@ public class CustomIntegerStringConverter extends IntegerStringConverter impleme
             return super.toString(aInt);
         } catch (NumberFormatException e) {
             logger.error("Error when converting Integer to String: {}", e.getMessage());
-            throw new ConverterException(e);
+            throw new ConverterException("Could not convert number " + aInt + " to a string.");
         }
     }
 }

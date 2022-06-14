@@ -1,5 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
+import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalDateTimeStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourLogData;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import javafx.fxml.FXML;
@@ -91,21 +93,38 @@ public class TourLogDataController extends BaseController<TourLogData> {
         logTableView.getSortOrder().add(dateCol);
 
 
+        this.setToolTipToCol(dateCol, "Start Date and Time", CustomLocalDateTimeStringConverter.DATE_TIME_FORMAT.toUpperCase());
         dateCol.setCellValueFactory(new PropertyValueFactory<>("dateTime"));
         dateCol.setOnEditCommit(getViewModel()::onEditCommitDate);
         dateCol.cellFactoryProperty().bindBidirectional(getViewModel().getDateColCellFactoryProperty());
+
+        this.setToolTipToCol(totalTimeCol, "Time Spent", CustomLocalTimeStringConverter.TIME_FORMAT.toUpperCase());
         totalTimeCol.setCellValueFactory(new PropertyValueFactory<>("totalTime"));
         totalTimeCol.setOnEditCommit(getViewModel()::onEditCommitTime);
         totalTimeCol.cellFactoryProperty().bindBidirectional(getViewModel().getTimeColCellFactoryProperty());
+
+        this.setToolTipToCol(difficultyCol, "Difficulty", "1-3");
         difficultyCol.setCellValueFactory(new PropertyValueFactory<>("difficulty"));
         difficultyCol.setOnEditCommit(getViewModel()::onEditCommitDifficulty);
         difficultyCol.cellFactoryProperty().bindBidirectional(getViewModel().getDifficultyColCellFactoryProperty());
+
+        this.setToolTipToCol(ratingCol, "Rating", "1-10");
         ratingCol.setCellValueFactory(new PropertyValueFactory<>("rating"));
         ratingCol.setOnEditCommit(getViewModel()::onEditCommitRating);
         ratingCol.cellFactoryProperty().bindBidirectional(getViewModel().getRatingColCellFactoryProperty());
+
+        this.setToolTipToCol(distanceCol, "Distance", "");
         distanceCol.setCellValueFactory(new PropertyValueFactory<>("distance"));
         distanceCol.setOnEditCommit(getViewModel()::onEditCommitDistance);
         distanceCol.cellFactoryProperty().bindBidirectional(getViewModel().getDistanceColCellFactoryProperty());
+    }
+
+    private void setToolTipToCol(TableColumn<?, ?> col, String colName, String toolTip) {
+        Label label = new Label(colName);
+        if (!toolTip.isEmpty()) {
+            label.setTooltip(new Tooltip(toolTip));
+        }
+        col.setGraphic(label);
     }
 
     public void addTourLog() {

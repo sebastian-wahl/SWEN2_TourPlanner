@@ -33,9 +33,6 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     // logger
     private final Logger logger = LogManager.getLogger(TourList.class);
 
-    // services
-    private final TourService tourService;
-
     // single Listeners
     @Setter
     private DeleteListener<Tour> tourDeleteListener;
@@ -65,8 +62,7 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
         this.getTours();
     }
 
-    public TourList(TourService tourService) {
-        this.tourService = tourService;
+    public TourList() {
         newTourName = new SimpleStringProperty();
         onlyFavoriteTour = new SimpleBooleanProperty();
 
