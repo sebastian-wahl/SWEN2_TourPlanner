@@ -2,6 +2,8 @@ package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.enums.TransportTypeEnum;
+import at.fhtw.swen2_tourplanner.frontend.listener.ExportTourListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.ExportTourReportListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.UpdateListener;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourObservable;
@@ -14,6 +16,7 @@ import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +28,6 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     private static final String BUTTON_SAVE_TEXT = "Save";
     // logger
     private final Logger logger = LogManager.getLogger(TourBasicData.class);
-    // Services
     // Properties
     @Getter
     private final StringProperty nameProperty;
@@ -71,6 +73,10 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     private final List<BaseObserver<Tour>> updateTourBaseObserverList;
 
     // single Listeners
+    @Setter
+    private ExportTourListener exportTourListener;
+    @Setter
+    private ExportTourReportListener exportTourReportListener;
     @Setter
     private UpdateListener<Tour> tourUpdateListener;
     private Tour currentTour;
@@ -203,6 +209,14 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
         this.toDisableProperty.setValue(to);
         this.descriptionDisableProperty.setValue(to);
         this.checkboxDisableProperty.setValue(to);
+    }
+
+    public void exportTour(File saveToFile) {
+        this.exportTourListener.exportTour(saveToFile, this.currentTour);
+    }
+
+    public void exportTourReport(File saveToFile) {
+        this.exportTourReportListener.exportTourReport(saveToFile, this.currentTour);
     }
 
     @Override

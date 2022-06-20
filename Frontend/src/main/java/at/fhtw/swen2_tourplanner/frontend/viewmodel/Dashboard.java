@@ -1,6 +1,5 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.observer.StringBooleanObserver;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.ApiCallTimoutException;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.BackendConnectionException;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
@@ -8,19 +7,30 @@ import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddUpdateSin
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.DeleteSingleTourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.GetMultipleTourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tourlog.TourLogService;
-import at.fhtw.swen2_tourplanner.frontend.service.tourlog.microservice.AddUpdateSingleLogService;
-import at.fhtw.swen2_tourplanner.frontend.service.tourlog.microservice.DeleteSingleLogService;
-import at.fhtw.swen2_tourplanner.frontend.service.tourlog.microservice.GetMultipleLogService;
+import at.fhtw.swen2_tourplanner.frontend.service.tourlog.microservice.*;
+import at.fhtw.swen2_tourplanner.frontend.util.FileConverter;
+import at.fhtw.swen2_tourplanner.frontend.util.exceptions.FileConvertException;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Service;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Dashboard implements ViewModel, StringBooleanObserver {
+public class Dashboard implements ViewModel {
+    // Logger
+    private final Logger logger = LogManager.getLogger(Dashboard.class);
 
     // Models
     private final InfoLine infoLine;
@@ -28,11 +38,16 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
     private final TourBasicData tourBasicData;
     private final TourMap tourMap;
     private final TourLogData tourLogData;
+
+    private final Menubar menubar;
     // Services
     private final TourService tourService;
     private final TourLogService tourLogService;
 
-    public Dashboard(TourList tourList, TourBasicData tourBasicData, TourMap tourMap, TourLogData tourLogData, InfoLine infoLine, TourService tourService, TourLogService tourLogService) {
+    private final ObjectMapper o;
+
+    public Dashboard(TourList tourList, TourBasicData tourBasicData, TourMap tourMap, TourLogData tourLogData,
+                     InfoLine infoLine, TourService tourService, TourLogService tourLogService, Menubar menubar) {
         this.tourList = tourList;
         this.tourBasicData = tourBasicData;
         this.tourMap = tourMap;
@@ -40,8 +55,15 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
         this.tourService = tourService;
         this.tourLogService = tourLogService;
         this.infoLine = infoLine;
+        this.menubar = menubar;
+
+        this.o = new ObjectMapper();
+        o.registerModule(new JavaTimeModule());
 
         // listeners
+        // set listeners for tour basic data export calls
+        this.tourBasicData.setExportTourListener(this::exportTour);
+        this.tourBasicData.setExportTourReportListener(this::exportTourReport);
         // set listeners for tour api calls
         this.tourBasicData.setTourUpdateListener(this::updateTourData);
         this.tourList.setTourDeleteListener(this::deleteTour);
@@ -52,30 +74,144 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
         this.tourLogData.setAddTourLogListener(this::addTourLog);
         this.tourLogData.setUpdateTourLogListener(this::updateTourLog);
         this.tourLogData.setDeleteTourLogListener(this::deleteTourLog);
-        this.tourLogData.setUpdateInfoTextListener(this::updateInfoText);
+        // set menubar listeners
+        this.menubar.setImportTourListener(this::importTour);
+        this.menubar.setExportTourSummaryListener(this::exportTourSummary);
     }
 
-    private void updateInfoText(String text) {
-        this.infoLine.setInfoText(text);
+    /* --------------------- Tour export/import API calls --------------------- */
+
+    private void importTour(List<File> files) {
+        this.infoLine.startLoading();
+        try {
+            List<Tour> toAdd = FileConverter.convertFileToTour(files);
+            for (Tour tour : toAdd) {
+                this.createTour(tour, false);
+            }
+            this.infoLine.setInfoText("Tour(s) added successfully.");
+        } catch (FileConvertException e) {
+            this.logger.error(e);
+            this.infoLine.setErrorText(e.getMessage());
+        }
+        this.infoLine.stopLoading();
+    }
+
+    private void exportTourSummary(File file) {
+        if (this.createFile(file)) {
+            this.infoLine.startLoading();
+            Service<byte[]> getReportService = new GetSummaryService(this::getSummaryCatchException);
+            getReportService.valueProperty().addListener((ObservableValue<? extends byte[]> observableValue, byte[] bytes, byte[] newValue) -> {
+                if (newValue.length > 0) {
+                    // success
+                    try (OutputStream outputStream = new FileOutputStream(file)) {
+                        outputStream.write(this.o.writeValueAsBytes(newValue));
+                        this.infoLine.setInfoText("Tour summary exported successfully!");
+                    } catch (IOException e) {
+                        this.infoLine.setErrorText("An error happened while exporting the tour summary. Please try again!");
+                        this.logger.error("The Tour summary export went wrong. Error message: {}", e.getMessage());
+                    }
+                } else {
+                    this.logger.error("The Tour summary export went wrong. Empty byte array returned.");
+                    this.infoLine.setErrorText("An error happened while exporting the tour summary. Please try again!");
+                }
+                this.infoLine.stopLoading();
+            });
+            getReportService.start();
+        }
+    }
+
+    private byte[] getSummaryCatchException() {
+        try {
+            byte[] summary = this.tourLogService.getTourSummary();
+            if (summary == null) {
+                return new byte[0];
+            }
+            return summary;
+        } catch (BackendConnectionException | ApiCallTimoutException e) {
+            this.logger.error(e);
+            this.infoLine.setErrorText(e.getMessage());
+            return new byte[0];
+        }
+    }
+
+    private void exportTourReport(File file, Tour toExport) {
+        if (this.createFile(file)) {
+            this.infoLine.startLoading();
+            Service<byte[]> getReportService = new GetReportService(this::getReportCatchException, toExport.getId());
+            getReportService.valueProperty().addListener((ObservableValue<? extends byte[]> observableValue, byte[] bytes, byte[] newValue) -> {
+                if (newValue.length > 0) {
+                    // success
+                    try (OutputStream outputStream = new FileOutputStream(file)) {
+                        outputStream.write(newValue);
+                        this.infoLine.setInfoText("Tour report exported successfully!");
+                    } catch (IOException e) {
+                        this.infoLine.setErrorText("An error happened while exporting the tour report. Please try again!");
+                        this.logger.error("The Tour report export went wrong. Error message: {}", e.getMessage());
+                    }
+                } else {
+                    this.logger.error("The Tour report export went wrong. Empty byte array returned.");
+                    this.infoLine.setErrorText("An error happened while exporting the tour report. Please try again!");
+                }
+                this.infoLine.stopLoading();
+            });
+            getReportService.start();
+        }
+    }
+
+    private byte[] getReportCatchException(UUID tourId) {
+        try {
+            byte[] report = this.tourLogService.getTourReport(tourId);
+            if (report == null) {
+                return new byte[0];
+            }
+            return report;
+        } catch (BackendConnectionException | ApiCallTimoutException e) {
+            this.logger.error(e);
+            this.infoLine.setErrorText(e.getMessage());
+            return new byte[0];
+        }
+    }
+
+
+    private void exportTour(File file, Tour toExport) {
+        if (this.createFile(file)) {
+            this.infoLine.startLoading();
+            try (OutputStream outputStream = new FileOutputStream(file)) {
+                outputStream.write(this.o.writeValueAsBytes(toExport));
+                this.infoLine.setInfoText("Tour exported successfully!");
+            } catch (IOException e) {
+                this.infoLine.setErrorText("An error happened while exporting the tour. Please try again!");
+                this.logger.error("The Tour export went wrong. Error message: {}", e.getMessage());
+
+            }
+            this.infoLine.stopLoading();
+        }
+    }
+
+    private boolean createFile(File file) {
+        try {
+            boolean fileCreated = file.createNewFile();
+            this.logger.info("File {}", fileCreated ? "created" : "overwritten");
+            return true;
+        } catch (IOException e) {
+            this.infoLine.setErrorText("Error while creating a file for the export.");
+            this.logger.error("Error while creating a file for the export. {}", e.getMessage());
+            return false;
+        }
     }
 
     /* --------------------- Tour API calls ---------------------------- */
-
-    @Override
-    public void update(String text, boolean showLoading) {
-        this.infoLine.setInfoText(text);
-        if (showLoading) this.infoLine.startLoading();
-        else this.infoLine.stopLoading();
-    }
 
     /**
      * From {@link TourList}
      */
     private void getAllTours() {
-        GetMultipleTourService getMultipleTourService = new GetMultipleTourService(this::getAllToursCatchException);
+        Service<List<Tour>> getMultipleTourService = new GetMultipleTourService(this::getAllToursCatchException);
         getMultipleTourService.valueProperty().addListener((ObservableValue<? extends List<Tour>> observableValue, List<Tour> tours, List<Tour> newTours) -> {
             if (!newTours.isEmpty()) {
                 this.tourList.getTourSuccessful(newTours);
+            } else {
+                this.logger.warn("No tours fetched. Maybe something went wrong.");
             }
             this.infoLine.stopLoading();
         });
@@ -89,7 +225,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
             out = tourService.getAllTours();
         } catch (BackendConnectionException | ApiCallTimoutException e) {
             out = Collections.emptyList();
-            this.infoLine.setInfoText(e.getMessage());
+            this.infoLine.setErrorText(e.getMessage());
         }
         return out;
     }
@@ -100,17 +236,21 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
      * @param toCreate
      */
     private void createTour(Tour toCreate) {
-        AddUpdateSingleTourService addUpdateSingleTourService = new AddUpdateSingleTourService(this::createTourCatchException, toCreate);
+        this.createTour(toCreate, true);
+    }
+
+    private void createTour(Tour toCreate, boolean withLoading) {
+        Service<Optional<Tour>> addUpdateSingleTourService = new AddUpdateSingleTourService(this::createTourCatchException, toCreate);
         addUpdateSingleTourService.valueProperty().addListener((observableValue, tourDTO, newValue) -> {
             if (newValue.isPresent()) {
                 this.tourList.addTourSuccessful(newValue.get());
             } else {
-                // error
+                this.logger.warn("Tour \"{}\" not created successfully.", toCreate.getName());
             }
-            this.infoLine.stopLoading();
+            if (withLoading) this.infoLine.stopLoading();
         });
         addUpdateSingleTourService.start();
-        this.infoLine.startLoading();
+        if (withLoading) this.infoLine.startLoading();
     }
 
     private Optional<Tour> createTourCatchException(Tour tour) {
@@ -118,7 +258,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
         try {
             out = tourService.addTour(tour);
         } catch (BackendConnectionException | ApiCallTimoutException ex) {
-            this.infoLine.setInfoText(ex.getMessage());
+            this.infoLine.setErrorText(ex.getMessage());
             out = Optional.empty();
         }
         return out;
@@ -130,10 +270,12 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
      * @param toDelete
      */
     private void deleteTour(Tour toDelete) {
-        DeleteSingleTourService deleteSingleTourService = new DeleteSingleTourService(this::deleteTourCatchException, toDelete);
+        Service<Boolean> deleteSingleTourService = new DeleteSingleTourService(this::deleteTourCatchException, toDelete);
         deleteSingleTourService.valueProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean deleted) -> {
             if (Boolean.TRUE.equals(deleted)) {
                 this.tourList.deleteTourSuccessful(toDelete);
+            } else {
+                this.logger.warn("Tour not deleted successfully.");
             }
             this.infoLine.stopLoading();
         });
@@ -145,7 +287,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
         try {
             return tourService.deleteTour(toDelete);
         } catch (BackendConnectionException | ApiCallTimoutException ex) {
-            this.infoLine.setInfoText(ex.getMessage());
+            this.infoLine.setErrorText(ex.getMessage());
         }
         return false;
     }
@@ -156,13 +298,13 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
      * @param toUpdate
      */
     private void updateTourData(Tour toUpdate) {
-        AddUpdateSingleTourService addUpdateSingleTourService = new AddUpdateSingleTourService(this::updateTourCatchException, toUpdate);
+        Service<Optional<Tour>> addUpdateSingleTourService = new AddUpdateSingleTourService(this::updateTourCatchException, toUpdate);
         addUpdateSingleTourService.valueProperty().addListener((observableValue, tourDTO, newValue) -> {
             if (newValue.isPresent()) {
                 this.tourBasicData.updateTourSuccessful(newValue.get());
                 this.tourList.updateTourSuccessful(newValue.get());
             } else {
-                // error
+                this.logger.warn("Tour not updated successfully.");
             }
             this.infoLine.stopLoading();
         });
@@ -175,7 +317,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
         try {
             out = tourService.updateTour(tour);
         } catch (BackendConnectionException | ApiCallTimoutException ex) {
-            this.infoLine.setInfoText(ex.getMessage());
+            this.infoLine.setErrorText(ex.getMessage());
             out = Optional.empty();
         }
         return out;
@@ -189,9 +331,13 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
      * @param currentTourId
      */
     private void getAllTourLogs(UUID currentTourId) {
-        GetMultipleLogService getMultipleLogService = new GetMultipleLogService(this::getAllTourLogsCatchException, currentTourId);
+        Service<List<TourLog>> getMultipleLogService = new GetMultipleLogService(this::getAllTourLogsCatchException, currentTourId);
         getMultipleLogService.valueProperty().addListener((ObservableValue<? extends List<TourLog>> observableValue, List<TourLog> tourDTOS, List<TourLog> newValues) -> {
-            this.tourLogData.getAllLogsSuccessful(newValues);
+            if (!newValues.isEmpty()) {
+                this.tourLogData.getAllLogsSuccessful(newValues);
+            } else {
+                this.logger.warn("No tour logs fetched. Maybe something went wrong.");
+            }
             this.infoLine.stopLoading();
         });
         getMultipleLogService.start();
@@ -204,7 +350,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
             out = this.tourLogService.getAllLogs(uuid);
         } catch (BackendConnectionException | ApiCallTimoutException e) {
             out = Collections.emptyList();
-            this.infoLine.setInfoText(e.getMessage());
+            this.infoLine.setErrorText(e.getMessage());
         }
         return out;
     }
@@ -215,7 +361,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
      * @param toAdd
      */
     private void addTourLog(TourLog toAdd) {
-        AddUpdateSingleLogService addUpdateSingleLogService = new AddUpdateSingleLogService(this::addTourLogCatchException, toAdd);
+        Service<Optional<TourLog>> addUpdateSingleLogService = new AddUpdateSingleLogService(this::addTourLogCatchException, toAdd);
         addUpdateSingleLogService.valueProperty().addListener((ObservableValue<? extends Optional<TourLog>> observableValue, Optional<TourLog> tourLog, Optional<TourLog> newValue) -> {
             newValue.ifPresent(this.tourLogData::addTourLogSuccessful);
             this.infoLine.stopLoading();
@@ -228,7 +374,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
         try {
             return tourLogService.addTourLog(toAdd);
         } catch (BackendConnectionException | ApiCallTimoutException e) {
-            this.infoLine.setInfoText(e.getMessage());
+            this.infoLine.setErrorText(e.getMessage());
         }
         return Optional.empty();
     }
@@ -239,7 +385,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
      * @param toUpdate
      */
     private void updateTourLog(TourLog toUpdate) {
-        AddUpdateSingleLogService addUpdateSingleLogService = new AddUpdateSingleLogService(this::updateTourCatchException, toUpdate);
+        Service<Optional<TourLog>> addUpdateSingleLogService = new AddUpdateSingleLogService(this::updateTourCatchException, toUpdate);
         addUpdateSingleLogService.valueProperty().addListener((ObservableValue<? extends Optional<TourLog>> observableValue, Optional<TourLog> tourLog, Optional<TourLog> newValue) -> {
             newValue.ifPresent(updatedTourLog -> tourLogData.updateTourLogSuccessful(toUpdate, updatedTourLog));
             this.infoLine.stopLoading();
@@ -252,7 +398,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
         try {
             return this.tourLogService.updateTourLog(toUpdate);
         } catch (BackendConnectionException | ApiCallTimoutException e) {
-            this.infoLine.setInfoText(e.getMessage());
+            this.infoLine.setErrorText(e.getMessage());
             return Optional.empty();
         }
     }
@@ -263,7 +409,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
      * @param toDelete
      */
     private void deleteTourLog(TourLog toDelete) {
-        DeleteSingleLogService deleteSingleLogService = new DeleteSingleLogService(this::deleteTourLogCatchException, toDelete);
+        Service<Boolean> deleteSingleLogService = new DeleteSingleLogService(this::deleteTourLogCatchException, toDelete);
         deleteSingleLogService.valueProperty().addListener((observableValue, aBoolean, success) -> {
             if (Boolean.TRUE.equals(success)) {
                 this.tourLogData.deleteTourLogSuccessful();
@@ -278,7 +424,7 @@ public class Dashboard implements ViewModel, StringBooleanObserver {
         try {
             return this.tourLogService.deleteTourLog(toDelete);
         } catch (BackendConnectionException | ApiCallTimoutException e) {
-            this.infoLine.setInfoText(e.getMessage());
+            this.infoLine.setErrorText(e.getMessage());
             return false;
         }
     }

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<MenuBar xmlns="http://javafx.com/javafx"
-         xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<MenuBar xmlns:fx="http://javafx.com/fxml" fx:id="menu"
+         xmlns="http://javafx.com/javafx"
          fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.MenubarController">
     <Menu mnemonicParsing="false" text="File">
-        <MenuItem mnemonicParsing="false" text="Open File"/>
-        <MenuItem mnemonicParsing="false" text="Export File"/>
-        <MenuItem mnemonicParsing="false" text="Close File"/>
+        <MenuItem fx:id="importToursMenu" mnemonicParsing="false" text="Import Tour(s)"/>
+        <MenuItem fx:id="exportSummary" mnemonicParsing="false" text="Export Tour Summary"/>
     </Menu>
-    <Menu mnemonicParsing="false" text="Options">
-    </Menu>
-
 </MenuBar>

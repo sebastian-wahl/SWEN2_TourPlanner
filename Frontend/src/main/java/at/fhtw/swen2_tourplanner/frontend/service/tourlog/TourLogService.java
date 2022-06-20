@@ -17,4 +17,8 @@ public interface TourLogService extends Service {
     Optional<TourLog> addTourLog(TourLog tourLog) throws BackendConnectionException, ApiCallTimoutException;
 
     Optional<TourLog> updateTourLog(TourLog tourLog) throws BackendConnectionException, ApiCallTimoutException;
+
+    byte[] getTourReport(UUID tourId) throws BackendConnectionException, ApiCallTimoutException;
+
+    byte[] getTourSummary() throws BackendConnectionException, ApiCallTimoutException;
 }

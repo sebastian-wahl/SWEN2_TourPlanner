@@ -45,7 +45,8 @@ public class ControllerFactory {
         searchbarTourLog = new Searchbar();
         tourLogData = new TourLogData(searchbarTourLog, infoLine);
         tourList = new TourList();
-        dashboard = new Dashboard(tourList, tourBasicData, tourMap, tourLogData, infoLine, tourService, tourLogService);
+        dashboard = new Dashboard(tourList, tourBasicData, tourMap, tourLogData, infoLine, tourService, tourLogService,
+                menubar);
 
 
         // --- register observers ---

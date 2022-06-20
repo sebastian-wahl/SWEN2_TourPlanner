@@ -3,74 +3,77 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<HBox prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.TourBasicDataController">
+<HBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16"
+      fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.TourBasicDataController">
     <VBox prefHeight="300.0" prefWidth="500.0">
         <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
-            <Label minWidth="80.0" text="Name" />
-            <TextField fx:id="name" disable="true" prefHeight="25.0" prefWidth="548.0" text="Hallo" />
-         <padding>
-            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
-         </padding>
-        </HBox>
-        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
-            <Label minWidth="80.0" text="From" />
-            <TextField fx:id="from" disable="true" prefHeight="25.0" prefWidth="479.0" text="Test" />
-         <padding>
-            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
-         </padding>
-        </HBox>
-        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
-            <Label minWidth="80.0" text="To" />
-            <TextField fx:id="to" disable="true" prefHeight="25.0" prefWidth="451.0" />
-         <padding>
-            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
-         </padding>
-        </HBox>
-        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
-            <Label minWidth="80.0" text="Distance" />
-            <Label fx:id="distance" prefHeight="30.0" prefWidth="431.0">
-                <padding>
-                    <Insets bottom="12" />
-                </padding>
-            </Label>
-         <padding>
-            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
-         </padding>
-        </HBox>
-        <HBox prefHeight="48.0" prefWidth="500.0" spacing="16.0">
-            <Label minWidth="80.0" prefWidth="80.0" text="Estimated &#10;Time" />
-            <Label fx:id="estimatedTime" prefHeight="30.0" prefWidth="431.0">
-                <padding>
-                    <Insets bottom="12" />
-                </padding>
-            </Label>
+            <Label minWidth="80.0" text="Name"/>
+            <TextField fx:id="name" disable="true" prefHeight="25.0" prefWidth="548.0" text="Hallo"/>
             <padding>
-                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
+                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
             </padding>
         </HBox>
         <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
-            <Label minWidth="80.0" text="Transport Type" />
-            <ComboBox fx:id="transportType" />
-         <padding>
-            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
-         </padding>
+            <Label minWidth="80.0" text="From"/>
+            <TextField fx:id="from" disable="true" prefHeight="25.0" prefWidth="479.0" text="Test"/>
+            <padding>
+                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
+            </padding>
+        </HBox>
+        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+            <Label minWidth="80.0" text="To"/>
+            <TextField fx:id="to" disable="true" prefHeight="25.0" prefWidth="451.0"/>
+            <padding>
+                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
+            </padding>
+        </HBox>
+        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+            <Label minWidth="80.0" text="Distance"/>
+            <Label fx:id="distance" prefHeight="30.0" prefWidth="431.0">
+                <padding>
+                    <Insets bottom="12"/>
+                </padding>
+            </Label>
+            <padding>
+                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
+            </padding>
+        </HBox>
+        <HBox prefHeight="48.0" prefWidth="500.0" spacing="16.0">
+            <Label minWidth="80.0" prefWidth="80.0" text="Estimated &#10;Time"/>
+            <Label fx:id="estimatedTime" prefHeight="30.0" prefWidth="431.0">
+                <padding>
+                    <Insets bottom="12"/>
+                </padding>
+            </Label>
+            <padding>
+                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
+            </padding>
+        </HBox>
+        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+            <Label minWidth="80.0" text="Transport Type"/>
+            <ComboBox fx:id="transportType"/>
+            <padding>
+                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
+            </padding>
         </HBox>
         <HBox prefHeight="70.0" prefWidth="484.0" spacing="16.0">
-            <Label minWidth="80.0" text="Descripton" />
-            <TextArea fx:id="description" disable="true" prefHeight="78.0" prefWidth="372.0" />
-         <padding>
-            <Insets bottom="4.0" left="8.0" right="8.0" top="4.0" />
-         </padding>
+            <Label minWidth="80.0" text="Descripton"/>
+            <TextArea fx:id="description" disable="true" prefHeight="78.0" prefWidth="372.0"/>
+            <padding>
+                <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
+            </padding>
         </HBox>
     </VBox>
     <VBox alignment="TOP_CENTER" prefHeight="300.0" prefWidth="85.0" spacing="4.0" HBox.hgrow="ALWAYS">
         <padding>
-            <Insets bottom="8" left="8" right="8" top="8" />
+            <Insets bottom="8" left="8" right="8" top="8"/>
         </padding>
-        <Button fx:id="exportSummaryButton" minHeight="45.0" minWidth="85.0" onAction="#exportSummary" prefHeight="45.0" prefWidth="85.0" text="Export Tour &#10;Summary" textAlignment="CENTER" />
-        <Button fx:id="exportButton" minWidth="85.0" mnemonicParsing="false" onAction="#exportTour" prefWidth="85.0" text="Export Tour" textAlignment="CENTER" />
-        <Button fx:id="editSaveButton" minWidth="85.0" mnemonicParsing="false" onMouseClicked="#onEditOrSave" prefWidth="85.0" text="Edit" textAlignment="CENTER" />
+        <Button fx:id="exportSummaryButton" minHeight="45.0" minWidth="85.0" onAction="#exportSummary" prefHeight="45.0"
+                prefWidth="85.0" text="Export Tour &#10;Report" textAlignment="CENTER"/>
+        <Button fx:id="exportButton" minWidth="85.0" mnemonicParsing="false" onAction="#exportTour" prefWidth="85.0"
+                text="Export Tour" textAlignment="CENTER"/>
+        <Button fx:id="editSaveButton" minWidth="85.0" mnemonicParsing="false" onMouseClicked="#onEditOrSave"
+                prefWidth="85.0" text="Edit" textAlignment="CENTER"/>
         <CheckBox fx:id="favoriteCheckbox" disable="true" text="Favorite">
         </CheckBox>
     </VBox>
