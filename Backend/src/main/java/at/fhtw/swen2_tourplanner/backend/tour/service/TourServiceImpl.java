@@ -86,8 +86,8 @@ public class TourServiceImpl implements TourService {
         List<Tour> tours = tourRepository.findAll();
         List<TourDTO> tourDTOS = new ArrayList<>();
         tours.forEach(tour -> {
-            final boolean secondIteration = false;
-            tourDTOS.add(tourMapQuestHelper.createTDOReadImageFile(tour, secondIteration));
+            tourMapQuestHelper.setRouteImage(tour);
+            tourDTOS.add(new TourDTO(tour));
         });
         return tourDTOS;
     }
