@@ -2,29 +2,23 @@ package at.fhtw.swen2_tourplanner.backend.mapquest.service;
 
 import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapLocationResponse;
 import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapQuestResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
-
 @Service
 public class MapQuestServiceImpl implements MapQuestService {
+    private final String ROUTE_URL;
+    private final String IMAGE_URL;
+    private final String LOCATION_URL;
 
-    @Value("${mapquest.url}")
-    private String BASE_URL;
-    @Value("${mapquest.key}")
-    private String KEYL;
-    @Value("${mapquest.route}")
-    private String ROUTE_URL;
-    @Value("${mapquest.image}")
-    private String IMAGE_URL;
-    @Value("${mapquest.location}")
-    private String LOCATION_URL;
-
-    private final Logger logger = LoggerFactory.getLogger(MapQuestServiceImpl.class);
+    public MapQuestServiceImpl(@Value("${mapquest.route}") final String routeUrl,
+                               @Value("${mapquest.image}") final String imageUrl,
+                               @Value("${mapquest.location}") final String locationUrl) {
+        ROUTE_URL = routeUrl;
+        IMAGE_URL = imageUrl;
+        LOCATION_URL = locationUrl;
+    }
 
 
     @Override
@@ -42,12 +36,10 @@ public class MapQuestServiceImpl implements MapQuestService {
     }
 
     @Override
-    public Optional<String> validateLocation(String address) {
+    public MapLocationResponse validateLocation(String address) {
         final String url = LOCATION_URL + "&location=" + address;
         final RestTemplate restTemplate = new RestTemplate();
-
-        MapLocationResponse mapLocationResponse = restTemplate.getForObject(url, MapLocationResponse.class);
-        return Optional.empty();
+        return restTemplate.getForObject(url, MapLocationResponse.class);
     }
 
 

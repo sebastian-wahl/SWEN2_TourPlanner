@@ -2,14 +2,20 @@ package at.fhtw.swen2_tourplanner.backend.tour.util;
 
 import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapQuestResponse;
 import at.fhtw.swen2_tourplanner.backend.mapquest.service.MapQuestService;
+import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
+import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalTime;
@@ -17,7 +23,7 @@ import java.util.UUID;
 
 @Component
 public class TourMapQuestHelper {
-    public final String IMAGE_SUFFIX = "_image.jpg";
+    public static final String IMAGE_SUFFIX = "_image.jpg";
     private final Logger logger = LoggerFactory.getLogger(TourMapQuestHelper.class);
     private final MapQuestService mapQuestService;
     public final String ABSOLUTE_IMAGE_PATH;
@@ -28,12 +34,12 @@ public class TourMapQuestHelper {
         ABSOLUTE_IMAGE_PATH = Paths.get(pathValues[0], pathValues[1], pathValues[2], pathValues[3], pathValues[4]).toFile().getAbsolutePath();
     }
 
-    public String saveRouteImage(UUID tourId, byte[] route) {
+    private String saveRouteImage(UUID tourId, byte[] route) {
         File newFile = getImageFile(tourId);
         logger.info("Saving route image to resources");
         try {
             if (!newFile.exists()) {
-                logger.info("File does not exists, create a new one");
+                logger.info("File does not exist, creating a new one");
                 new File(ABSOLUTE_IMAGE_PATH).mkdirs();
                 newFile.createNewFile();
             }
@@ -47,14 +53,29 @@ public class TourMapQuestHelper {
         return newFile.getName();
     }
 
-    public byte[] getImageFromFile(String path) throws FileNotFoundException {
-        if (path != null) {
+    public TourDTO createTDOReadImageFile(Tour tour, final boolean secondIteration) {
+        try {
+            if (tour.getStart() != null && tour.getGoal() != null) {
+                return new TourDTO(tour, getImage(tour.getId().toString()));
+            }
+            return new TourDTO(tour);
+        } catch (IOException ex) {
+            if (secondIteration) {
+                throw new BusinessException("Could not find Image");
+            }
+            setMapQuestData(tour);
+            return this.createTDOReadImageFile(tour, true);
+        }
+    }
+
+    public byte[] getImage(String tourId) throws FileNotFoundException {
+        if (tourId != null) {
             try {
-                File file = new File(ABSOLUTE_IMAGE_PATH + '\\' + path);
+                File file = new File(ABSOLUTE_IMAGE_PATH + '\\' + tourId);
                 return Files.readAllBytes(file.toPath());
             } catch (IOException e) {
-                logger.error("Error while loading the image from path '{}'", ABSOLUTE_IMAGE_PATH + "\\" + path);
-                throw new FileNotFoundException("Image File not found under path: " + ABSOLUTE_IMAGE_PATH + "\\" + path);
+                logger.error("Error while loading the image from tourId '{}'", ABSOLUTE_IMAGE_PATH + "\\" + tourId);
+                throw new FileNotFoundException("Image File not found under tourId: " + ABSOLUTE_IMAGE_PATH + "\\" + tourId);
             }
         }
         return new byte[0];
@@ -62,7 +83,7 @@ public class TourMapQuestHelper {
 
     public void setRouteImage(Tour tour) {
         try {
-            tour.setImage(this.getImageFromFile(tour.getRouteImageName()));
+            tour.setImage(this.getImage(tour.getRouteImageName()));
         } catch (FileNotFoundException e) {
             this.setTourMapImage(tour);
         }

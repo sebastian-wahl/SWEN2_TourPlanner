@@ -65,18 +65,3 @@ public class Tour {
         this.routeImageName = tourDTO.getRouteImageName();
     }
 }
-
-/*
-EXAMPLE JSON FOR POST REQUEST
-{
-    OPTIONAL (ONLY IN CASE OF UPDATE) "id": "95be5aec-b7ec-4c1e-b04f-5d8d4159c192",
-    "name": "Tour1",
-    "tourDescription": "this is the description",
-    "start": "Spain",
-    "goal": "France",
-    "transportType": "1",
-    "tourDistance": "1",
-    "estimatedTime": "06:00:00",
-    "routeInformation": "this is the information"
-}
-*/

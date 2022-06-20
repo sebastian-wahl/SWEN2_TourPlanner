@@ -2,6 +2,7 @@ package at.fhtw.swen2_tourplanner.backend.tourlog.util;
 
 import at.fhtw.swen2_tourplanner.backend.tour.dto.TourDTO;
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
+import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,27 +29,27 @@ public class TourLogPdfHelper {
     private final String ABSOLUTE_PDF_PATH;
 
     public final String ABSOLUTE_IMAGE_PATH;
-    private final String PDF_SUFFIX = ".pdf";
-    private final String SUMMARY_REPORT_NAME = "summary_report";
+    private static final String PDF_SUFFIX = ".pdf";
+    private static final String SUMMARY_REPORT_NAME = "summary_report";
 
     public TourLogPdfHelper(@Value("${pdf.path.prefix}") String[] pathValues, @Value("${image.path.prefix}") String[] imagePathValues) {
-        ABSOLUTE_PDF_PATH = Paths.get(pathValues[0], pathValues[1], pathValues[2], pathValues[3], pathValues[4]).toFile().getAbsolutePath() + "\\";
-        ABSOLUTE_IMAGE_PATH = Paths.get(imagePathValues[0], imagePathValues[1], imagePathValues[2], imagePathValues[3], imagePathValues[4]).toFile().getAbsolutePath() + "\\";
+        ABSOLUTE_PDF_PATH = Paths.get(pathValues[0], pathValues[1], pathValues[2], pathValues[3], pathValues[4]).toFile().getAbsolutePath() + '\\';
+        ABSOLUTE_IMAGE_PATH = Paths.get(imagePathValues[0], imagePathValues[1], imagePathValues[2], imagePathValues[3], imagePathValues[4]).toFile().getAbsolutePath() + '\\';
     }
 
-    public void createTourReport(TourDTO tour, List<TourLogDTO> tourLogs) throws FileNotFoundException {
-        PdfWriter writer = new PdfWriter(ABSOLUTE_PDF_PATH + tour.getId() + PDF_SUFFIX);
-        PdfDocument pdf = new PdfDocument(writer);
-        Document document = new Document(pdf);
-        try {
+    public void createTourReport(TourDTO tour, List<TourLogDTO> tourLogs) throws FileNotFoundException, MalformedURLException {
+        if (tourHasRequiredValues(tour)) {
+            PdfWriter writer = new PdfWriter(ABSOLUTE_PDF_PATH + tour.getId() + PDF_SUFFIX);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
             generateTourReport(tour, tourLogs, document);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            document.close();
+        } else {
+            throw new BusinessException("Document could not be created. Tour is incomplete");
         }
-        document.close();
     }
 
-    public void createSummaryReport(HashMap<TourDTO, List<TourLogDTO>> allToursAndLogs) throws IOException {
+    public void createSummaryReport(Map<TourDTO, List<TourLogDTO>> allToursAndLogs) throws IOException {
         PdfWriter writer = new PdfWriter(ABSOLUTE_PDF_PATH + SUMMARY_REPORT_NAME + PDF_SUFFIX);
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
@@ -58,7 +58,9 @@ public class TourLogPdfHelper {
             TourDTO tour = set.getKey();
             List<TourLogDTO> tourLogs = set.getValue();
 
-            generateTourReport(tour, tourLogs, document);
+            if (tourHasRequiredValues(tour)) {
+                generateTourReport(tour, tourLogs, document);
+            }
         }
 
         document.close();
@@ -70,10 +72,10 @@ public class TourLogPdfHelper {
                 File file = new File(ABSOLUTE_PDF_PATH + '\\' + filename + PDF_SUFFIX);
                 return Files.readAllBytes(file.toPath());
             } catch (IOException e) {
-                throw new FileNotFoundException("PDF File not found under path: " + ABSOLUTE_IMAGE_PATH + "\\" + filename + PDF_SUFFIX);
+                throw new FileNotFoundException("PDF File not found");
             }
         }
-        return new byte[0];
+        throw new BusinessException("No filename supplied");
     }
 
     private void generateTourReport(TourDTO tour, List<TourLogDTO> tourLogs, Document document) throws MalformedURLException {
@@ -102,18 +104,16 @@ public class TourLogPdfHelper {
         doc.add(image);
     }
 
+    private boolean tourHasRequiredValues(TourDTO tour) {
+        return tour.getName() != null && tour.getStart() != null && tour.getGoal() != null;
+    }
+
     private String getTransportType(int type) {
-        switch (type) {
-            case 0 -> {
-                return "Foot";
-            }
-            case 1 -> {
-                return "Car";
-            }
-            case 2 -> {
-                return "Skateboard";
-            }
+        return switch (type) {
+            case 0 -> "Foot";
+            case 1 -> "Car";
+            case 2 -> "Skateboard";
             default -> throw new IllegalStateException("Unexpected value: " + type);
-        }
+        };
     }
 }
