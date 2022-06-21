@@ -284,10 +284,10 @@ public class TourLogData implements ViewModel, StringObserver {
 
     private void setTourLogValuesIntoLabels() {
         dateLabelProperty.setValue(selectedTourLog.getDateTime() != null ?
-                selectedTourLog.getDateTime().format(DateTimeFormatter.ofPattern(CustomLocalDateTimeStringConverter.DATE_TIME_FORMAT)) : "00.00.0000 00:00");
+                selectedTourLog.getDateTime().format(DateTimeFormatter.ofPattern(CustomLocalDateTimeStringConverter.DATE_TIME_FORMAT)) + " (DD.MM.YYY HH:MM)" : "00.00.0000 00:00 (DD.MM.YYY HH:MM)");
         timeLabelProperty.setValue(selectedTourLog.getTotalTime() != null ?
-                selectedTourLog.getTotalTime().format(DateTimeFormatter.ofPattern(CustomLocalTimeStringConverter.TIME_FORMAT)) : "00:00:00");
-        distanceLabelProperty.setValue("" + selectedTourLog.getDistance());
+                selectedTourLog.getTotalTime().format(DateTimeFormatter.ofPattern(CustomLocalTimeStringConverter.TIME_FORMAT)) + " (HH:MM:SS)" : "00:00:00 (HH:MM:SS)");
+        distanceLabelProperty.setValue(selectedTourLog.getDistance() + " km");
         difficultyLabelProperty.setValue(selectedTourLog.getDifficulty() + "/3");
         ratingLabelProperty.setValue(selectedTourLog.getRating() + "/10.0");
         commentTextProperty.setValue(Objects.requireNonNullElse(selectedTourLog.getComment(), ""));

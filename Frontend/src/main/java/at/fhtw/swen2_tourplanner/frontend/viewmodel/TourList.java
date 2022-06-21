@@ -6,7 +6,6 @@ import at.fhtw.swen2_tourplanner.frontend.listener.TourGetListener;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourObservable;
-import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -32,19 +31,9 @@ import java.util.function.Predicate;
 public class TourList implements ViewModel, StringObserver, UpdateTourObservable, ChangeListener<Tour> {
     // logger
     private final Logger logger = LogManager.getLogger(TourList.class);
-
-    // single Listeners
-    @Setter
-    private DeleteListener<Tour> tourDeleteListener;
-    @Setter
-    private AddListener<Tour> tourAddListener;
-
-    private TourGetListener tourGetListener;
-
     // View Properties
     @Getter
     private final StringProperty newTourName;
-
     @Getter
     private final BooleanProperty onlyFavoriteTour;
     private final ObservableList<Tour> baseTourList;
@@ -52,15 +41,16 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     private final FilteredList<Tour> tourList;
     // list click observer list
     private final List<BaseObserver<Tour>> listviewBaseObserver;
+    // single Listeners
+    @Setter
+    private DeleteListener<Tour> tourDeleteListener;
+    @Setter
+    private AddListener<Tour> tourAddListener;
+    private TourGetListener tourGetListener;
     private MultipleSelectionModel<Tour> listViewSelectionModel;
     // for filtering
     private String searchText = "";
     private Tour selectedTour;
-
-    public void setTourGetListener(TourGetListener tourGetListener) {
-        this.tourGetListener = tourGetListener;
-        this.getTours();
-    }
 
     public TourList() {
         newTourName = new SimpleStringProperty();
@@ -74,6 +64,11 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
         tourList = new FilteredList<>(baseTourList);
         // default filtering -> no filters set
         tourList.setPredicate(null);
+    }
+
+    public void setTourGetListener(TourGetListener tourGetListener) {
+        this.tourGetListener = tourGetListener;
+        this.getTours();
     }
 
     private void getTours() {
@@ -104,6 +99,10 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     public void addTourSuccessful(Tour addedTour) {
         this.baseTourList.add(addedTour);
         this.listViewSelectionModel.select(addedTour);
+    }
+
+    public void importToursSuccessful(List<Tour> importedTours) {
+        this.baseTourList.addAll(importedTours);
     }
 
     public void updateTourSuccessful(Tour updatedTour) {

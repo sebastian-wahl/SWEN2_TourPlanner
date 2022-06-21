@@ -6,14 +6,7 @@ import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +28,16 @@ public class TourController {
         try {
             TourDTO addedTour = tourService.createTour(tour);
             return new ResponseEntity<>(addedTour, HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @PostMapping(value = "/import-tours")
+    public ResponseEntity<Object> importTours(@RequestBody List<TourDTO> tourList) {
+        try {
+            List<TourDTO> addedTours = tourService.createTours(tourList);
+            return new ResponseEntity<>(addedTours, HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }

@@ -3,6 +3,7 @@ package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.ApiCallTimoutException;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.BackendConnectionException;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
+import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddMultipleTourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddUpdateSingleTourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.DeleteSingleTourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.GetMultipleTourService;
@@ -82,18 +83,36 @@ public class Dashboard implements ViewModel {
     /* --------------------- Tour export/import API calls --------------------- */
 
     private void importTour(List<File> files) {
-        this.infoLine.startLoading();
         try {
-            List<Tour> toAdd = FileConverter.convertFileToTour(files);
-            for (Tour tour : toAdd) {
-                this.createTour(tour, false);
-            }
-            this.infoLine.setInfoText("Tour(s) added successfully.");
+            this.infoLine.startLoading();
+            List<Tour> toAddWithId = FileConverter.convertFileToTour(files);
+            Service<List<Tour>> addMultipleTourService = new AddMultipleTourService(this::importToursCatchException, toAddWithId);
+            addMultipleTourService.valueProperty().addListener((ObservableValue<? extends List<Tour>> observableValue, List<Tour> tourList, List<Tour> t1) -> {
+                if (!t1.isEmpty()) {
+                    this.infoLine.setInfoText("Tour(s) imported successfully.");
+                    this.tourList.importToursSuccessful(t1);
+                } else {
+                    this.infoLine.setErrorText("An error occurred while importing the Tour(s).");
+                    this.logger.error("Error while importing tours.");
+                }
+                this.infoLine.stopLoading();
+            });
+            addMultipleTourService.start();
         } catch (FileConvertException e) {
             this.logger.error(e);
             this.infoLine.setErrorText(e.getMessage());
+            this.infoLine.stopLoading();
         }
-        this.infoLine.stopLoading();
+    }
+
+    private List<Tour> importToursCatchException(List<Tour> tourList) {
+        try {
+            return this.tourService.importTours(tourList);
+        } catch (BackendConnectionException | ApiCallTimoutException e) {
+            this.logger.error(e);
+            this.infoLine.setErrorText(e.getMessage());
+        }
+        return Collections.emptyList();
     }
 
     private void exportTourSummary(File file) {
@@ -236,10 +255,6 @@ public class Dashboard implements ViewModel {
      * @param toCreate
      */
     private void createTour(Tour toCreate) {
-        this.createTour(toCreate, true);
-    }
-
-    private void createTour(Tour toCreate, boolean withLoading) {
         Service<Optional<Tour>> addUpdateSingleTourService = new AddUpdateSingleTourService(this::createTourCatchException, toCreate);
         addUpdateSingleTourService.valueProperty().addListener((observableValue, tourDTO, newValue) -> {
             if (newValue.isPresent()) {
@@ -247,10 +262,10 @@ public class Dashboard implements ViewModel {
             } else {
                 this.logger.warn("Tour \"{}\" not created successfully.", toCreate.getName());
             }
-            if (withLoading) this.infoLine.stopLoading();
+            this.infoLine.stopLoading();
         });
         addUpdateSingleTourService.start();
-        if (withLoading) this.infoLine.startLoading();
+        this.infoLine.startLoading();
     }
 
     private Optional<Tour> createTourCatchException(Tour tour) {
@@ -333,11 +348,10 @@ public class Dashboard implements ViewModel {
     private void getAllTourLogs(UUID currentTourId) {
         Service<List<TourLog>> getMultipleLogService = new GetMultipleLogService(this::getAllTourLogsCatchException, currentTourId);
         getMultipleLogService.valueProperty().addListener((ObservableValue<? extends List<TourLog>> observableValue, List<TourLog> tourDTOS, List<TourLog> newValues) -> {
-            if (!newValues.isEmpty()) {
-                this.tourLogData.getAllLogsSuccessful(newValues);
-            } else {
+            if (newValues.isEmpty()) {
                 this.logger.warn("No tour logs fetched. Maybe something went wrong.");
             }
+            this.tourLogData.getAllLogsSuccessful(newValues);
             this.infoLine.stopLoading();
         });
         getMultipleLogService.start();

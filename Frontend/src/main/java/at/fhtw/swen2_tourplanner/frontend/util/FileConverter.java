@@ -22,12 +22,7 @@ public class FileConverter {
         List<Tour> out = new ArrayList<>();
         for (File file : files) {
             try {
-                Tour tourWithId = o.readValue(file, Tour.class);
-                tourWithId.setId(null);
-                tourWithId.setRouteImage(null);
-                tourWithId.setRouteImageName(null);
-
-                out.add(tourWithId);
+                out.add(o.readValue(file, Tour.class));
             } catch (IOException e) {
                 logger.warn("Exception while converting file \"{}\"", file.getName(), e);
                 throw new FileConvertException("Exception while converting file " + file.getName() + "\n" + e.getMessage());
