@@ -10,6 +10,8 @@ import java.util.UUID;
 public interface TourService {
     TourDTO createTour(TourDTO tour) throws BusinessException;
 
+    List<TourDTO> createTours(List<TourDTO> tourList) throws BusinessException;
+
     TourDTO updateTour(TourDTO tour) throws BusinessException;
 
     //Service Method declarations

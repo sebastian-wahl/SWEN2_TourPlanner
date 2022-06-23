@@ -18,5 +18,9 @@ public interface TourService extends Service {
 
     Optional<Tour> addTour(Tour tour) throws BackendConnectionException, ApiCallTimoutException;
 
+    List<Tour> importTours(List<Tour> tourList) throws BackendConnectionException, ApiCallTimoutException;
+
     Optional<Tour> updateTour(Tour tour) throws BackendConnectionException, ApiCallTimoutException;
+
+
 }

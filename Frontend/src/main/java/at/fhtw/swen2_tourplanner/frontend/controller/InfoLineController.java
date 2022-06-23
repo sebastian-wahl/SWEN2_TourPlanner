@@ -20,6 +20,7 @@ public class InfoLineController extends BaseController<InfoLine> {
     @FXML
     public void initialize() {
         this.progressBar.visibleProperty().bind(getViewModel().getLoadingProperty());
-        this.infoLabel.textProperty().bindBidirectional(getViewModel().getInfoTextProperty());
+        this.infoLabel.textProperty().bind(getViewModel().getInfoTextProperty());
+        this.infoLabel.styleProperty().bindBidirectional(getViewModel().getInfoTextStyleProperty());
     }
 }

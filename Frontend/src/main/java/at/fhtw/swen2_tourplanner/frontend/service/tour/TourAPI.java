@@ -21,6 +21,9 @@ public interface TourAPI {
     @POST("tour/create")
     Call<Optional<Tour>> addTour(@Body Tour tour);
 
+    @POST("tour/import-tours")
+    Call<List<Tour>> importTours(@Body List<Tour> tourList);
+
     @PUT("tour/update")
     Call<Optional<Tour>> updateTour(@Body Tour tour);
 }

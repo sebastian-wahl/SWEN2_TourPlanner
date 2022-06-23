@@ -5,7 +5,7 @@
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<GridPane prefWidth="421.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+<GridPane xmlns:fx="http://javafx.com/fxml/1" prefWidth="421.0" xmlns="http://javafx.com/javafx/16"
           fx:controller="at.fhtw.swen2_tourplanner.frontend.controller.InfoLineController">
     <columnConstraints>
         <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="70.0" prefWidth="100.0"/>
@@ -14,7 +14,7 @@
     <rowConstraints>
         <RowConstraints maxHeight="20" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES"/>
     </rowConstraints>
-    <Label fx:id="infoLabel" textFill="#cb0000" GridPane.columnIndex="0">
+    <Label fx:id="infoLabel" textFill="#008a00" GridPane.columnIndex="0">
         <padding>
             <Insets left="8.0" right="8.0"/>
         </padding>

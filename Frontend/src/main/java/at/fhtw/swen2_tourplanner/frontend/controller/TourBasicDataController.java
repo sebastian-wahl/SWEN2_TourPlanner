@@ -3,6 +3,9 @@ package at.fhtw.swen2_tourplanner.frontend.controller;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourBasicData;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+
+import java.io.File;
 
 public class TourBasicDataController extends BaseController<TourBasicData> {
 
@@ -39,6 +42,8 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
     @FXML
     private ComboBox<String> transportType;
 
+    private FileChooser fileChooser;
+
 
     public TourBasicDataController(TourBasicData viewModel) {
         super(viewModel);
@@ -73,6 +78,8 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
         this.transportType.valueProperty().bindBidirectional(getViewModel().getTransportTypeSelectedItemProperty());
         this.exportButton.disableProperty().bind(getViewModel().getExportButtonDisableProperty());
         this.exportSummaryButton.disableProperty().bind(getViewModel().getExportSummaryButtonDisableProperty());
+
+        fileChooser = new FileChooser();
     }
 
     public void onEditOrSave() {
@@ -80,10 +87,22 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
     }
 
     public void exportSummary() {
-        // ToDo Context menu (filesystem) and save as pdf
+        fileChooser.getExtensionFilters().clear();
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.PDF", "*.pdf"));
+        fileChooser.setTitle("Save Tour Report");
+        File saveToFile = fileChooser.showSaveDialog(exportButton.getScene().getWindow());
+        if (saveToFile != null) {
+            this.getViewModel().exportTourReport(saveToFile);
+        }
     }
 
     public void exportTour() {
-        // ToDo Context menu (filesystem) and save as pdf
+        fileChooser.getExtensionFilters().clear();
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON Files (*.json)", "*.json", "*.JSON"));
+        fileChooser.setTitle("Save Tour Export");
+        File saveToFile = fileChooser.showSaveDialog(exportButton.getScene().getWindow());
+        if (saveToFile != null) {
+            this.getViewModel().exportTour(saveToFile);
+        }
     }
 }

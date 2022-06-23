@@ -20,4 +20,10 @@ public interface TourLogAPI {
 
     @PUT("tour-log/update")
     Call<Optional<TourLog>> updateTourLog(@Body TourLog tourLog);
+
+    @GET("tour-log/get-tour-report/{tourId}")
+    Call<byte[]> getTourReport(@Path("tourId") UUID tourId);
+
+    @GET("tour-log/get-summary-report")
+    Call<byte[]> getTourSummary();
 }

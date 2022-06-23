@@ -107,6 +107,26 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
+    public List<Tour> importTours(List<Tour> tourList) throws BackendConnectionException, ApiCallTimoutException {
+        try {
+            logger.info("Add tour");
+            List<Tour> out = tourAPI.importTours(tourList).execute().body();
+            if (out == null) {
+                return Collections.emptyList();
+            }
+            return out;
+        } catch (ConnectException e) {
+            logger.error("Failed to connect to BE!");
+            throw new BackendConnectionException();
+        } catch (SocketTimeoutException ex) {
+            throw new ApiCallTimoutException("addTour");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
     public Optional<Tour> updateTour(Tour tour) throws BackendConnectionException, ApiCallTimoutException {
         try {
             logger.info("Update tour request sent. Updating tour with id {}", tour);

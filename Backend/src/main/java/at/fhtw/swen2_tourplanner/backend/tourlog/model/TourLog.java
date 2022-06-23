@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -43,6 +45,7 @@ public class TourLog {
     private double rating;
     @ManyToOne
     @JoinColumn(name = "tour_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Tour tour;
 
     public TourLog(TourLogDTO tourLogDto, TourDTO tourDTO) {

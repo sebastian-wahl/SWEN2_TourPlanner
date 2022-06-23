@@ -5,7 +5,10 @@ import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomDoubleStri
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomIntegerStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalDateTimeStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
-import at.fhtw.swen2_tourplanner.frontend.listener.*;
+import at.fhtw.swen2_tourplanner.frontend.listener.AddListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.DeleteListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.TourLogGetListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.UpdateListener;
 import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
@@ -84,8 +87,6 @@ public class TourLogData implements ViewModel, StringObserver {
     private UpdateListener<TourLog> updateTourLogListener;
     @Setter
     private DeleteListener<TourLog> deleteTourLogListener;
-    @Setter
-    private UpdateInfoTextListener updateInfoTextListener;
 
     private Tour currentTour;
     private TourLog selectedTourLog;
@@ -141,7 +142,7 @@ public class TourLogData implements ViewModel, StringObserver {
     }
 
     private void updateInfoLine(String text) {
-        this.infoLine.setInfoText(text);
+        this.infoLine.setErrorText(text);
     }
 
     private SortedList<TourLog> setUpSortedList() {
@@ -283,10 +284,10 @@ public class TourLogData implements ViewModel, StringObserver {
 
     private void setTourLogValuesIntoLabels() {
         dateLabelProperty.setValue(selectedTourLog.getDateTime() != null ?
-                selectedTourLog.getDateTime().format(DateTimeFormatter.ofPattern(CustomLocalDateTimeStringConverter.DATE_TIME_FORMAT)) : "00.00.0000 00:00");
+                selectedTourLog.getDateTime().format(DateTimeFormatter.ofPattern(CustomLocalDateTimeStringConverter.DATE_TIME_FORMAT)) + " (DD.MM.YYY HH:MM)" : "00.00.0000 00:00 (DD.MM.YYY HH:MM)");
         timeLabelProperty.setValue(selectedTourLog.getTotalTime() != null ?
-                selectedTourLog.getTotalTime().format(DateTimeFormatter.ofPattern(CustomLocalTimeStringConverter.TIME_FORMAT)) : "00:00:00");
-        distanceLabelProperty.setValue("" + selectedTourLog.getDistance());
+                selectedTourLog.getTotalTime().format(DateTimeFormatter.ofPattern(CustomLocalTimeStringConverter.TIME_FORMAT)) + " (HH:MM:SS)" : "00:00:00 (HH:MM:SS)");
+        distanceLabelProperty.setValue(selectedTourLog.getDistance() + " km");
         difficultyLabelProperty.setValue(selectedTourLog.getDifficulty() + "/3");
         ratingLabelProperty.setValue(selectedTourLog.getRating() + "/10.0");
         commentTextProperty.setValue(Objects.requireNonNullElse(selectedTourLog.getComment(), ""));

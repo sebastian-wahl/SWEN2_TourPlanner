@@ -17,10 +17,14 @@ public class InfoLine implements ViewModel {
     @Getter
     private final StringProperty infoTextProperty;
 
+    @Getter
+    private final StringProperty infoTextStyleProperty;
+
 
     public InfoLine() {
         this.loadingProperty = new SimpleBooleanProperty(false);
         this.infoTextProperty = new SimpleStringProperty();
+        infoTextStyleProperty = new SimpleStringProperty();
     }
 
     public void startLoading() {
@@ -32,6 +36,16 @@ public class InfoLine implements ViewModel {
     }
 
     public void setInfoText(String text) {
+        this.infoTextStyleProperty.setValue("-fx-text-fill: #008a00");
+        setText(text);
+    }
+
+    public void setErrorText(String text) {
+        this.infoTextStyleProperty.setValue("-fx-text-fill: #cb0000");
+        setText(text);
+    }
+
+    private void setText(String text) {
         Service<Void> setTextService = new Service<Void>() {
             @Override
             protected Task<Void> createTask() {

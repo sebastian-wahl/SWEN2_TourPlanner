@@ -5,6 +5,8 @@ import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
 import at.fhtw.swen2_tourplanner.backend.tour.repo.TourRepository;
 import at.fhtw.swen2_tourplanner.backend.tour.util.TourMapQuestHelper;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import java.util.UUID;
 //Business Logic Executor
 @Service
 public class TourServiceImpl implements TourService {
+    private final Logger logger = LoggerFactory.getLogger(TourMapQuestHelper.class);
+
     private final TourRepository tourRepository;
     private final TourMapQuestHelper tourMapQuestHelper;
 
@@ -40,6 +44,15 @@ public class TourServiceImpl implements TourService {
         } else {
             throw new BusinessException("Tour already exists");
         }
+    }
+
+    @Override
+    public List<TourDTO> createTours(List<TourDTO> tourList) throws BusinessException {
+        List<TourDTO> out = new ArrayList<>();
+        for (TourDTO tour : tourList) {
+            out.add(this.createTour(tour));
+        }
+        return out;
     }
 
     @Override
@@ -97,7 +110,7 @@ public class TourServiceImpl implements TourService {
     }
 
     private boolean tourHasStartAndGoal(TourDTO tour) {
-        return tour.getStart() != null && tour.getGoal() != null;
+        return tour.getStart() != null && !tour.getStart().isEmpty() && tour.getGoal() != null && !tour.getGoal().isEmpty();
     }
 
 }
