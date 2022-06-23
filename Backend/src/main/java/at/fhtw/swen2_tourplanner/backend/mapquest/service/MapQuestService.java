@@ -1,6 +1,5 @@
 package at.fhtw.swen2_tourplanner.backend.mapquest.service;
 
-import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapLocationResponse;
 import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapQuestResponse;
 
 public interface MapQuestService {
@@ -9,5 +8,5 @@ public interface MapQuestService {
 
     byte[] getImage(String start, String end);
 
-    MapLocationResponse validateLocation(String address);
+    boolean validateLocation(String address);
 }

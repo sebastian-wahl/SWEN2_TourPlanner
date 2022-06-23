@@ -2,6 +2,7 @@ package at.fhtw.swen2_tourplanner.backend.mapquest.service;
 
 import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapLocationResponse;
 import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapQuestResponse;
+import at.fhtw.swen2_tourplanner.backend.mapquest.util.Location;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -36,10 +37,23 @@ public class MapQuestServiceImpl implements MapQuestService {
     }
 
     @Override
-    public MapLocationResponse validateLocation(String address) {
+    public boolean validateLocation(String address) {
         final String url = LOCATION_URL + "&location=" + address;
         final RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.getForObject(url, MapLocationResponse.class);
+        final MapLocationResponse response = restTemplate.getForObject(url, MapLocationResponse.class);
+        if (checkFields(response)){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkFields(MapLocationResponse response) {
+        final Location location = response.getResults()[0].getLocations()[0];
+        final boolean country = !location.getCountry().isEmpty();
+        final boolean street = !location.getStreet().isEmpty();
+        final boolean state = !location.getState().isEmpty();
+        final boolean postalCode = !location.getPostalCode().isEmpty();
+        return country && street && state && postalCode;
     }
 
 

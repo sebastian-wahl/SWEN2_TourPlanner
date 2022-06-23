@@ -9,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalTime;
@@ -26,25 +30,6 @@ public class TourMapQuestHelper {
     public TourMapQuestHelper(MapQuestService mapQuestService, @Value("${image.path.prefix}") String[] pathValues) {
         this.mapQuestService = mapQuestService;
         ABSOLUTE_IMAGE_PATH = Paths.get(pathValues[0], pathValues[1], pathValues[2], pathValues[3], pathValues[4]).toFile().getAbsolutePath();
-    }
-
-    private String saveRouteImage(UUID tourId, byte[] route) {
-        File newFile = getImageFile(tourId);
-        logger.info("Saving route image to resources");
-        try {
-            if (!newFile.exists()) {
-                logger.info("File does not exist, creating a new one");
-                new File(ABSOLUTE_IMAGE_PATH).mkdirs();
-                newFile.createNewFile();
-            }
-            try (OutputStream outputStream = new FileOutputStream(newFile)) {
-                outputStream.write(route);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return newFile.getName();
     }
 
     public byte[] getImage(String tourId) throws FileNotFoundException {
@@ -77,6 +62,25 @@ public class TourMapQuestHelper {
         setTourMapImage(tour);
         setTourDistanceAndTime(tour);
     }
+
+    private String saveRouteImage(UUID tourId, byte[] route) {
+        File newFile = getImageFile(tourId);
+        logger.info("Saving route image to resources");
+        try {
+            if (!newFile.exists()) {
+                logger.info("File does not exist, creating a new one");
+                new File(ABSOLUTE_IMAGE_PATH).mkdirs();
+                newFile.createNewFile();
+            }
+            try (OutputStream outputStream = new FileOutputStream(newFile)) {
+                outputStream.write(route);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return newFile.getName();
+    }
+
 
     private void setTourMapImage(Tour tour) {
         byte[] image = this.mapQuestService.getImage(tour.getStart(), tour.getGoal());
