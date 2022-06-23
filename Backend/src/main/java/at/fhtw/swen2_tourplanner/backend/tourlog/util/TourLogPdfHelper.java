@@ -27,7 +27,6 @@ import java.util.Map;
 public class TourLogPdfHelper {
 
     private final String ABSOLUTE_PDF_PATH;
-
     public final String ABSOLUTE_IMAGE_PATH;
     private static final String PDF_SUFFIX = ".pdf";
     private static final String SUMMARY_REPORT_NAME = "summary_report";
@@ -105,7 +104,7 @@ public class TourLogPdfHelper {
     }
 
     private boolean tourHasRequiredValues(TourDTO tour) {
-        return tour.getName() != null && tour.getStart() != null && tour.getGoal() != null;
+        return !tour.getName().isEmpty() && !tour.getStart().isEmpty() && !tour.getGoal().isEmpty();
     }
 
     private String getTransportType(int type) {

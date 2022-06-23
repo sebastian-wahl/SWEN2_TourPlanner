@@ -22,8 +22,6 @@ import java.util.UUID;
 //Business Logic Executor
 @Service
 public class TourServiceImpl implements TourService {
-    private final Logger logger = LoggerFactory.getLogger(TourMapQuestHelper.class);
-
     private final TourRepository tourRepository;
     private final TourMapQuestHelper tourMapQuestHelper;
 
@@ -48,11 +46,7 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public List<TourDTO> createTours(List<TourDTO> tourList) throws BusinessException {
-        List<TourDTO> out = new ArrayList<>();
-        for (TourDTO tour : tourList) {
-            out.add(this.createTour(tour));
-        }
-        return out;
+        return tourList.stream().map(this::createTour).toList();
     }
 
     @Override
@@ -110,7 +104,7 @@ public class TourServiceImpl implements TourService {
     }
 
     private boolean tourHasStartAndGoal(TourDTO tour) {
-        return tour.getStart() != null && !tour.getStart().isEmpty() && tour.getGoal() != null && !tour.getGoal().isEmpty();
+        return !tour.getStart().isEmpty() && !tour.getGoal().isEmpty();
     }
 
 }

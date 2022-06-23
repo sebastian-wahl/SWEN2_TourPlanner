@@ -95,10 +95,10 @@ public class TourLogServiceImpl implements TourLogService {
         try {
             List<TourDTO> tours = tourService.getAllTours();
             HashMap<TourDTO, List<TourLogDTO>> allToursAndLogs = new HashMap<>();
-            for (TourDTO tour : tours) {
+            tours.forEach(tour -> {
                 List<TourLogDTO> tourLogs = tourLogRepository.findByTourId(tour.getId()).stream().map(TourLogDTO::new).toList();
                 allToursAndLogs.put(tour, tourLogs);
-            }
+            });
             tourLogPdfHelper.createSummaryReport(allToursAndLogs);
             return tourLogPdfHelper.getPdfFile(SUMMARY_REPORT_NAME);
         } catch (BusinessException businessException) {

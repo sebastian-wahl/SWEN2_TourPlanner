@@ -49,11 +49,11 @@ public class MapQuestServiceImpl implements MapQuestService {
 
     private boolean checkFields(MapLocationResponse response) {
         final Location location = response.getResults()[0].getLocations()[0];
-        final boolean country = !location.getCountry().isEmpty();
-        final boolean street = !location.getStreet().isEmpty();
-        final boolean state = !location.getState().isEmpty();
-        final boolean postalCode = !location.getPostalCode().isEmpty();
-        return country && street && state && postalCode;
+        final boolean countryIsPresent = !location.getCountry().isEmpty();
+        final boolean streetIsPresent = !location.getStreet().isEmpty();
+        final boolean stateIsPresent = !location.getState().isEmpty();
+        final boolean postalCodeIsPresent = !location.getPostalCode().isEmpty();
+        return countryIsPresent && streetIsPresent && stateIsPresent && postalCodeIsPresent;
     }
 
 
