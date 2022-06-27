@@ -12,9 +12,9 @@ module at.fhtw.swen2_tourplanner.frontend {
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
     requires org.apache.logging.log4j.slf4j;
-    requires io.reactivex.rxjava3;
     requires retrofit2;
     requires retrofit2.converter.jackson;
+    requires okhttp3;
 
     opens at.fhtw.swen2_tourplanner.frontend.controller;
     exports at.fhtw.swen2_tourplanner.frontend.controller;

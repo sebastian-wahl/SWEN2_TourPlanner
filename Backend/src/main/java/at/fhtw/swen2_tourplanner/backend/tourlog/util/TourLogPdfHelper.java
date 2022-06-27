@@ -26,10 +26,10 @@ import java.util.Map;
 @Component
 public class TourLogPdfHelper {
 
-    private final String ABSOLUTE_PDF_PATH;
-    public final String ABSOLUTE_IMAGE_PATH;
     private static final String PDF_SUFFIX = ".pdf";
     private static final String SUMMARY_REPORT_NAME = "summary_report";
+    public final String ABSOLUTE_IMAGE_PATH;
+    private final String ABSOLUTE_PDF_PATH;
 
     public TourLogPdfHelper(@Value("${pdf.path.prefix}") String[] pathValues, @Value("${image.path.prefix}") String[] imagePathValues) {
         ABSOLUTE_PDF_PATH = Paths.get(pathValues[0], pathValues[1], pathValues[2], pathValues[3], pathValues[4]).toFile().getAbsolutePath() + '\\';
@@ -78,7 +78,8 @@ public class TourLogPdfHelper {
     }
 
     private void generateTourReport(TourDTO tour, List<TourLogDTO> tourLogs, Document document) throws MalformedURLException {
-        final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime().getHour() * 60 + a.getDateTime().getMinute()).average().orElse(0);
+        // ToDo Mazen: fix avg time (maybe also add seconds?)
+        final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime() != null ? a.getDateTime().getHour() * 60 + a.getDateTime().getMinute() : 0).average().orElse(0);
         final double avgDistance = tourLogs.stream().mapToDouble(TourLogDTO::getDistance).average().orElse(0);
         final double avgRating = tourLogs.stream().mapToDouble(TourLogDTO::getRating).average().orElse(0);
 

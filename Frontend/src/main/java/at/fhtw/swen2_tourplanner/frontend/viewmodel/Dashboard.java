@@ -37,7 +37,6 @@ public class Dashboard implements ViewModel {
     private final InfoLine infoLine;
     private final TourList tourList;
     private final TourBasicData tourBasicData;
-    private final TourMap tourMap;
     private final TourLogData tourLogData;
 
     private final Menubar menubar;
@@ -51,7 +50,6 @@ public class Dashboard implements ViewModel {
                      InfoLine infoLine, TourService tourService, TourLogService tourLogService, Menubar menubar) {
         this.tourList = tourList;
         this.tourBasicData = tourBasicData;
-        this.tourMap = tourMap;
         this.tourLogData = tourLogData;
         this.tourService = tourService;
         this.tourLogService = tourLogService;
@@ -132,6 +130,7 @@ public class Dashboard implements ViewModel {
                 } else {
                     this.logger.error("The Tour summary export went wrong. Empty byte array returned.");
                     this.infoLine.setErrorText("An error happened while exporting the tour summary. Please try again!");
+                    file.delete();
                 }
                 this.infoLine.stopLoading();
             });
@@ -170,6 +169,7 @@ public class Dashboard implements ViewModel {
                 } else {
                     this.logger.error("The Tour report export went wrong. Empty byte array returned.");
                     this.infoLine.setErrorText("An error happened while exporting the tour report. Please try again!");
+                    file.delete();
                 }
                 this.infoLine.stopLoading();
             });

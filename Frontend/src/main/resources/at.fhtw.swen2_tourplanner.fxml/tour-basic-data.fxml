@@ -13,16 +13,16 @@
                 <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
             </padding>
         </HBox>
-        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+        <HBox fx:id="fromHbox" prefHeight="30.0" prefWidth="300.0" spacing="16.0">
             <Label minWidth="80.0" text="From"/>
-            <TextField fx:id="from" disable="true" prefHeight="25.0" prefWidth="479.0" text="Test"/>
+            <TextField fx:id="from" disable="true" prefHeight="25.0" prefWidth="450.0" text="Test"/>
             <padding>
                 <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
             </padding>
         </HBox>
-        <HBox prefHeight="30.0" prefWidth="300.0" spacing="16.0">
+        <HBox fx:id="toHbox" prefHeight="30.0" prefWidth="300.0" spacing="16.0">
             <Label minWidth="80.0" text="To"/>
-            <TextField fx:id="to" disable="true" prefHeight="25.0" prefWidth="451.0"/>
+            <TextField fx:id="to" disable="true" prefHeight="25.0" prefWidth="450.0"/>
             <padding>
                 <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
             </padding>

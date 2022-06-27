@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import okhttp3.ResponseBody;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import retrofit2.Retrofit;
@@ -109,7 +110,8 @@ public class TourLogServiceImpl implements TourLogService {
     public byte[] getTourReport(UUID tourId) throws BackendConnectionException, ApiCallTimoutException {
         try {
             logger.info("Get tour request sent. Generation tour request for tour with");
-            return tourLogAPI.getTourReport(tourId).execute().body();
+            final ResponseBody responseBody = tourLogAPI.getTourReport(tourId).execute().body();
+            return responseBody != null ? responseBody.bytes() : new byte[0];
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("getTourReport");
         } catch (ConnectException e) {
@@ -125,7 +127,8 @@ public class TourLogServiceImpl implements TourLogService {
     public byte[] getTourSummary() throws BackendConnectionException, ApiCallTimoutException {
         try {
             logger.info("Get tour summary sent.");
-            return tourLogAPI.getTourSummary().execute().body();
+            final ResponseBody responseBody = tourLogAPI.getTourSummary().execute().body();
+            return responseBody != null ? responseBody.bytes() : new byte[0];
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("getTourSummary");
         } catch (ConnectException e) {

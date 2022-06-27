@@ -1,6 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.service.tourlog;
 
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -22,8 +23,8 @@ public interface TourLogAPI {
     Call<Optional<TourLog>> updateTourLog(@Body TourLog tourLog);
 
     @GET("tour-log/get-tour-report/{tourId}")
-    Call<byte[]> getTourReport(@Path("tourId") UUID tourId);
+    Call<ResponseBody> getTourReport(@Path("tourId") UUID tourId);
 
     @GET("tour-log/get-summary-report")
-    Call<byte[]> getTourSummary();
+    Call<ResponseBody> getTourSummary();
 }

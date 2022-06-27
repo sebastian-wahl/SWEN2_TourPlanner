@@ -18,11 +18,10 @@ import java.util.UUID;
 @Service
 public class TourLogServiceImpl implements TourLogService {
 
+    private static final String SUMMARY_REPORT_NAME = "summary_report";
     private final TourLogRepository tourLogRepository;
     private final TourService tourService;
     private final TourLogPdfHelper tourLogPdfHelper;
-
-    private static final String SUMMARY_REPORT_NAME = "summary_report";
 
     @Autowired
     public TourLogServiceImpl(TourLogRepository tourLogRepository, TourService tourService, TourLogPdfHelper tourLogPdfHelper) {
@@ -86,6 +85,7 @@ public class TourLogServiceImpl implements TourLogService {
         } catch (BusinessException businessException) {
             throw businessException;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BusinessException("Could not create report");
         }
     }

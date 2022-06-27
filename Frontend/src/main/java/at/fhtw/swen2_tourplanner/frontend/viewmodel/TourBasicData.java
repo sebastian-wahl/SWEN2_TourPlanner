@@ -235,4 +235,11 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
             baseObserver.update(this.currentTour);
         }
     }
+
+    public void validateToInput() {
+
+    }
+
+    public void validateFromInput() {
+    }
 }
