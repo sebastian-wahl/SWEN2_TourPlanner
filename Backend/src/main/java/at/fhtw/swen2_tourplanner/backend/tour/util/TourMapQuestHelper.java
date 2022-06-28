@@ -3,28 +3,23 @@ package at.fhtw.swen2_tourplanner.backend.tour.util;
 import at.fhtw.swen2_tourplanner.backend.mapquest.model.MapQuestResponse;
 import at.fhtw.swen2_tourplanner.backend.mapquest.service.MapQuestService;
 import at.fhtw.swen2_tourplanner.backend.tour.model.Tour;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.util.UUID;
 
 @Component
+@Log4j2
 public class TourMapQuestHelper {
     public static final String IMAGE_SUFFIX = "_image.jpg";
-    private final Logger logger = LoggerFactory.getLogger(TourMapQuestHelper.class);
-    private final MapQuestService mapQuestService;
     public final String ABSOLUTE_IMAGE_PATH;
+    private final MapQuestService mapQuestService;
 
     @Autowired
     public TourMapQuestHelper(MapQuestService mapQuestService, @Value("${image.path.prefix}") String[] pathValues) {
@@ -38,7 +33,7 @@ public class TourMapQuestHelper {
                 File file = new File(ABSOLUTE_IMAGE_PATH + '\\' + tourId);
                 return Files.readAllBytes(file.toPath());
             } catch (IOException e) {
-                logger.error("Error while loading the image from tourId '{}'", ABSOLUTE_IMAGE_PATH + "\\" + tourId);
+                log.error("Error while loading the image from tourId '{}'", ABSOLUTE_IMAGE_PATH + "\\" + tourId);
                 throw new FileNotFoundException("Image File not found under tourId: " + ABSOLUTE_IMAGE_PATH + "\\" + tourId);
             }
         }
@@ -65,10 +60,10 @@ public class TourMapQuestHelper {
 
     private String saveRouteImage(UUID tourId, byte[] route) {
         File newFile = getImageFile(tourId);
-        logger.info("Saving route image to resources");
+        log.info("Saving route image to resources");
         try {
             if (!newFile.exists()) {
-                logger.info("File does not exist, creating a new one");
+                log.info("File does not exist, creating a new one");
                 new File(ABSOLUTE_IMAGE_PATH).mkdirs();
                 newFile.createNewFile();
             }
@@ -87,7 +82,7 @@ public class TourMapQuestHelper {
         String imageName = this.saveRouteImage(tour.getId(), image);
         tour.setRouteImageName(imageName);
         tour.setImage(image);
-        logger.info("Route image name: {}", imageName);
+        log.info("Route image name: {}", imageName);
     }
 
     private void setTourDistanceAndTime(Tour tour) {
@@ -96,8 +91,8 @@ public class TourMapQuestHelper {
         final LocalTime time = response.getRoute().getFormattedTime();
         tour.setTourDistance(distance);
         tour.setEstimatedTime(time);
-        logger.info("New Distance: {}", distance);
-        logger.info("New Time: {}", time);
+        log.info("New Distance: {}", distance);
+        log.info("New Time: {}", time);
     }
 
 }

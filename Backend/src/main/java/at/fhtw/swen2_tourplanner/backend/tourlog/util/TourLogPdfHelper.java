@@ -111,8 +111,8 @@ public class TourLogPdfHelper {
     private String getTransportType(int type) {
         return switch (type) {
             case 0 -> "Foot";
-            case 1 -> "Car";
-            case 2 -> "Skateboard";
+            case 1 -> "Bike";
+            case 2 -> "Car";
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }

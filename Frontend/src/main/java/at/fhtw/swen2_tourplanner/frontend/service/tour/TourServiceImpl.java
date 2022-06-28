@@ -7,8 +7,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -20,9 +19,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Log4j2
 public class TourServiceImpl implements TourService {
-    private final Logger logger = LogManager.getLogger(TourServiceImpl.class);
-
     private final TourAPI tourAPI;
 
     public TourServiceImpl() {
@@ -43,11 +41,11 @@ public class TourServiceImpl implements TourService {
     @Override
     public List<Tour> getAllTours() throws BackendConnectionException, ApiCallTimoutException {
         try {
-            logger.info("Get all tours request send.");
+            log.info("Get all tours request send.");
             List<Tour> result = tourAPI.getAllTours().execute().body();
             return result != null ? result : Collections.emptyList();
         } catch (ConnectException e) {
-            logger.error("Failed to connect to BE!");
+            log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("getAllTours");
@@ -60,10 +58,10 @@ public class TourServiceImpl implements TourService {
     @Override
     public Optional<Tour> getTourById(UUID id) throws BackendConnectionException, ApiCallTimoutException {
         try {
-            logger.info("Get tour by id request send.");
+            log.info("Get tour by id request send.");
             return tourAPI.getTourById(id).execute().body();
         } catch (ConnectException e) {
-            logger.error("Failed to connect to BE!");
+            log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("getTour");
@@ -77,10 +75,10 @@ public class TourServiceImpl implements TourService {
     @Override
     public boolean deleteTour(Tour tour) throws BackendConnectionException, ApiCallTimoutException {
         try {
-            logger.info("Delete tour with id {}", tour.getId());
+            log.info("Delete tour with id {}", tour.getId());
             return tourAPI.deleteTour(tour.getId()).execute().isSuccessful();
         } catch (ConnectException e) {
-            logger.error("Failed to connect to BE!");
+            log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("deleteTour");
@@ -93,10 +91,10 @@ public class TourServiceImpl implements TourService {
     @Override
     public Optional<Tour> addTour(Tour tour) throws BackendConnectionException, ApiCallTimoutException {
         try {
-            logger.info("Add tour");
+            log.info("Add tour");
             return tourAPI.addTour(tour).execute().body();
         } catch (ConnectException e) {
-            logger.error("Failed to connect to BE!");
+            log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("addTour");
@@ -109,14 +107,14 @@ public class TourServiceImpl implements TourService {
     @Override
     public List<Tour> importTours(List<Tour> tourList) throws BackendConnectionException, ApiCallTimoutException {
         try {
-            logger.info("Add tour");
+            log.info("Add tour");
             List<Tour> out = tourAPI.importTours(tourList).execute().body();
             if (out == null) {
                 return Collections.emptyList();
             }
             return out;
         } catch (ConnectException e) {
-            logger.error("Failed to connect to BE!");
+            log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("addTour");
@@ -129,10 +127,10 @@ public class TourServiceImpl implements TourService {
     @Override
     public Optional<Tour> updateTour(Tour tour) throws BackendConnectionException, ApiCallTimoutException {
         try {
-            logger.info("Update tour request sent. Updating tour with id {}", tour);
+            log.info("Update tour request sent. Updating tour with id {}", tour);
             return tourAPI.updateTour(tour).execute().body();
         } catch (ConnectException e) {
-            logger.error("Failed to connect to BE!");
+            log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("updateTour");

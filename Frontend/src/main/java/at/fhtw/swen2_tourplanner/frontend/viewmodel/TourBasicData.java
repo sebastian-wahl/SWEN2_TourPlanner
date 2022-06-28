@@ -5,16 +5,17 @@ import at.fhtw.swen2_tourplanner.frontend.enums.TransportTypeEnum;
 import at.fhtw.swen2_tourplanner.frontend.listener.ExportTourListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.ExportTourReportListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.UpdateListener;
+import at.fhtw.swen2_tourplanner.frontend.listener.ValidationListener;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourObservable;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
+import javafx.beans.Observable;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.time.format.DateTimeFormatter;
@@ -22,12 +23,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Log4j2
 public class TourBasicData implements ViewModel, UpdateTourObservable {
 
     private static final String BUTTON_EDIT_TEXT = "Edit";
     private static final String BUTTON_SAVE_TEXT = "Save";
-    // logger
-    private final Logger logger = LogManager.getLogger(TourBasicData.class);
     // Properties
     @Getter
     private final StringProperty nameProperty;
@@ -69,6 +69,15 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     private final ObjectProperty<ObservableList<String>> transportTypeItemsProperty;
     @Getter
     private final ObjectProperty<String> transportTypeSelectedItemProperty;
+    @Getter
+    private final BooleanProperty validateToButtonDisableProperty;
+    @Getter
+    private final BooleanProperty validateFromButtonDisableProperty;
+    @Getter
+    private final BooleanProperty validateFromButtonVisibilityProperty;
+    @Getter
+    private final BooleanProperty validateToButtonVisibilityProperty;
+
     // observer list
     private final List<BaseObserver<Tour>> updateTourBaseObserverList;
 
@@ -79,6 +88,12 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     private ExportTourReportListener exportTourReportListener;
     @Setter
     private UpdateListener<Tour> tourUpdateListener;
+    @Setter
+    private ValidationListener validationListenerFrom;
+    @Setter
+    private ValidationListener validationListenerTo;
+
+
     private Tour currentTour;
 
     public TourBasicData() {
@@ -87,8 +102,10 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
         nameProperty = new SimpleStringProperty();
         nameDisableProperty = new SimpleBooleanProperty(true);
         fromProperty = new SimpleStringProperty();
+        fromProperty.addListener(this::fromLocationChanged);
         fromDisableProperty = new SimpleBooleanProperty(true);
         toProperty = new SimpleStringProperty();
+        toProperty.addListener(this::toLocationChanged);
         toDisableProperty = new SimpleBooleanProperty(true);
         distanceProperty = new SimpleStringProperty();
         descriptionProperty = new SimpleStringProperty();
@@ -109,6 +126,21 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
                 )
         );
         transportTypeSelectedItemProperty = new SimpleObjectProperty<>();
+
+        validateToButtonDisableProperty = new SimpleBooleanProperty(false);
+        validateFromButtonDisableProperty = new SimpleBooleanProperty(false);
+        validateFromButtonVisibilityProperty = new SimpleBooleanProperty(false);
+        validateToButtonVisibilityProperty = new SimpleBooleanProperty(false);
+    }
+
+    private void toLocationChanged(Observable observable) {
+        this.validateToButtonDisableProperty.setValue(false);
+        editSaveButtonDisableProperty.setValue(true);
+    }
+
+    private void fromLocationChanged(Observable observable) {
+        this.validateFromButtonDisableProperty.setValue(false);
+        editSaveButtonDisableProperty.setValue(true);
     }
 
     public void setCurrentTour(Tour tour) {
@@ -134,8 +166,21 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
             this.transportTypeSelectedItemProperty.setValue("");
             this.disableEditSaveAndExportButtons();
         }
+        this.hideValidateButtons();
         this.disableAllProperties();
         this.editSaveButtonTextProperty.setValue(BUTTON_EDIT_TEXT);
+    }
+
+    private void hideValidateButtons() {
+        this.validateFromButtonVisibilityProperty.setValue(false);
+        this.validateToButtonVisibilityProperty.setValue(false);
+    }
+
+    private void showValidateButtons() {
+        this.validateFromButtonDisableProperty.setValue(false);
+        this.validateToButtonDisableProperty.setValue(false);
+        this.validateFromButtonVisibilityProperty.setValue(true);
+        this.validateToButtonVisibilityProperty.setValue(true);
     }
 
     private String getTimeString() {
@@ -165,6 +210,7 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
         this.currentTour.setGoal(this.toProperty.getValue());
         this.currentTour.setTourDescription(this.descriptionProperty.getValue());
         this.currentTour.setFavorite(this.favoriteCheckboxProperty.getValue());
+        this.currentTour.setTransportType(TransportTypeEnum.valueOf(this.transportTypeSelectedItemProperty.get().toUpperCase()).getDbValue());
     }
 
     public void editOrSaveTour() {
@@ -172,10 +218,13 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
             if (editSaveButtonTextProperty.getValue().equals(BUTTON_SAVE_TEXT)) {
                 // save
                 saveCurrentTour();
+                this.hideValidateButtons();
             } else {
                 // edit
                 this.editSaveButtonTextProperty.setValue(BUTTON_SAVE_TEXT);
+                this.editSaveButtonDisableProperty.setValue(true);
                 this.enableAllProperties();
+                this.showValidateButtons();
             }
         }
     }
@@ -209,6 +258,7 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
         this.toDisableProperty.setValue(to);
         this.descriptionDisableProperty.setValue(to);
         this.checkboxDisableProperty.setValue(to);
+        this.transportTypeDisableProperty.setValue(to);
     }
 
     public void exportTour(File saveToFile) {
@@ -237,9 +287,34 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     }
 
     public void validateToInput() {
+        this.validationListenerTo.validateLocation(this.toProperty.getValue());
+    }
 
+    public void inputToValidationSuccessful() {
+        this.validateToButtonDisableProperty.setValue(true);
+        if (validateFromButtonDisableProperty.get()) {
+            this.editSaveButtonDisableProperty.setValue(false);
+        }
+    }
+
+    public void inputToValidationFailed() {
+        this.validateToButtonDisableProperty.setValue(false);
+        this.toProperty.setValue("");
     }
 
     public void validateFromInput() {
+        this.validationListenerFrom.validateLocation(this.fromProperty.getValue());
+    }
+
+    public void inputFromValidationSuccessful() {
+        this.validateFromButtonDisableProperty.setValue(true);
+        if (validateToButtonDisableProperty.get()) {
+            this.editSaveButtonDisableProperty.setValue(false);
+        }
+    }
+
+    public void inputFromValidationFailed() {
+        this.validateFromButtonDisableProperty.setValue(false);
+        this.fromProperty.setValue("");
     }
 }

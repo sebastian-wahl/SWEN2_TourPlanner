@@ -5,6 +5,7 @@ import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourList;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -12,6 +13,8 @@ import javafx.scene.control.TextField;
 import java.util.UUID;
 
 public class TourListController extends BaseController<TourList> {
+    @FXML
+    public Button addTourButton;
     @FXML
     private CheckBox favoritesCheckbox;
     @FXML
@@ -28,6 +31,7 @@ public class TourListController extends BaseController<TourList> {
     public void initialize() {
         // property binding
         this.toAddTourName.textProperty().bindBidirectional(getViewModel().getNewTourName());
+        this.addTourButton.disableProperty().bind(getViewModel().getAddTourButtonDisabledProperty());
         this.favoritesCheckbox.selectedProperty().bindBidirectional(getViewModel().getOnlyFavoriteTour());
         // add change listener to list and select first
         this.tourListView.getSelectionModel().selectedItemProperty().addListener(getViewModel());

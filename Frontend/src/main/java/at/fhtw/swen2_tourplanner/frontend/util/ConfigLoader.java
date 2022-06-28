@@ -1,16 +1,14 @@
 package at.fhtw.swen2_tourplanner.frontend.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
+@Log4j2
 public class ConfigLoader {
-    static Logger logger = LogManager.getLogger(ConfigLoader.class);
-
     public static String getValue(String name) {
         if (name == null || name.equals("")) {
             return "";
@@ -27,7 +25,7 @@ public class ConfigLoader {
                 }
             }
         } catch (NullPointerException | IOException e) {
-            logger.error("Config file not found: {}", e.getMessage());
+            log.error("Config file not found: {}", e.getMessage());
         }
         return "";
     }

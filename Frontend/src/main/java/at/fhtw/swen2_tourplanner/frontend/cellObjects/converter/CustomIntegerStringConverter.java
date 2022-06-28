@@ -2,13 +2,10 @@ package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
 import javafx.util.converter.IntegerStringConverter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
-
+@Log4j2
 public class CustomIntegerStringConverter extends IntegerStringConverter implements Converter<Integer> {
-    private final Logger logger = LogManager.getLogger(CustomIntegerStringConverter.class);
-
     private final int lowerBound;
     private final int upperBound;
 
@@ -30,7 +27,7 @@ public class CustomIntegerStringConverter extends IntegerStringConverter impleme
             }
             return number;
         } catch (NumberFormatException e) {
-            logger.error("Error when converting String to Integer: {}", e.getMessage());
+            log.error("Error when converting String to Integer: {}", e.getMessage());
             throw new ConverterException("Could not convert string \"" + s + "\" to a number.");
         }
     }
@@ -48,7 +45,7 @@ public class CustomIntegerStringConverter extends IntegerStringConverter impleme
         try {
             return super.toString(aInt);
         } catch (NumberFormatException e) {
-            logger.error("Error when converting Integer to String: {}", e.getMessage());
+            log.error("Error when converting Integer to String: {}", e.getMessage());
             throw new ConverterException("Could not convert number " + aInt + " to a string.");
         }
     }

@@ -2,6 +2,8 @@ package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.ApiCallTimoutException;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.BackendConnectionException;
+import at.fhtw.swen2_tourplanner.frontend.service.mapquest.MapQuestService;
+import at.fhtw.swen2_tourplanner.frontend.service.mapquest.microservice.ValidationService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddMultipleTourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.microservice.AddUpdateSingleTourService;
@@ -17,8 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Service;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,10 +30,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Log4j2
 public class Dashboard implements ViewModel {
-    // Logger
-    private final Logger logger = LogManager.getLogger(Dashboard.class);
-
     // Models
     private final InfoLine infoLine;
     private final TourList tourList;
@@ -43,16 +42,18 @@ public class Dashboard implements ViewModel {
     // Services
     private final TourService tourService;
     private final TourLogService tourLogService;
+    private final MapQuestService mapQuestService;
 
     private final ObjectMapper o;
 
-    public Dashboard(TourList tourList, TourBasicData tourBasicData, TourMap tourMap, TourLogData tourLogData,
-                     InfoLine infoLine, TourService tourService, TourLogService tourLogService, Menubar menubar) {
+    public Dashboard(TourList tourList, TourBasicData tourBasicData, TourLogData tourLogData,
+                     InfoLine infoLine, TourService tourService, TourLogService tourLogService, MapQuestService mapQuestService, Menubar menubar) {
         this.tourList = tourList;
         this.tourBasicData = tourBasicData;
         this.tourLogData = tourLogData;
         this.tourService = tourService;
         this.tourLogService = tourLogService;
+        this.mapQuestService = mapQuestService;
         this.infoLine = infoLine;
         this.menubar = menubar;
 
@@ -63,6 +64,8 @@ public class Dashboard implements ViewModel {
         // set listeners for tour basic data export calls
         this.tourBasicData.setExportTourListener(this::exportTour);
         this.tourBasicData.setExportTourReportListener(this::exportTourReport);
+        this.tourBasicData.setValidationListenerFrom(this::validateFromLocation);
+        this.tourBasicData.setValidationListenerTo(this::validateToLocation);
         // set listeners for tour api calls
         this.tourBasicData.setTourUpdateListener(this::updateTourData);
         this.tourList.setTourDeleteListener(this::deleteTour);
@@ -78,26 +81,68 @@ public class Dashboard implements ViewModel {
         this.menubar.setExportTourSummaryListener(this::exportTourSummary);
     }
 
+    /* --------------------- Location Input Validation ----------------------- */
+    private void validateToLocation(String location) {
+        this.infoLine.startLoading();
+        Service<Boolean> validateService = new ValidationService(this::validateLocationCatchException, location);
+        validateService.valueProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            if (t1) {
+                this.tourBasicData.inputToValidationSuccessful();
+            } else {
+                this.tourBasicData.inputToValidationFailed();
+                this.infoLine.setErrorText("This location does not exist!");
+            }
+            this.infoLine.stopLoading();
+        });
+        validateService.start();
+    }
+
+    private boolean validateLocationCatchException(String location) {
+        try {
+            return mapQuestService.validateInput(location);
+        } catch (BackendConnectionException | ApiCallTimoutException e) {
+            log.error(e);
+            this.infoLine.setErrorText(e.getMessage());
+        }
+        return false;
+    }
+
+    private void validateFromLocation(String location) {
+        this.infoLine.startLoading();
+        Service<Boolean> validateService = new ValidationService(this::validateLocationCatchException, location);
+        validateService.valueProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            if (t1) {
+                this.tourBasicData.inputFromValidationSuccessful();
+            } else {
+                this.tourBasicData.inputFromValidationFailed();
+                this.infoLine.setErrorText("This location does not exist!");
+            }
+            this.infoLine.stopLoading();
+        });
+        validateService.start();
+    }
+
     /* --------------------- Tour export/import API calls --------------------- */
 
     private void importTour(List<File> files) {
         try {
             this.infoLine.startLoading();
-            List<Tour> toAddWithId = FileConverter.convertFileToTour(files);
-            Service<List<Tour>> addMultipleTourService = new AddMultipleTourService(this::importToursCatchException, toAddWithId);
+            List<Tour> toAddTours = FileConverter.convertFileToTour(files);
+            toAddTours.forEach(tour -> tour.setId(null));
+            Service<List<Tour>> addMultipleTourService = new AddMultipleTourService(this::importToursCatchException, toAddTours);
             addMultipleTourService.valueProperty().addListener((ObservableValue<? extends List<Tour>> observableValue, List<Tour> tourList, List<Tour> t1) -> {
                 if (!t1.isEmpty()) {
                     this.infoLine.setInfoText("Tour(s) imported successfully.");
                     this.tourList.importToursSuccessful(t1);
                 } else {
                     this.infoLine.setErrorText("An error occurred while importing the Tour(s).");
-                    this.logger.error("Error while importing tours.");
+                    log.error("Error while importing tours.");
                 }
                 this.infoLine.stopLoading();
             });
             addMultipleTourService.start();
         } catch (FileConvertException e) {
-            this.logger.error(e);
+            log.error(e);
             this.infoLine.setErrorText(e.getMessage());
             this.infoLine.stopLoading();
         }
@@ -107,7 +152,7 @@ public class Dashboard implements ViewModel {
         try {
             return this.tourService.importTours(tourList);
         } catch (BackendConnectionException | ApiCallTimoutException e) {
-            this.logger.error(e);
+            log.error(e);
             this.infoLine.setErrorText(e.getMessage());
         }
         return Collections.emptyList();
@@ -125,10 +170,10 @@ public class Dashboard implements ViewModel {
                         this.infoLine.setInfoText("Tour summary exported successfully!");
                     } catch (IOException e) {
                         this.infoLine.setErrorText("An error happened while exporting the tour summary. Please try again!");
-                        this.logger.error("The Tour summary export went wrong. Error message: {}", e.getMessage());
+                        log.error("The Tour summary export went wrong. Error message: {}", e.getMessage());
                     }
                 } else {
-                    this.logger.error("The Tour summary export went wrong. Empty byte array returned.");
+                    log.error("The Tour summary export went wrong. Empty byte array returned.");
                     this.infoLine.setErrorText("An error happened while exporting the tour summary. Please try again!");
                     file.delete();
                 }
@@ -146,7 +191,7 @@ public class Dashboard implements ViewModel {
             }
             return summary;
         } catch (BackendConnectionException | ApiCallTimoutException e) {
-            this.logger.error(e);
+            log.error(e);
             this.infoLine.setErrorText(e.getMessage());
             return new byte[0];
         }
@@ -164,10 +209,10 @@ public class Dashboard implements ViewModel {
                         this.infoLine.setInfoText("Tour report exported successfully!");
                     } catch (IOException e) {
                         this.infoLine.setErrorText("An error happened while exporting the tour report. Please try again!");
-                        this.logger.error("The Tour report export went wrong. Error message: {}", e.getMessage());
+                        log.error("The Tour report export went wrong. Error message: {}", e.getMessage());
                     }
                 } else {
-                    this.logger.error("The Tour report export went wrong. Empty byte array returned.");
+                    log.error("The Tour report export went wrong. Empty byte array returned.");
                     this.infoLine.setErrorText("An error happened while exporting the tour report. Please try again!");
                     file.delete();
                 }
@@ -185,7 +230,7 @@ public class Dashboard implements ViewModel {
             }
             return report;
         } catch (BackendConnectionException | ApiCallTimoutException e) {
-            this.logger.error(e);
+            log.error(e);
             this.infoLine.setErrorText(e.getMessage());
             return new byte[0];
         }
@@ -200,7 +245,7 @@ public class Dashboard implements ViewModel {
                 this.infoLine.setInfoText("Tour exported successfully!");
             } catch (IOException e) {
                 this.infoLine.setErrorText("An error happened while exporting the tour. Please try again!");
-                this.logger.error("The Tour export went wrong. Error message: {}", e.getMessage());
+                log.error("The Tour export went wrong. Error message: {}", e.getMessage());
 
             }
             this.infoLine.stopLoading();
@@ -210,11 +255,11 @@ public class Dashboard implements ViewModel {
     private boolean createFile(File file) {
         try {
             boolean fileCreated = file.createNewFile();
-            this.logger.info("File {}", fileCreated ? "created" : "overwritten");
+            log.info("File {}", fileCreated ? "created" : "overwritten");
             return true;
         } catch (IOException e) {
             this.infoLine.setErrorText("Error while creating a file for the export.");
-            this.logger.error("Error while creating a file for the export. {}", e.getMessage());
+            log.error("Error while creating a file for the export. {}", e.getMessage());
             return false;
         }
     }
@@ -230,7 +275,7 @@ public class Dashboard implements ViewModel {
             if (!newTours.isEmpty()) {
                 this.tourList.getTourSuccessful(newTours);
             } else {
-                this.logger.warn("No tours fetched. Maybe something went wrong.");
+                log.warn("No tours fetched. Maybe something went wrong.");
             }
             this.infoLine.stopLoading();
         });
@@ -260,7 +305,7 @@ public class Dashboard implements ViewModel {
             if (newValue.isPresent()) {
                 this.tourList.addTourSuccessful(newValue.get());
             } else {
-                this.logger.warn("Tour \"{}\" not created successfully.", toCreate.getName());
+                log.warn("Tour \"{}\" not created successfully.", toCreate.getName());
             }
             this.infoLine.stopLoading();
         });
@@ -290,7 +335,7 @@ public class Dashboard implements ViewModel {
             if (Boolean.TRUE.equals(deleted)) {
                 this.tourList.deleteTourSuccessful(toDelete);
             } else {
-                this.logger.warn("Tour not deleted successfully.");
+                log.warn("Tour not deleted successfully.");
             }
             this.infoLine.stopLoading();
         });
@@ -319,7 +364,7 @@ public class Dashboard implements ViewModel {
                 this.tourBasicData.updateTourSuccessful(newValue.get());
                 this.tourList.updateTourSuccessful(newValue.get());
             } else {
-                this.logger.warn("Tour not updated successfully.");
+                log.warn("Tour not updated successfully.");
             }
             this.infoLine.stopLoading();
         });
@@ -349,7 +394,7 @@ public class Dashboard implements ViewModel {
         Service<List<TourLog>> getMultipleLogService = new GetMultipleLogService(this::getAllTourLogsCatchException, currentTourId);
         getMultipleLogService.valueProperty().addListener((ObservableValue<? extends List<TourLog>> observableValue, List<TourLog> tourDTOS, List<TourLog> newValues) -> {
             if (newValues.isEmpty()) {
-                this.logger.warn("No tour logs fetched. Maybe something went wrong.");
+                log.warn("No tour logs fetched. Maybe something went wrong.");
             }
             this.tourLogData.getAllLogsSuccessful(newValues);
             this.infoLine.stopLoading();

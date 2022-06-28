@@ -12,12 +12,14 @@ import java.io.File;
 public class TourBasicDataController extends BaseController<TourBasicData> {
 
     private final FileChooser fileChooser;
-    private final Button validateButton1;
-    private final Button validateButton2;
     @FXML
     public HBox fromHbox;
     @FXML
     public HBox toHbox;
+    @FXML
+    public Button validateFromButton;
+    @FXML
+    public Button validateToButton;
     @FXML
     private TextField name;
     @FXML
@@ -44,9 +46,6 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
 
     public TourBasicDataController(TourBasicData viewModel) {
         super(viewModel);
-        validateButton1 = new Button("Validate");
-        validateButton2 = new Button("Validate");
-
         fileChooser = new FileChooser();
     }
 
@@ -80,33 +79,26 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
         this.exportButton.disableProperty().bind(getViewModel().getExportButtonDisableProperty());
         this.exportSummaryButton.disableProperty().bind(getViewModel().getExportSummaryButtonDisableProperty());
 
+        validateToButton.visibleProperty().bind(getViewModel().getValidateToButtonVisibilityProperty());
+        validateToButton.managedProperty().bind(validateToButton.visibleProperty());
 
-        validateButton1.setPrefHeight(25.0);
-        validateButton1.setPrefWidth(240.0);
+        validateFromButton.visibleProperty().bind(getViewModel().getValidateFromButtonVisibilityProperty());
+        validateFromButton.managedProperty().bind(validateFromButton.visibleProperty());
 
-        validateButton2.setPrefHeight(25.0);
-        validateButton2.setPrefWidth(240.0);
 
-        validateButton1.setOnAction(this::validateFrom);
-        validateButton2.setOnAction(this::validateTo);
+        validateToButton.disableProperty().bind(getViewModel().getValidateToButtonDisableProperty());
+        validateFromButton.disableProperty().bind(getViewModel().getValidateFromButtonDisableProperty());
     }
 
-    private void validateTo(ActionEvent actionEvent) {
+    public void validateTo(ActionEvent actionEvent) {
         this.getViewModel().validateToInput();
     }
 
-    private void validateFrom(ActionEvent actionEvent) {
+    public void validateFrom(ActionEvent actionEvent) {
         this.getViewModel().validateFromInput();
     }
 
     public void onEditOrSave() {
-        if (this.fromHbox.getChildren().contains(validateButton1)) {
-            this.fromHbox.getChildren().remove(validateButton1);
-            this.toHbox.getChildren().remove(validateButton2);
-        } else {
-            this.fromHbox.getChildren().add(validateButton1);
-            this.toHbox.getChildren().add(validateButton2);
-        }
         getViewModel().editOrSaveTour();
     }
 

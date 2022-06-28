@@ -1,16 +1,15 @@
 package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+@Log4j2
 public class CustomLocalTimeStringConverter implements Converter<LocalTime> {
     public static final String TIME_FORMAT = "HH:mm:ss";
-    private final Logger logger = LogManager.getLogger(CustomLocalTimeStringConverter.class);
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
 
     @Override
@@ -18,7 +17,7 @@ public class CustomLocalTimeStringConverter implements Converter<LocalTime> {
         try {
             return LocalTime.parse(s, formatter);
         } catch (DateTimeParseException e) {
-            logger.error("Error when converting String to LocalDateTime: {}", e.getMessage());
+            log.error("Error when converting String to LocalDateTime: {}", e.getMessage());
             throw new ConverterException("Could not convert string \"" + s + "\" to a Time object. Please use format: \"" + TIME_FORMAT.toUpperCase() + "\".");
         }
     }
@@ -28,7 +27,7 @@ public class CustomLocalTimeStringConverter implements Converter<LocalTime> {
         try {
             return formatter.format(localTime);
         } catch (DateTimeParseException e) {
-            logger.error("Error when converting LocalDateTime to String: {}", e.getMessage());
+            log.error("Error when converting LocalDateTime to String: {}", e.getMessage());
             throw new ConverterException("Could not convert Time \"" + localTime.toString() + "\" to a formatted string.");
         }
     }

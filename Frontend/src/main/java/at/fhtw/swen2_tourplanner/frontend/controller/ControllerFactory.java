@@ -1,6 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
-import at.fhtw.swen2_tourplanner.frontend.service.MapService;
+import at.fhtw.swen2_tourplanner.frontend.service.mapquest.MapQuestServiceImpl;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.TourService;
 import at.fhtw.swen2_tourplanner.frontend.service.tour.TourServiceImpl;
 import at.fhtw.swen2_tourplanner.frontend.service.tourlog.TourLogService;
@@ -27,13 +27,13 @@ public class ControllerFactory {
     // services
     private final TourService tourService;
     private final TourLogService tourLogService;
-    private final MapService mapService;
+    private final MapQuestServiceImpl mapQuestService;
 
     public ControllerFactory() {
         // services
         tourService = new TourServiceImpl();
         tourLogService = new TourLogServiceImpl();
-        mapService = new MapService();
+        mapQuestService = new MapQuestServiceImpl();
 
         // views
         tourMap = new TourMap();
@@ -45,7 +45,7 @@ public class ControllerFactory {
         searchbarTourLog = new Searchbar();
         tourLogData = new TourLogData(searchbarTourLog, infoLine);
         tourList = new TourList();
-        dashboard = new Dashboard(tourList, tourBasicData, tourMap, tourLogData, infoLine, tourService, tourLogService,
+        dashboard = new Dashboard(tourList, tourBasicData, tourLogData, infoLine, tourService, tourLogService, mapQuestService,
                 menubar);
 
 

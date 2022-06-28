@@ -8,6 +8,7 @@ import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourObservable;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,20 +21,20 @@ import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.MultipleSelectionModel;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+@Log4j2
 public class TourList implements ViewModel, StringObserver, UpdateTourObservable, ChangeListener<Tour> {
-    // logger
-    private final Logger logger = LogManager.getLogger(TourList.class);
     // View Properties
     @Getter
     private final StringProperty newTourName;
+    @Getter
+    private final BooleanProperty addTourButtonDisabledProperty;
     @Getter
     private final BooleanProperty onlyFavoriteTour;
     private final ObservableList<Tour> baseTourList;
@@ -53,7 +54,9 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     private Tour selectedTour;
 
     public TourList() {
+        addTourButtonDisabledProperty = new SimpleBooleanProperty(true);
         newTourName = new SimpleStringProperty();
+        newTourName.addListener(this::setButton);
         onlyFavoriteTour = new SimpleBooleanProperty();
 
         onlyFavoriteTour.addListener((observable, oldValue, newValue) -> this.updateFilteredListPredicate());
@@ -64,6 +67,10 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
         tourList = new FilteredList<>(baseTourList);
         // default filtering -> no filters set
         tourList.setPredicate(null);
+    }
+
+    private void setButton(Observable observable) {
+        this.addTourButtonDisabledProperty.setValue(newTourName.getValue().length() <= 0);
     }
 
     public void setTourGetListener(TourGetListener tourGetListener) {

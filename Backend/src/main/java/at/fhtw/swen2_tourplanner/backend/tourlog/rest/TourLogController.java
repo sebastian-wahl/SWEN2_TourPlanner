@@ -75,7 +75,6 @@ public class TourLogController {
 
     @GetMapping(value = "/get-tour-report/{id}")
     public ResponseEntity<Object> getTourReport(@PathVariable("id") UUID id) {
-        System.out.println("Try to create");
         try {
             final byte[] pdfFile = tourLogService.getTourReport(id);
             HttpHeaders headers = new HttpHeaders();

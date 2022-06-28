@@ -2,13 +2,12 @@ package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
 import javafx.util.converter.DoubleStringConverter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.text.DecimalFormat;
 
+@Log4j2
 public class CustomDoubleStringConverter extends DoubleStringConverter implements Converter<Double> {
-    private final Logger logger = LogManager.getLogger(CustomDoubleStringConverter.class);
 
     private final double lowerBound;
     private final double upperBound;
@@ -48,7 +47,7 @@ public class CustomDoubleStringConverter extends DoubleStringConverter implement
             }
             return number;
         } catch (NumberFormatException e) {
-            logger.error("Error when converting String to Integer: {}", e.getMessage());
+            log.error("Error when converting String to Integer: {}", e.getMessage());
             throw e;
         }
     }
@@ -66,7 +65,7 @@ public class CustomDoubleStringConverter extends DoubleStringConverter implement
         try {
             return super.toString(aDouble);
         } catch (NumberFormatException e) {
-            logger.error("Error when converting Integer to String: {}", e.getMessage());
+            log.error("Error when converting Integer to String: {}", e.getMessage());
             throw e;
         }
     }

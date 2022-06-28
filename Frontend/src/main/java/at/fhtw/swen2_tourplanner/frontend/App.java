@@ -4,20 +4,17 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.util.Locale;
 
+@Log4j2
 public class App extends Application {
-    static Logger logger = LogManager.getLogger(App.class);
-
-    // ToDo Http request retrofit
     public static void main(String[] args) {
-        logger.info("Starting Tourplanner application");
+        log.info("Starting Tourplanner application");
         launch();
-        logger.info("Finished Tourplanner application");
+        log.info("Finished Tourplanner application");
     }
 
     @Override

@@ -16,6 +16,8 @@
         <HBox fx:id="fromHbox" prefHeight="30.0" prefWidth="300.0" spacing="16.0">
             <Label minWidth="80.0" text="From"/>
             <TextField fx:id="from" disable="true" prefHeight="25.0" prefWidth="450.0" text="Test"/>
+            <Button fx:id="validateFromButton" onAction="#validateFrom" text="Validate" prefHeight="25.0"
+                    prefWidth="240.0"/>
             <padding>
                 <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
             </padding>
@@ -23,6 +25,8 @@
         <HBox fx:id="toHbox" prefHeight="30.0" prefWidth="300.0" spacing="16.0">
             <Label minWidth="80.0" text="To"/>
             <TextField fx:id="to" disable="true" prefHeight="25.0" prefWidth="450.0"/>
+            <Button fx:id="validateToButton" onAction="#validateTo" text="Validate" prefHeight="25.0"
+                    prefWidth="240.0"/>
             <padding>
                 <Insets bottom="4.0" left="8.0" right="8.0" top="4.0"/>
             </padding>

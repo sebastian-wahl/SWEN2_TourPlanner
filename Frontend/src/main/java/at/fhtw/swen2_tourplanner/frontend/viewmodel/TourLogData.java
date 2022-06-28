@@ -78,6 +78,7 @@ public class TourLogData implements ViewModel, StringObserver {
     @Getter
     private final BooleanProperty tableDisableProperty;
     private final ObservableList<TourLog> baseList;
+    private final SortedList<TourLog> sortedList;
     // single listeners
     @Setter
     private TourLogGetListener getTourLogListener;
@@ -102,7 +103,7 @@ public class TourLogData implements ViewModel, StringObserver {
         this.tourLogSearchbar.disableSearchbar();
 
         baseList = FXCollections.observableArrayList();
-        SortedList<TourLog> sortedList = setUpSortedList();
+        sortedList = setUpSortedList();
 
         tourLogList = new FilteredList<>(sortedList);
         // default filtering -> no filters set
@@ -192,8 +193,8 @@ public class TourLogData implements ViewModel, StringObserver {
             TablePosition<TourLog, LocalDateTime> position = event.getTablePosition();
             int row = position.getRow();
             // update log element & update tour
-            this.baseList.get(row).setDateTime(event.getNewValue());
-            this.updateTourLog(this.baseList.get(row));
+            this.sortedList.get(row).setDateTime(event.getNewValue());
+            this.updateTourLog(this.sortedList.get(row));
         }
     }
 
@@ -202,8 +203,8 @@ public class TourLogData implements ViewModel, StringObserver {
             TablePosition<TourLog, LocalTime> position = event.getTablePosition();
             int row = position.getRow();
             // update log element & update tour
-            this.baseList.get(row).setTotalTime(event.getNewValue());
-            this.updateTourLog(this.baseList.get(row));
+            this.sortedList.get(row).setTotalTime(event.getNewValue());
+            this.updateTourLog(this.sortedList.get(row));
         }
     }
 
@@ -212,8 +213,8 @@ public class TourLogData implements ViewModel, StringObserver {
             TablePosition<TourLog, Integer> position = event.getTablePosition();
             int row = position.getRow();
             // update log element & update tour
-            this.baseList.get(row).setDifficulty(event.getNewValue());
-            this.updateTourLog(this.baseList.get(row));
+            this.sortedList.get(row).setDifficulty(event.getNewValue());
+            this.updateTourLog(this.sortedList.get(row));
         }
     }
 
@@ -222,8 +223,8 @@ public class TourLogData implements ViewModel, StringObserver {
             TablePosition<TourLog, Double> position = event.getTablePosition();
             int row = position.getRow();
             // update log element & update tour
-            this.baseList.get(row).setRating(event.getNewValue());
-            this.updateTourLog(this.baseList.get(row));
+            this.sortedList.get(row).setRating(event.getNewValue());
+            this.updateTourLog(this.sortedList.get(row));
         }
     }
 
@@ -232,8 +233,8 @@ public class TourLogData implements ViewModel, StringObserver {
             TablePosition<TourLog, Double> position = event.getTablePosition();
             int row = position.getRow();
             // update log element & update tour
-            this.baseList.get(row).setDistance(event.getNewValue());
-            this.updateTourLog(this.baseList.get(row));
+            this.sortedList.get(row).setDistance(event.getNewValue());
+            this.updateTourLog(this.sortedList.get(row));
         }
     }
 

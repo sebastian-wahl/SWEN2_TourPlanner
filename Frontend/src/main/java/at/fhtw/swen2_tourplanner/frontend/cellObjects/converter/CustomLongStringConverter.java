@@ -2,18 +2,16 @@ package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
 
 import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
 import javafx.util.converter.LongStringConverter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class CustomLongStringConverter extends LongStringConverter implements Converter<Long> {
-    private final Logger logger = LogManager.getLogger(CustomDoubleStringConverter.class);
-
     @Override
     public Long convertFromString(String s) throws ConverterException {
         try {
             return super.fromString(s);
         } catch (NumberFormatException e) {
-            logger.error("Error when converting String to Long: {}", e.getMessage());
+            log.error("Error when converting String to Long: {}", e.getMessage());
             throw e;
         }
     }
