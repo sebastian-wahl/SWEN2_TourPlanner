@@ -30,7 +30,7 @@ public class ComputedValues {
 
     private double calculateChildFriendliness(List<TourLogDTO> tourLogs) {
         if (!tourLogs.isEmpty()) {
-            final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime().getHour() * 60 + a.getDateTime().getMinute()).average().orElse(0);
+            final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime() != null ? a.getDateTime().getHour() * 60 + a.getDateTime().getMinute() : 0).average().orElse(0);
             final double avgDistance = tourLogs.stream().mapToDouble(TourLogDTO::getDistance).average().orElse(0);
             final double avgDifficulty = tourLogs.stream().mapToDouble(TourLogDTO::getDifficulty).average().orElse(0);
             return (calculateTimeRating(avgTime) + calculateDistanceRating(avgDistance) + calculateDifficultyRating(avgDifficulty)) / MAX_RATING;

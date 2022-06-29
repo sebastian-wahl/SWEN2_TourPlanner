@@ -78,14 +78,14 @@ public class TourLogPdfHelper {
     }
 
     private void generateTourReport(TourDTO tour, List<TourLogDTO> tourLogs, Document document) throws MalformedURLException {
-        // ToDo Mazen: fix avg time (maybe also add seconds?)
-        final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime() != null ? a.getDateTime().getHour() * 60 + a.getDateTime().getMinute() : 0).average().orElse(0);
+        final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime() != null ? a.getDateTime().getHour() * 3600 + a.getDateTime().getMinute() * 60 + a.getDateTime().getSecond() : 0).average().orElse(0);
         final double avgDistance = tourLogs.stream().mapToDouble(TourLogDTO::getDistance).average().orElse(0);
         final double avgRating = tourLogs.stream().mapToDouble(TourLogDTO::getRating).average().orElse(0);
+        final String formattedTime = String.format("%02d", ((int) (avgTime / 3600))) + ":" + String.format("%02d", ((int) (avgTime / 60) % 60)) + ":" + String.format("%02d", ((int) avgTime % 60));
 
         tourSummary(document, tour);
 
-        Paragraph average = new Paragraph("Amount of tours: " + tourLogs.size() + "\nAverage Time: " + avgTime / 60.0 + "\nAverage Distance: " + avgDistance + "\nAverage Rating: " + avgRating);
+        Paragraph average = new Paragraph("Amount of tours: " + tourLogs.size() + "\nAverage Time: " + formattedTime + "\nAverage Distance: " + avgDistance + "\nAverage Rating: " + avgRating);
         document.add(average);
     }
 
@@ -93,7 +93,7 @@ public class TourLogPdfHelper {
         final String name = "Name: " + tour.getName() + "\n";
         final String start = "Start: " + tour.getStart() + "\n";
         final String goal = "Goal: " + tour.getGoal() + "\n";
-        final String desc = "Description: " + tour.getTourDescription() + "\n";
+        final String desc = getDescription(tour.getTourDescription());
         final String time = "Estimated Time: " + tour.getEstimatedTime() + "\n";
         final String type = "Transport Type: " + getTransportType(tour.getTransportType()) + "\n";
         final String distance = "Distance: " + tour.getTourDistance();
@@ -102,6 +102,14 @@ public class TourLogPdfHelper {
         Paragraph tourSummary = new Paragraph(name + start + goal + desc + time + type + distance);
         doc.add(tourSummary);
         doc.add(image);
+    }
+
+    private String getDescription(String tourDescription) {
+        String desc = "-";
+        if (tourDescription != null) {
+            desc = tourDescription;
+        }
+        return "Description: " + desc + "\n";
     }
 
     private boolean tourHasRequiredValues(TourDTO tour) {
