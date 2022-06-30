@@ -1,9 +1,11 @@
 package at.fhtw.swen2_tourplanner.backend.tourlog.util;
 
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 public class ComputedValues {
     private final int popularity;
     private final double childFriendliness;
