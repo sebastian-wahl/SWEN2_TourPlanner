@@ -31,6 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/pdf/a18fe9f6-4b78-4903-a3bb-4c9fd0e61ff6.pdf
-/src/main/resources/pdf/bfc6e1ca-f2a2-482d-8487-75261b41f603.pdf
-/src/main/resources/pdf/74d2dcbc-26ee-485c-92f5-30b2fd9ce986.pdf
+/src/main/resources/pdf/

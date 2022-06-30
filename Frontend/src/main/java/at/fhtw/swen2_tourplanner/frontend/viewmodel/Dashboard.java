@@ -111,7 +111,7 @@ public class Dashboard implements ViewModel {
         this.infoLine.startLoading();
         Service<Boolean> validateService = new ValidationService(this::validateLocationCatchException, location);
         validateService.valueProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
-            if (t1) {
+            if (Boolean.TRUE.equals(t1)) {
                 this.tourBasicData.inputFromValidationSuccessful();
             } else {
                 this.tourBasicData.inputFromValidationFailed();
@@ -166,7 +166,7 @@ public class Dashboard implements ViewModel {
                 if (newValue.length > 0) {
                     // success
                     try (OutputStream outputStream = new FileOutputStream(file)) {
-                        outputStream.write(this.o.writeValueAsBytes(newValue));
+                        outputStream.write(newValue);
                         this.infoLine.setInfoText("Tour summary exported successfully!");
                     } catch (IOException e) {
                         this.infoLine.setErrorText("An error happened while exporting the tour summary. Please try again!");
