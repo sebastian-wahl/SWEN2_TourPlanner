@@ -29,7 +29,7 @@ public class CustomLocalDateTimeStringConverter implements Converter<LocalDateTi
             return LocalDateTime.parse(string, formatter);
         } catch (DateTimeParseException e) {
             log.error("Error when converting String to LocalDateTime: {}", e.getMessage());
-            throw new ConverterException("Could not convert string \"" + string + "\" to a Date object. Please use format: \"" + DATE_TIME_FORMAT.toUpperCase() + "\".");
+            throw new ConverterException("Please use format: \"" + DATE_TIME_FORMAT.toUpperCase() + "\". Could not convert string \"" + string + "\" to a Date object.");
         }
     }
 }

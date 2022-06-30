@@ -21,6 +21,10 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
     @FXML
     public Button validateToButton;
     @FXML
+    public Label childFriendlinessLabel;
+    @FXML
+    public Label popularityLabel;
+    @FXML
     private TextField name;
     @FXML
     private TextField from;
@@ -63,6 +67,9 @@ public class TourBasicDataController extends BaseController<TourBasicData> {
         this.distance.textProperty().bind(getViewModel().getDistanceProperty());
 
         this.estimatedTime.textProperty().bind(getViewModel().getEstimatedTimeProperty());
+
+        this.childFriendlinessLabel.textProperty().bind(getViewModel().getChildFriendlinessProperty());
+        this.popularityLabel.textProperty().bind(getViewModel().getPopularityProperty());
 
         this.description.textProperty().bindBidirectional(getViewModel().getDescriptionProperty());
         this.description.disableProperty().bind(getViewModel().getDescriptionDisableProperty());

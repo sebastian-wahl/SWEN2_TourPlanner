@@ -1,13 +1,14 @@
 package at.fhtw.swen2_tourplanner.backend.tourlog.util;
 
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-@Data
 public class ComputedValues {
+    @JsonProperty("popularity")
     private final int popularity;
+    @JsonProperty("childFriendliness")
     private final double childFriendliness;
     private static final int MAX_RATING = 3;
     private static final int MID_RATING = 2;

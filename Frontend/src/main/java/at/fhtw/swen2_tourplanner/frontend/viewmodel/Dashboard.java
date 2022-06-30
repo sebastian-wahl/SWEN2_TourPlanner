@@ -72,10 +72,10 @@ public class Dashboard implements ViewModel {
         this.tourList.setTourAddListener(this::createTour);
         this.tourList.setTourGetListener(this::getAllTours);
         // set listeners for tour log api calls
-        this.tourLogData.setGetTourLogListener(this::getAllTourLogs);
-        this.tourLogData.setAddTourLogListener(this::addTourLog);
-        this.tourLogData.setUpdateTourLogListener(this::updateTourLog);
-        this.tourLogData.setDeleteTourLogListener(this::deleteTourLog);
+        this.tourLogData.setGetTourLogListener(this::getAllTourLogsAndCalculatedAttributes);
+        this.tourLogData.setAddTourLogListener(this::addTourLogAndCalculateAttributes);
+        this.tourLogData.setUpdateTourLogListener(this::updateTourLogAndCalculateAttributes);
+        this.tourLogData.setDeleteTourLogListener(this::deleteTourLogAndCalculateAttributes);
         // set menubar listeners
         this.menubar.setImportTourListener(this::importTour);
         this.menubar.setExportTourSummaryListener(this::exportTourSummary);
@@ -388,6 +388,46 @@ public class Dashboard implements ViewModel {
     /**
      * From {@link TourLogData}
      *
+     * @param tourId
+     */
+    private void getAllTourLogsAndCalculatedAttributes(UUID tourId) {
+        this.getAllTourLogs(tourId);
+        this.getCalculatedAttributes(tourId);
+    }
+
+    /**
+     * Used after every tour log operation to calculate the additional tour attributes
+     *
+     * @param tourId
+     */
+    private void getCalculatedAttributes(UUID tourId) {
+        Service<Optional<Tour>> getComputedAttributes = new GetSingleTourWithAttributes(this::getCalculatedAttributesCatchException, tourId);
+        getComputedAttributes.valueProperty().addListener((ObservableValue<? extends Optional<Tour>> observableValue, Optional<Tour> tour, Optional<Tour> newValue) -> {
+            if (newValue.isPresent()) {
+                this.tourBasicData.computedAttributesSuccessful(newValue.get());
+            } else {
+                log.error("No tour fetched while calculating the attributes. Something went wrong.");
+                this.infoLine.setErrorText("Error while fetching the computed attributes");
+            }
+            this.infoLine.stopLoading();
+        });
+        getComputedAttributes.start();
+        this.infoLine.startLoading();
+    }
+
+    private Optional<Tour> getCalculatedAttributesCatchException(UUID tourId) {
+        try {
+            return this.tourLogService.getComputedTourAttributes(tourId);
+        } catch (BackendConnectionException | ApiCallTimoutException e) {
+            log.error(e.getMessage());
+            this.infoLine.setErrorText(e.getMessage());
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * From {@link TourLogData}
+     *
      * @param currentTourId
      */
     private void getAllTourLogs(UUID currentTourId) {
@@ -409,6 +449,7 @@ public class Dashboard implements ViewModel {
             out = this.tourLogService.getAllLogs(uuid);
         } catch (BackendConnectionException | ApiCallTimoutException e) {
             out = Collections.emptyList();
+            log.error(e.getMessage());
             this.infoLine.setErrorText(e.getMessage());
         }
         return out;
@@ -419,11 +460,13 @@ public class Dashboard implements ViewModel {
      *
      * @param toAdd
      */
-    private void addTourLog(TourLog toAdd) {
+    private void addTourLogAndCalculateAttributes(TourLog toAdd) {
         Service<Optional<TourLog>> addUpdateSingleLogService = new AddUpdateSingleLogService(this::addTourLogCatchException, toAdd);
         addUpdateSingleLogService.valueProperty().addListener((ObservableValue<? extends Optional<TourLog>> observableValue, Optional<TourLog> tourLog, Optional<TourLog> newValue) -> {
             newValue.ifPresent(this.tourLogData::addTourLogSuccessful);
             this.infoLine.stopLoading();
+            // after that, calculate attributes
+            this.getCalculatedAttributes(toAdd.getTour());
         });
         addUpdateSingleLogService.start();
         this.infoLine.startLoading();
@@ -433,6 +476,7 @@ public class Dashboard implements ViewModel {
         try {
             return tourLogService.addTourLog(toAdd);
         } catch (BackendConnectionException | ApiCallTimoutException e) {
+            log.error(e.getMessage());
             this.infoLine.setErrorText(e.getMessage());
         }
         return Optional.empty();
@@ -443,11 +487,13 @@ public class Dashboard implements ViewModel {
      *
      * @param toUpdate
      */
-    private void updateTourLog(TourLog toUpdate) {
+    private void updateTourLogAndCalculateAttributes(TourLog toUpdate) {
         Service<Optional<TourLog>> addUpdateSingleLogService = new AddUpdateSingleLogService(this::updateTourCatchException, toUpdate);
         addUpdateSingleLogService.valueProperty().addListener((ObservableValue<? extends Optional<TourLog>> observableValue, Optional<TourLog> tourLog, Optional<TourLog> newValue) -> {
             newValue.ifPresent(updatedTourLog -> tourLogData.updateTourLogSuccessful(toUpdate, updatedTourLog));
             this.infoLine.stopLoading();
+            // after that, calculate attributes
+            this.getCalculatedAttributes(toUpdate.getTour());
         });
         addUpdateSingleLogService.start();
         this.infoLine.startLoading();
@@ -457,6 +503,7 @@ public class Dashboard implements ViewModel {
         try {
             return this.tourLogService.updateTourLog(toUpdate);
         } catch (BackendConnectionException | ApiCallTimoutException e) {
+            log.error(e.getMessage());
             this.infoLine.setErrorText(e.getMessage());
             return Optional.empty();
         }
@@ -467,13 +514,16 @@ public class Dashboard implements ViewModel {
      *
      * @param toDelete
      */
-    private void deleteTourLog(TourLog toDelete) {
+    private void deleteTourLogAndCalculateAttributes(TourLog toDelete) {
         Service<Boolean> deleteSingleLogService = new DeleteSingleLogService(this::deleteTourLogCatchException, toDelete);
         deleteSingleLogService.valueProperty().addListener((observableValue, aBoolean, success) -> {
             if (Boolean.TRUE.equals(success)) {
                 this.tourLogData.deleteTourLogSuccessful();
             }
             this.infoLine.stopLoading();
+            // after that calculate attributes
+            this.getCalculatedAttributes(toDelete.getTour());
+
         });
         deleteSingleLogService.start();
         this.infoLine.startLoading();
@@ -483,6 +533,7 @@ public class Dashboard implements ViewModel {
         try {
             return this.tourLogService.deleteTourLog(toDelete);
         } catch (BackendConnectionException | ApiCallTimoutException e) {
+            log.error(e.getMessage());
             this.infoLine.setErrorText(e.getMessage());
             return false;
         }
