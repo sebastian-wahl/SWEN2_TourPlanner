@@ -9,9 +9,9 @@ import java.util.List;
 public class ComputedValues {
     private final int popularity;
     private final double childFriendliness;
-    private static final double MAX_RATING = 3;
-    private static final double MID_RATING = 2;
-    private static final double MIN_RATING = 1;
+    private static final int MAX_RATING = 3;
+    private static final int MID_RATING = 2;
+    private static final int MIN_RATING = 1;
 
     public ComputedValues(List<TourLogDTO> tourLogs) {
         this.popularity = calculatePopularity(tourLogs.size());
@@ -20,11 +20,11 @@ public class ComputedValues {
 
     private int calculatePopularity(int tourCount) {
         if (tourCount <= 5) {
-            return 1;
+            return MIN_RATING;
         } else if (tourCount <= 15) {
-            return 2;
+            return MID_RATING;
         } else {
-            return 3;
+            return MAX_RATING;
         }
     }
 
@@ -33,7 +33,7 @@ public class ComputedValues {
             final double avgTime = tourLogs.stream().mapToInt(a -> a.getDateTime() != null ? a.getDateTime().getHour() * 60 + a.getDateTime().getMinute() : 0).average().orElse(0);
             final double avgDistance = tourLogs.stream().mapToDouble(TourLogDTO::getDistance).average().orElse(0);
             final double avgDifficulty = tourLogs.stream().mapToDouble(TourLogDTO::getDifficulty).average().orElse(0);
-            return (calculateTimeRating(avgTime) + calculateDistanceRating(avgDistance) + calculateDifficultyRating(avgDifficulty)) / MAX_RATING;
+            return (calculateTimeRating(avgTime) / 2 + calculateDistanceRating(avgDistance) * 2 + calculateDifficultyRating(avgDifficulty) / 2) / MAX_RATING;
         }
         return 1;
     }
@@ -43,9 +43,9 @@ public class ComputedValues {
     }
 
     private double calculateDistanceRating(double avgDistance) {
-        if (avgDistance <= 10) {
+        if (avgDistance <= 30) {
             return MAX_RATING;
-        } else if (avgDistance <= 30) {
+        } else if (avgDistance <= 80) {
             return MID_RATING;
         } else {
             return MIN_RATING;
