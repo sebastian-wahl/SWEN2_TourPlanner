@@ -30,7 +30,7 @@ public class TourLog {
     private UUID id;
     @Column(name = "date_time")
     private LocalDateTime dateTime;
-    @Column(name = "comment")
+    @Column(name = "comment", length = 10485760)
     private String comment;
     @Column(name = "difficulty")
     private int difficulty;

@@ -16,7 +16,6 @@ import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
 import java.io.IOException;
-import java.util.Locale;
 
 
 @ExtendWith(ApplicationExtension.class)
@@ -26,7 +25,7 @@ class TourPlannerGuiTest {
     private void start(Stage stage) {
         Parent root = null;  // Locale.GERMANY, Locale.ENGLISH
         try {
-            root = FXMLDependencyInjection.load("dashboard.fxml", Locale.GERMAN);
+            root = FXMLDependencyInjection.load("dashboard.fxml");
             Scene scene = new Scene(root, 1280, 720);
             stage.setScene(scene);
             stage.show();

@@ -1,15 +1,18 @@
 package at.fhtw.swen2_tourplanner.backend.tourlog.util;
 
 import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 public class ComputedValues {
-    private final int popularity;
-    private final double childFriendliness;
     private static final double MAX_RATING = 3;
     private static final double MID_RATING = 2;
     private static final double MIN_RATING = 1;
+    @JsonProperty("popularity")
+    private final int popularity;
+    @JsonProperty("childFriendliness")
+    private final double childFriendliness;
 
     public ComputedValues(List<TourLogDTO> tourLogs) {
         this.popularity = calculatePopularity(tourLogs.size());

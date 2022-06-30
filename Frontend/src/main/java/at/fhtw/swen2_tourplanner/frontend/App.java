@@ -19,7 +19,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLDependencyInjection.load("dashboard.fxml", Locale.GERMAN);  // Locale.GERMANY, Locale.ENGLISH
+        Parent root = FXMLDependencyInjection.load("dashboard.fxml");  // Locale.GERMANY, Locale.ENGLISH
 
         Scene scene = new Scene(root, 1280, 720);
         stage.setScene(scene);

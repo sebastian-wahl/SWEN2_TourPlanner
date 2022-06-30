@@ -32,14 +32,20 @@ public class Tour {
     @JsonProperty("estimated_time")
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime estimatedTime;
-    @JsonProperty("route_information")
-    private String routeInformation;
     @JsonProperty("favorite")
     private boolean favorite;
     @JsonProperty("routeImage")
     private byte[] routeImage;
     @JsonProperty("routeImageName")
     private String routeImageName;
+
+    // calculated attributes (separate call)
+    // 1.0 - 3.0
+    @JsonProperty("childFriendliness")
+    private double childFriendliness = 3;
+    // 1 - 3
+    @JsonProperty("popularity")
+    private int popularity = 1;
 
     public Tour(String name) {
         this.name = name;

@@ -2,6 +2,7 @@ package at.fhtw.swen2_tourplanner.frontend.service.tourlog;
 
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.ApiCallTimoutException;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.BackendConnectionException;
+import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -136,6 +137,21 @@ public class TourLogServiceImpl implements TourLogService {
             e.printStackTrace();
         }
         return new byte[0];
+    }
+
+    @Override
+    public Optional<Tour> getComputedTourAttributes(UUID tourId) throws BackendConnectionException, ApiCallTimoutException {
+        try {
+            log.info("Update tour attributes for tour with id {}", tourId.toString());
+            return tourLogAPI.getComputedTourAttributes(tourId).execute().body();
+        } catch (SocketTimeoutException ex) {
+            throw new ApiCallTimoutException("updateTourLog");
+        } catch (ConnectException e) {
+            throw new BackendConnectionException();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
 

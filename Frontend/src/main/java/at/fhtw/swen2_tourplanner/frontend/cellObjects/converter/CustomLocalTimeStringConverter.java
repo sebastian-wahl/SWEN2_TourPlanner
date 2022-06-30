@@ -18,7 +18,7 @@ public class CustomLocalTimeStringConverter implements Converter<LocalTime> {
             return LocalTime.parse(s, formatter);
         } catch (DateTimeParseException e) {
             log.error("Error when converting String to LocalDateTime: {}", e.getMessage());
-            throw new ConverterException("Could not convert string \"" + s + "\" to a Time object. Please use format: \"" + TIME_FORMAT.toUpperCase() + "\".");
+            throw new ConverterException("Please use format: \"" + TIME_FORMAT.toUpperCase() + "\". Could not convert string \"" + s + "\" to a Time object.");
         }
     }
 

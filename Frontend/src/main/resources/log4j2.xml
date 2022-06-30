@@ -4,14 +4,18 @@
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
+        <!-- No file appender at the moment
         <File name="FileAppender" fileName="application-${date:yyyyMMdd}.log" immediateFlush="false" append="true">
             <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
+        -->
     </Appenders>
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="ConsoleAppender"/>
-            <!--<AppenderRef ref="FileAppender"/>-->
+            <!-- No file appender at the moment
+            <AppenderRef ref="FileAppender"/>
+            -->
         </Root>
     </Loggers>
 </Configuration>

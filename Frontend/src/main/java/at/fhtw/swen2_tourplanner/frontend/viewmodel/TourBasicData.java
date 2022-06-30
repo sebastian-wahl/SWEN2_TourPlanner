@@ -18,6 +18,7 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +44,10 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     private final BooleanProperty toDisableProperty;
     @Getter
     private final StringProperty distanceProperty;
+    @Getter
+    private final StringProperty childFriendlinessProperty;
+    @Getter
+    private final StringProperty popularityProperty;
     @Getter
     private final StringProperty estimatedTimeProperty;
     @Getter
@@ -80,7 +85,7 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
 
     // observer list
     private final List<BaseObserver<Tour>> updateTourBaseObserverList;
-
+    private final DecimalFormat df;
     // single Listeners
     @Setter
     private ExportTourListener exportTourListener;
@@ -92,11 +97,10 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     private ValidationListener validationListenerFrom;
     @Setter
     private ValidationListener validationListenerTo;
-
-
     private Tour currentTour;
 
     public TourBasicData() {
+        df = new DecimalFormat("##." + "0".repeat(2));
         this.updateTourBaseObserverList = new ArrayList<>();
 
         nameProperty = new SimpleStringProperty();
@@ -110,6 +114,8 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
         distanceProperty = new SimpleStringProperty();
         descriptionProperty = new SimpleStringProperty();
         estimatedTimeProperty = new SimpleStringProperty();
+        childFriendlinessProperty = new SimpleStringProperty();
+        popularityProperty = new SimpleStringProperty();
         descriptionDisableProperty = new SimpleBooleanProperty(true);
         favoriteCheckboxProperty = new SimpleBooleanProperty(false);
         checkboxDisableProperty = new SimpleBooleanProperty(true);
@@ -152,6 +158,8 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
             this.distanceProperty.setValue("" + currentTour.getTourDistance() + " km");
             this.descriptionProperty.setValue(currentTour.getTourDescription());
             this.estimatedTimeProperty.setValue(getTimeString() + " (HH:MM:SS)");
+            this.popularityProperty.setValue(currentTour.getPopularity() + "/3");
+            this.childFriendlinessProperty.setValue(df.format(currentTour.getChildFriendliness()).replace(",", ".") + "/3.0");
             this.favoriteCheckboxProperty.setValue(currentTour.isFavorite());
             this.transportTypeSelectedItemProperty.setValue(TransportTypeEnum.valueOf(tour.getTransportType()).getName());
             this.enableEditSaveAndExportButtons();
@@ -162,6 +170,8 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
             this.distanceProperty.setValue("");
             this.descriptionProperty.setValue("");
             this.estimatedTimeProperty.setValue("");
+            this.childFriendlinessProperty.setValue("");
+            this.popularityProperty.setValue("");
             this.favoriteCheckboxProperty.setValue(false);
             this.transportTypeSelectedItemProperty.setValue("");
             this.disableEditSaveAndExportButtons();
@@ -242,6 +252,12 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
         // update map
         notifyObservers();
         editSaveButtonTextProperty.setValue(BUTTON_EDIT_TEXT);
+    }
+
+    public void computedAttributesSuccessful(Tour tourOnlyAttributes) {
+        this.currentTour.setChildFriendliness(tourOnlyAttributes.getChildFriendliness());
+        this.currentTour.setPopularity(tourOnlyAttributes.getPopularity());
+        this.setCurrentTour(this.currentTour);
     }
 
     private void enableAllProperties() {

@@ -27,7 +27,7 @@ public class Tour {
     private UUID id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "tour_description")
+    @Column(name = "tour_description", length = 10485760)
     private String tourDescription;
     @Column(name = "start")
     private String start;
