@@ -5,11 +5,15 @@ import at.fhtw.swen2_tourplanner.backend.tourlog.dto.TourLogDTO;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -90,26 +94,40 @@ public class TourLogPdfHelper {
     }
 
     private void tourSummary(Document doc, TourDTO tour) throws MalformedURLException {
-        final String name = "Name: " + tour.getName() + "\n";
-        final String start = "Start: " + tour.getStart() + "\n";
-        final String goal = "Goal: " + tour.getGoal() + "\n";
-        final String desc = getDescription(tour.getTourDescription());
-        final String time = "Estimated Time: " + tour.getEstimatedTime() + "\n";
-        final String type = "Transport Type: " + getTransportType(tour.getTransportType()) + "\n";
-        final String distance = "Distance: " + tour.getTourDistance();
+        final String name = tour.getName();
+        final String start = tour.getStart();
+        final String goal = tour.getGoal();
+        final String desc = tour.getTourDescription();
+        final String time = "" + tour.getEstimatedTime();
+        final String type = getTransportType(tour.getTransportType());
+        final String distance = "" + tour.getTourDistance();
+
         ImageData data = ImageDataFactory.create(ABSOLUTE_IMAGE_PATH + tour.getId() + "_image.jpg");
         final Image image = new Image(data);
-        Paragraph tourSummary = new Paragraph(name + start + goal + desc + time + type + distance);
-        doc.add(tourSummary);
-        doc.add(image);
-    }
 
-    private String getDescription(String tourDescription) {
-        String desc = "-";
-        if (tourDescription != null) {
-            desc = tourDescription;
+        Paragraph title = new Paragraph("Tour: " + name).setFontColor(new DeviceRgb(8, 73, 117)).setFontSize(23f);
+        title.getAccessibilityProperties().setRole(StandardRoles.H1);
+
+        float[] pointColumnWidths = {100F, 100F, 100F, 100F, 100F};
+        Table table = new Table(pointColumnWidths);
+        table.addCell(new Cell().add(new Paragraph("Start")));
+        table.addCell(new Cell().add(new Paragraph("Goal")));
+        table.addCell(new Cell().add(new Paragraph("Estimated Time")));
+        table.addCell(new Cell().add(new Paragraph("Estimated Distance")));
+        table.addCell(new Cell().add(new Paragraph("Transport Type")));
+        table.addCell(new Cell().add(new Paragraph(start)));
+        table.addCell(new Cell().add(new Paragraph(goal)));
+        table.addCell(new Cell().add(new Paragraph(time)));
+        table.addCell(new Cell().add(new Paragraph(distance)));
+        table.addCell(new Cell().add(new Paragraph(type)));
+
+        doc.add(table);
+        if (desc != null) {
+            doc.add(new Paragraph("Description").setFontColor(new DeviceRgb(8, 73, 117)).setFontSize(15f));
+            doc.add(new Paragraph(desc));
         }
-        return "Description: " + desc + "\n";
+        doc.add(new Paragraph("Route").setFontColor(new DeviceRgb(8, 73, 117)).setFontSize(15f));
+        doc.add(image);
     }
 
     private boolean tourHasRequiredValues(TourDTO tour) {

@@ -50,15 +50,6 @@ public class TourLogServiceImpl implements TourLogService {
         }
     }
 
-    private TourLogDTO saveTourLog(TourLogDTO tourLogDto) {
-        TourDTO tourDTO;
-        tourDTO = tourService.getTour(tourLogDto.getTour());
-        TourLog tourLog = new TourLog(tourLogDto, tourDTO);
-        tourLog.setId(tourLogDto.getId());
-        tourLogRepository.save(tourLog);
-        return new TourLogDTO(tourLog);
-    }
-
     @Override
     public boolean deleteTourLog(UUID id) {
         try {
@@ -106,5 +97,14 @@ public class TourLogServiceImpl implements TourLogService {
         } catch (Exception e) {
             throw new BusinessException("Could not create report");
         }
+    }
+
+    private TourLogDTO saveTourLog(TourLogDTO tourLogDto) {
+        TourDTO tourDTO;
+        tourDTO = tourService.getTour(tourLogDto.getTour());
+        TourLog tourLog = new TourLog(tourLogDto, tourDTO);
+        tourLog.setId(tourLogDto.getId());
+        tourLogRepository.save(tourLog);
+        return new TourLogDTO(tourLog);
     }
 }

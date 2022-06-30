@@ -40,8 +40,6 @@ public class Tour {
     @Column(name = "estimated_time")
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime estimatedTime;
-    @Column(name = "route_information")
-    private String routeInformation;
     @Column(name = "favorite", nullable = false, columnDefinition = "boolean default false")
     private boolean favorite;
     @Column(name = "routeImageName")
@@ -60,7 +58,6 @@ public class Tour {
         this.transportType = tourDTO.getTransportType();
         this.tourDistance = tourDTO.getTourDistance();
         this.estimatedTime = tourDTO.getEstimatedTime();
-        this.routeInformation = tourDTO.getRouteInformation();
         this.favorite = tourDTO.isFavorite();
         this.routeImageName = tourDTO.getRouteImageName();
     }

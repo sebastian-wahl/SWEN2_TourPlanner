@@ -31,8 +31,6 @@ public class TourDTO {
     @JsonProperty("estimated_time")
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime estimatedTime;
-    @JsonProperty("route_information")
-    private String routeInformation;
     @JsonProperty("favorite")
     private boolean favorite;
     @JsonProperty("routeImage")
@@ -49,7 +47,6 @@ public class TourDTO {
         this.transportType = tour.getTransportType();
         this.tourDistance = tour.getTourDistance();
         this.estimatedTime = tour.getEstimatedTime();
-        this.routeInformation = tour.getRouteInformation();
         this.favorite = tour.isFavorite();
         this.routeImageName = tour.getRouteImageName();
         this.routeImage = tour.getImage();
@@ -64,7 +61,6 @@ public class TourDTO {
         this.transportType = tour.getTransportType();
         this.tourDistance = tour.getTourDistance();
         this.estimatedTime = tour.getEstimatedTime();
-        this.routeInformation = tour.getRouteInformation();
         this.favorite = tour.isFavorite();
         this.routeImageName = tour.getRouteImageName();
         this.routeImage = image;
