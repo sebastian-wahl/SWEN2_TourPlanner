@@ -10,6 +10,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
@@ -57,9 +58,17 @@ public class TourLogPdfHelper {
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
 
+        boolean first = true;
+
         for (Map.Entry<TourDTO, List<TourLogDTO>> set : allToursAndLogs.entrySet()) {
             TourDTO tour = set.getKey();
             List<TourLogDTO> tourLogs = set.getValue();
+
+            if (!first) {
+                document.add(new AreaBreak());
+            } else {
+                first = false;
+            }
 
             if (tourHasRequiredValues(tour)) {
                 generateTourReport(tour, tourLogs, document);
@@ -89,8 +98,18 @@ public class TourLogPdfHelper {
 
         tourSummary(document, tour);
 
-        Paragraph average = new Paragraph("Amount of tours: " + tourLogs.size() + "\nAverage Time: " + formattedTime + "\nAverage Distance: " + avgDistance + "\nAverage Rating: " + avgRating);
-        document.add(average);
+        float[] pointColumnWidths = {160F, 150F, 150F, 150F};
+        Table table = new Table(pointColumnWidths);
+        table.addCell(new Cell().add(new Paragraph("Amount of logged tours")));
+        table.addCell(new Cell().add(new Paragraph("Average Time")));
+        table.addCell(new Cell().add(new Paragraph("Average Distance")));
+        table.addCell(new Cell().add(new Paragraph("Average Rating")));
+        table.addCell(new Cell().add(new Paragraph("" + tourLogs.size())));
+        table.addCell(new Cell().add(new Paragraph(formattedTime)));
+        table.addCell(new Cell().add(new Paragraph("" + avgDistance)));
+        table.addCell(new Cell().add(new Paragraph("" + avgRating)));
+
+        document.add(table);
     }
 
     private void tourSummary(Document doc, TourDTO tour) throws MalformedURLException {
@@ -102,13 +121,10 @@ public class TourLogPdfHelper {
         final String type = getTransportType(tour.getTransportType());
         final String distance = "" + tour.getTourDistance();
 
-        ImageData data = ImageDataFactory.create(ABSOLUTE_IMAGE_PATH + tour.getId() + "_image.jpg");
-        final Image image = new Image(data);
-
         Paragraph title = new Paragraph("Tour: " + name).setFontColor(new DeviceRgb(8, 73, 117)).setFontSize(23f);
         title.getAccessibilityProperties().setRole(StandardRoles.H1);
 
-        float[] pointColumnWidths = {100F, 100F, 100F, 100F, 100F};
+        float[] pointColumnWidths = {104F, 104F, 104F, 104F, 104F};
         Table table = new Table(pointColumnWidths);
         table.addCell(new Cell().add(new Paragraph("Start")));
         table.addCell(new Cell().add(new Paragraph("Goal")));
@@ -121,13 +137,18 @@ public class TourLogPdfHelper {
         table.addCell(new Cell().add(new Paragraph(distance)));
         table.addCell(new Cell().add(new Paragraph(type)));
 
+        ImageData data = ImageDataFactory.create(ABSOLUTE_IMAGE_PATH + tour.getId() + "_image.jpg");
+        final Image image = new Image(data);
+        image.setAutoScale(true);
+
+        doc.add(title);
         doc.add(table);
-        if (desc != null) {
+        if (desc != null && !desc.isBlank()) {
             doc.add(new Paragraph("Description").setFontColor(new DeviceRgb(8, 73, 117)).setFontSize(15f));
             doc.add(new Paragraph(desc));
         }
         doc.add(new Paragraph("Route").setFontColor(new DeviceRgb(8, 73, 117)).setFontSize(15f));
-        doc.add(image);
+        doc.add(new Paragraph().add(image));
     }
 
     private boolean tourHasRequiredValues(TourDTO tour) {
