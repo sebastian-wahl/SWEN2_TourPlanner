@@ -16,7 +16,7 @@ public class CustomDoubleStringConverter extends DoubleStringConverter implement
     private final boolean limitDigits;
 
     public CustomDoubleStringConverter() {
-        this(-1, -1, -1);
+        this(Double.MIN_VALUE, Double.MAX_VALUE, -1);
     }
 
     public CustomDoubleStringConverter(double lower, double upper, int limitDigits) {
@@ -31,8 +31,7 @@ public class CustomDoubleStringConverter extends DoubleStringConverter implement
         }
     }
 
-    @Override
-    public Double fromString(String s) throws NumberFormatException {
+    private Double fromStringAdapted(String s) throws NumberFormatException {
         try {
             double number = super.fromString(s);
             if (limitDigits) {
@@ -60,8 +59,7 @@ public class CustomDoubleStringConverter extends DoubleStringConverter implement
         return lowerBound > 0 && upperBound > 0;
     }
 
-    @Override
-    public String toString(Double aDouble) throws NumberFormatException {
+    private String toStringAdapted(Double aDouble) throws NumberFormatException {
         try {
             return super.toString(aDouble);
         } catch (NumberFormatException e) {
@@ -73,7 +71,7 @@ public class CustomDoubleStringConverter extends DoubleStringConverter implement
     @Override
     public Double convertFromString(String s) throws ConverterException {
         try {
-            return this.fromString(s);
+            return this.fromStringAdapted(s);
         } catch (NumberFormatException e) {
             throw new ConverterException("Could not convert string \"" + s + "\" to a number.");
         }
@@ -82,7 +80,7 @@ public class CustomDoubleStringConverter extends DoubleStringConverter implement
     @Override
     public String convertToString(Double aDouble) throws ConverterException {
         try {
-            return this.toString(aDouble);
+            return this.toStringAdapted(aDouble);
         } catch (NumberFormatException e) {
             throw new ConverterException("Could not convert number " + aDouble + " to a string.");
         }

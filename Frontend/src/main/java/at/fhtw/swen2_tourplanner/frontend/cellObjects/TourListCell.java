@@ -13,16 +13,14 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class TourListCell extends ListCell<Tour> {
+    private final Consumer<UUID> deleteTourConsumer;
     @FXML
     private Label nameLabel;
     @FXML
     private GridPane cell;
     @FXML
-    private Button deleteButton;
-
+    private Button deleteTourButton;
     private FXMLLoader mLLoader;
-
-    private final Consumer<UUID> deleteTourConsumer;
 
     public TourListCell(Consumer<UUID> deleteTourConsumer) {
         this.deleteTourConsumer = deleteTourConsumer;
@@ -47,7 +45,7 @@ public class TourListCell extends ListCell<Tour> {
                 }
             }
 
-            deleteButton.setOnMouseClicked(event -> this.deleteTourConsumer.accept(tour.getId()));
+            deleteTourButton.setOnMouseClicked(event -> this.deleteTourConsumer.accept(tour.getId()));
             nameLabel.setText(tour.getName());
             setGraphic(cell);
         }

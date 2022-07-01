@@ -12,7 +12,7 @@ public class CustomLongStringConverter extends LongStringConverter implements Co
             return super.fromString(s);
         } catch (NumberFormatException e) {
             log.error("Error when converting String to Long: {}", e.getMessage());
-            throw e;
+            throw new ConverterException("Could not convert string \"" + s + "\" to a number.");
         }
     }
 

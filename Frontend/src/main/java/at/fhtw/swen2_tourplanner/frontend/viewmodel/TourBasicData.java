@@ -159,7 +159,7 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
             this.descriptionProperty.setValue(currentTour.getTourDescription());
             this.estimatedTimeProperty.setValue(getTimeString() + " (HH:MM:SS)");
             this.popularityProperty.setValue(currentTour.getPopularity() + "/3");
-            this.childFriendlinessProperty.setValue(df.format(currentTour.getChildFriendliness()).replace(",", ".") + "/3.0");
+            this.childFriendlinessProperty.setValue(df.format(currentTour.getChildFriendliness()).replace(",", ".") + "/3.00");
             this.favoriteCheckboxProperty.setValue(currentTour.isFavorite());
             this.transportTypeSelectedItemProperty.setValue(TransportTypeEnum.valueOf(tour.getTransportType()).getName());
             this.enableEditSaveAndExportButtons();

@@ -12,7 +12,7 @@
         <ColumnConstraints halignment="RIGHT" percentWidth="30"/>
     </columnConstraints>
     <Label fx:id="nameLabel" GridPane.columnIndex="0"/>
-    <Button fx:id="deleteButton" GridPane.columnIndex="1">
+    <Button fx:id="deleteTourButton" GridPane.columnIndex="1">
         <graphic>
             <ImageView>
                 <Image url="@../icons/icons8-remove-16.png"/>

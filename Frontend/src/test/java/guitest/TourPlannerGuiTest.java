@@ -42,18 +42,22 @@ class TourPlannerGuiTest {
         Assertions.assertThat(searchbar).hasText("");
     }
 
-    // not working yet..
     @Test
-    void testAddTour(FxRobot robot) {
+    void testAddTourDeleteTour(FxRobot robot) {
         TextField tourNameField = robot.lookup("#toAddTourName").queryAs(TextField.class);
         ListView<Tour> tourListView = robot.lookup("#tourListView").queryAs(ListView.class);
         int startSize = tourListView.getItems().size();
         tourNameField.setText("New Tour");
         robot.clickOn("#addTourButton");
+
+        // assert add
         Assertions.assertThat(tourNameField).hasText("");
         Assertions.assertThat(tourListView).hasExactlyChildren(startSize + 1, "#cell");
 
-        Button deleteButton = robot.lookup("#deleteButton" + startSize).queryButton();
+        Button deleteButton = robot.lookup("#deleteTourButton").nth(startSize).queryButton();
         robot.clickOn(deleteButton);
+
+        // assert delete
+        Assertions.assertThat(tourListView).hasExactlyChildren(startSize, "#cell");
     }
 }

@@ -15,6 +15,7 @@ module at.fhtw.swen2_tourplanner.frontend {
     requires retrofit2;
     requires retrofit2.converter.jackson;
     requires okhttp3;
+    requires de.saxsys.mvvmfx;
 
     opens at.fhtw.swen2_tourplanner.frontend.controller;
     exports at.fhtw.swen2_tourplanner.frontend.controller;

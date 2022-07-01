@@ -37,6 +37,7 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     private final BooleanProperty addTourButtonDisabledProperty;
     @Getter
     private final BooleanProperty onlyFavoriteTour;
+    @Getter
     private final ObservableList<Tour> baseTourList;
     @Getter
     private final FilteredList<Tour> tourList;
