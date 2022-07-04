@@ -22,12 +22,6 @@ class TourListTest {
         tourList = new TourList();
     }
 
-
-    @Test
-    void testSomething() {
-        assertThat(1).isEqualTo(1);
-    }
-
     @Test
     void testAddTourSuccessful() {
         tourList.getNewTourName().setValue("New Tour");
@@ -46,6 +40,6 @@ class TourListTest {
         });
         tourList.deleteTour(testTour.getId());
 
-        assertThat(tourList.getTourList().size()).isEqualTo(0);
+        assertThat(tourList.getTourList().size()).isZero();
     }
 }
