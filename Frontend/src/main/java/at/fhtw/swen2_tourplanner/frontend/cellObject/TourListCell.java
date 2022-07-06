@@ -7,11 +7,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+@Log4j2
 public class TourListCell extends ListCell<Tour> {
     private final Consumer<UUID> deleteTourConsumer;
     @FXML
@@ -41,7 +43,7 @@ public class TourListCell extends ListCell<Tour> {
                 try {
                     mLLoader.load();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
             }
 

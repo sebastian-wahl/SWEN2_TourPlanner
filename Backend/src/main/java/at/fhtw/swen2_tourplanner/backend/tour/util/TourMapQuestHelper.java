@@ -71,7 +71,7 @@ public class TourMapQuestHelper {
                 outputStream.write(route);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return newFile.getName();
     }

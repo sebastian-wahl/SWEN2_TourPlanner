@@ -333,7 +333,7 @@ public class TourLogData implements ViewModel, StringObserver {
     public void addTourLog() {
         TourLog toAdd = new TourLog(currentTour);
         toAdd.setDistance(currentTour.getTourDistance());
-        this.addTourLogListener.addTour(toAdd);
+        this.addTourLogListener.addTour(toAdd, false);
     }
 
     public void addTourLogSuccessful(TourLog addedTourLog) {

@@ -26,6 +26,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
@@ -53,6 +54,7 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     // for filtering
     private String searchText = "";
     private Tour selectedTour;
+    private boolean blockObservers = false;
 
     public TourList() {
         addTourButtonDisabledProperty = new SimpleBooleanProperty(true);
@@ -84,7 +86,34 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     }
 
     public void getTourSuccessful(List<Tour> tourList) {
+        blockObservers = true;
+        Tour selectedTourCache = null;
+        boolean addSelectedTourNewly = false;
+        if (this.selectedTour != null) {
+            Optional<Tour> selectedTourOpt = tourList.stream()
+                    .filter(tour -> tour.editableEqual(this.selectedTour))
+                    .findFirst();
+            if (selectedTourOpt.isPresent()) {
+                selectedTourCache = selectedTourOpt.get();
+            } else {
+                selectedTourCache = this.selectedTour;
+                addSelectedTourNewly = true;
+            }
+        }
+        baseTourList.clear();
         baseTourList.addAll(tourList);
+        if (selectedTourCache != null) {
+            if (addSelectedTourNewly) {
+                selectedTourCache.setId(null);
+                this.addTourDueToDeletion(selectedTourCache);
+                log.info("Re-adding selected tour, other client deleted the tour while this client is working on it.");
+            } else {
+                this.listViewSelectionModel.select(selectedTourCache);
+                blockObservers = false;
+            }
+        } else {
+            blockObservers = false;
+        }
     }
 
     public void setListViewSelectionModel(MultipleSelectionModel<Tour> listViewSelectionModel) {
@@ -99,14 +128,21 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     public void addTour() {
         if (this.newTourName.getValue() != null && !this.newTourName.getValue().isEmpty()) {
             Tour newTour = new Tour(newTourName.getValue());
-            this.tourAddListener.addTour(newTour);
+            this.tourAddListener.addTour(newTour, false);
             newTourName.setValue("");
         }
+    }
+
+    private void addTourDueToDeletion(Tour tour) {
+        this.tourAddListener.addTour(tour, true);
     }
 
     public void addTourSuccessful(Tour addedTour) {
         this.baseTourList.add(addedTour);
         this.listViewSelectionModel.select(addedTour);
+        if (blockObservers) {
+            blockObservers = false;
+        }
     }
 
     public void importToursSuccessful(List<Tour> importedTours) {
@@ -161,7 +197,9 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     @Override
     public void changed(ObservableValue<? extends Tour> observableValue, Tour tour, Tour t1) {
         this.selectedTour = t1;
-        Platform.runLater(this::notifyObservers);
+        if (!blockObservers) {
+            Platform.runLater(this::notifyObservers);
+        }
     }
 
     @Override

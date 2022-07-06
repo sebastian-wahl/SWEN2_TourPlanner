@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 public class TourBasicData implements ViewModel, UpdateTourObservable {
@@ -332,5 +333,9 @@ public class TourBasicData implements ViewModel, UpdateTourObservable {
     public void inputFromValidationFailed() {
         this.validateFromButtonDisableProperty.setValue(false);
         this.fromProperty.setValue("");
+    }
+
+    public void resetCurrentTourId(UUID id) {
+        this.currentTour.setId(id);
     }
 }

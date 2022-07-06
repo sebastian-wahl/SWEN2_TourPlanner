@@ -7,6 +7,7 @@ import at.fhtw.swen2_tourplanner.backend.tourlog.model.TourLog;
 import at.fhtw.swen2_tourplanner.backend.tourlog.repo.TourLogRepository;
 import at.fhtw.swen2_tourplanner.backend.tourlog.util.TourLogPdfHelper;
 import at.fhtw.swen2_tourplanner.backend.util.BusinessException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+@Log4j2
 @Service
 public class TourLogServiceImpl implements TourLogService {
 
@@ -76,7 +78,7 @@ public class TourLogServiceImpl implements TourLogService {
         } catch (BusinessException businessException) {
             throw businessException;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
             throw new BusinessException("Could not create report");
         }
     }

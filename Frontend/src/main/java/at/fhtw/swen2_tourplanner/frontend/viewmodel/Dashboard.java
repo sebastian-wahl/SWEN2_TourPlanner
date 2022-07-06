@@ -17,8 +17,12 @@ import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Service;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.util.Duration;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
@@ -270,9 +274,11 @@ public class Dashboard implements ViewModel {
      * From {@link TourList}
      */
     private void getAllTours() {
-        Service<List<Tour>> getMultipleTourService = new GetMultipleTourService(this::getAllToursCatchException);
-        getMultipleTourService.valueProperty().addListener((ObservableValue<? extends List<Tour>> observableValue, List<Tour> tours, List<Tour> newTours) -> {
-            if (!newTours.isEmpty()) {
+        ScheduledService<List<Tour>> getMultipleTourService = new GetMultipleTourService(this::getAllToursCatchException);
+        getMultipleTourService.setPeriod(Duration.seconds(30));
+        getMultipleTourService.setOnSucceeded((WorkerStateEvent workerStateEvent) -> {
+            List<Tour> newTours = (List<Tour>) workerStateEvent.getSource().getValue();
+            if (newTours != null && !newTours.isEmpty()) {
                 this.tourList.getTourSuccessful(newTours);
             } else {
                 log.warn("No tours fetched. Maybe something went wrong.");
@@ -284,6 +290,7 @@ public class Dashboard implements ViewModel {
     }
 
     private List<Tour> getAllToursCatchException() {
+        Platform.runLater(this.infoLine::startLoading);
         List<Tour> out;
         try {
             out = tourService.getAllTours();
@@ -299,10 +306,14 @@ public class Dashboard implements ViewModel {
      *
      * @param toCreate
      */
-    private void createTour(Tour toCreate) {
+    private void createTour(Tour toCreate, boolean replacement) {
         Service<Optional<Tour>> addUpdateSingleTourService = new AddUpdateSingleTourService(this::createTourCatchException, toCreate);
         addUpdateSingleTourService.valueProperty().addListener((observableValue, tourDTO, newValue) -> {
             if (newValue.isPresent()) {
+                if (replacement) {
+                    this.infoLine.setInfoText("Another client deleted the selected tour, this client re-added it back.");
+                    this.tourBasicData.resetCurrentTourId(newValue.get().getId());
+                }
                 this.tourList.addTourSuccessful(newValue.get());
             } else {
                 log.warn("Tour \"{}\" not created successfully.", toCreate.getName());
@@ -460,7 +471,7 @@ public class Dashboard implements ViewModel {
      *
      * @param toAdd
      */
-    private void addTourLogAndCalculateAttributes(TourLog toAdd) {
+    private void addTourLogAndCalculateAttributes(TourLog toAdd, boolean replacement) {
         Service<Optional<TourLog>> addUpdateSingleLogService = new AddUpdateSingleLogService(this::addTourLogCatchException, toAdd);
         addUpdateSingleLogService.valueProperty().addListener((ObservableValue<? extends Optional<TourLog>> observableValue, Optional<TourLog> tourLog, Optional<TourLog> newValue) -> {
             newValue.ifPresent(this.tourLogData::addTourLogSuccessful);

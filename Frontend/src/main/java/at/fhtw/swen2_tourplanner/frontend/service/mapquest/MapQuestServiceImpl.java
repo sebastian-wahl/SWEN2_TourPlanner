@@ -44,7 +44,7 @@ public class MapQuestServiceImpl implements MapQuestService {
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("getAllTours");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return false;
     }

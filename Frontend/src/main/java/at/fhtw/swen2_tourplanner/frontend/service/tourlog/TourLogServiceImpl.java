@@ -52,7 +52,7 @@ public class TourLogServiceImpl implements TourLogService {
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("getAllTourLogs");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return Collections.emptyList();
     }
@@ -68,7 +68,7 @@ public class TourLogServiceImpl implements TourLogService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return false;
     }
@@ -85,7 +85,7 @@ public class TourLogServiceImpl implements TourLogService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return Optional.empty();
     }
@@ -100,7 +100,7 @@ public class TourLogServiceImpl implements TourLogService {
         } catch (ConnectException e) {
             throw new BackendConnectionException();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return Optional.empty();
     }
@@ -117,7 +117,7 @@ public class TourLogServiceImpl implements TourLogService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return new byte[0];
     }
@@ -134,7 +134,7 @@ public class TourLogServiceImpl implements TourLogService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return new byte[0];
     }
@@ -149,7 +149,7 @@ public class TourLogServiceImpl implements TourLogService {
         } catch (ConnectException e) {
             throw new BackendConnectionException();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return Optional.empty();
     }

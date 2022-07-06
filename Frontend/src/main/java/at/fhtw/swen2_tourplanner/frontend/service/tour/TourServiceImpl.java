@@ -50,7 +50,7 @@ public class TourServiceImpl implements TourService {
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("getAllTours");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return Collections.emptyList();
     }
@@ -66,7 +66,7 @@ public class TourServiceImpl implements TourService {
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("getTour");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return Optional.empty();
     }
@@ -83,7 +83,7 @@ public class TourServiceImpl implements TourService {
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("deleteTour");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return false;
     }
@@ -99,7 +99,7 @@ public class TourServiceImpl implements TourService {
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("addTour");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return Optional.empty();
     }
@@ -119,7 +119,7 @@ public class TourServiceImpl implements TourService {
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("addTour");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return Collections.emptyList();
     }
@@ -135,7 +135,7 @@ public class TourServiceImpl implements TourService {
         } catch (SocketTimeoutException ex) {
             throw new ApiCallTimoutException("updateTour");
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return Optional.empty();
     }
