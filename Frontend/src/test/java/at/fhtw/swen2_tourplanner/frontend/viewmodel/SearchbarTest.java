@@ -22,7 +22,7 @@ class SearchbarTest {
         String searchText = "TestSearch";
         searchbar.getSearchText().setValue(searchText);
         searchbar.clearSearch();
-        assertThat(searchbar.getSearchText().getValue()).isEqualTo("");
+        assertThat(searchbar.getSearchText().getValue()).isEmpty();
     }
 
 }

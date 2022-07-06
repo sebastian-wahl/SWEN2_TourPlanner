@@ -1,6 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.enums.TransportTypeEnum;
+import at.fhtw.swen2_tourplanner.frontend.customEnum.TransportTypeEnum;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,10 +38,10 @@ class TourBasicDataTest {
         assertThat(tourBasicData.getTransportTypeSelectedItemProperty().getValue()).isEqualTo(TransportTypeEnum.valueOf(testTour.getTransportType()).getName());
 
         tourBasicData.setCurrentTour(null);
-        assertThat(tourBasicData.getNameProperty().getValue()).isEqualTo("");
-        assertThat(tourBasicData.getNameProperty().getValue()).isEqualTo("");
-        assertThat(tourBasicData.getFromProperty().getValue()).isEqualTo("");
-        assertThat(tourBasicData.getToProperty().getValue()).isEqualTo("");
+        assertThat(tourBasicData.getNameProperty().getValue()).isEmpty();
+        assertThat(tourBasicData.getNameProperty().getValue()).isEmpty();
+        assertThat(tourBasicData.getFromProperty().getValue()).isEmpty();
+        assertThat(tourBasicData.getToProperty().getValue()).isEmpty();
         assertThat(tourBasicData.getDistanceProperty().getValue()).isEqualTo("");
         assertThat(tourBasicData.getDescriptionProperty().getValue()).isEqualTo("");
         assertThat(tourBasicData.getEstimatedTimeProperty().getValue()).isEqualTo("");

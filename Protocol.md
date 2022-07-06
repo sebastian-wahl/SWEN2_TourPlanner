@@ -71,6 +71,13 @@ private Optional<Tour> createTourCatchException(Tour tour) {
 
 #### UI decisions
 
+Our final UI design looks like the following:
+![TourPlannerUI](src/main/resources/TourPlannerUI.PNG)
+![TourPlannerUI](src/main/resources/TourPlannerUI2.PNG)
+We decided to split up the UI in several single components. Every red rectangle represents a component which included
+into the base component.
+![TourPlannerUI](src/main/resources/TourPlannerUIComponents.PNG)
+We decided to go 
 ### Backend
 
 ## Lessons learned

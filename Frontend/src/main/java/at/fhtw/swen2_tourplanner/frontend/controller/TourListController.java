@@ -1,6 +1,6 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.TourListCell;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.TourListCell;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourList;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.application.Platform;

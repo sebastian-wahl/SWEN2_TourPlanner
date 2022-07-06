@@ -1,4 +1,4 @@
-package at.fhtw.swen2_tourplanner.frontend.cellObjects;
+package at.fhtw.swen2_tourplanner.frontend.cellObject;
 
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.fxml.FXML;

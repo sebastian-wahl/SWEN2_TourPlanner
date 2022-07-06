@@ -1,7 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
-import at.fhtw.swen2_tourplanner.frontend.enums.TransportTypeEnum;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.converter.CustomLocalTimeStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.customEnum.TransportTypeEnum;
 import at.fhtw.swen2_tourplanner.frontend.listener.ExportTourListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.ExportTourReportListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.UpdateListener;

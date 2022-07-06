@@ -23,12 +23,12 @@ module at.fhtw.swen2_tourplanner.frontend {
     exports at.fhtw.swen2_tourplanner.frontend.viewmodel;
     opens at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects;
     exports at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects;
-    opens at.fhtw.swen2_tourplanner.frontend.cellObjects;
-    exports at.fhtw.swen2_tourplanner.frontend.cellObjects;
-    opens at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
-    exports at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
-    opens at.fhtw.swen2_tourplanner.frontend.cellObjects.exception;
-    exports at.fhtw.swen2_tourplanner.frontend.cellObjects.exception;
+    opens at.fhtw.swen2_tourplanner.frontend.cellObject;
+    exports at.fhtw.swen2_tourplanner.frontend.cellObject;
+    opens at.fhtw.swen2_tourplanner.frontend.cellObject.converter;
+    exports at.fhtw.swen2_tourplanner.frontend.cellObject.converter;
+    opens at.fhtw.swen2_tourplanner.frontend.cellObject.exception;
+    exports at.fhtw.swen2_tourplanner.frontend.cellObject.exception;
     opens at.fhtw.swen2_tourplanner.frontend.observer;
     exports at.fhtw.swen2_tourplanner.frontend.observer;
     opens at.fhtw.swen2_tourplanner.frontend.service;

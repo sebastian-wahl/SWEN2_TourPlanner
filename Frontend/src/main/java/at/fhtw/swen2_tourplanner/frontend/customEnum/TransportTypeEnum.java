@@ -1,4 +1,4 @@
-package at.fhtw.swen2_tourplanner.frontend.enums;
+package at.fhtw.swen2_tourplanner.frontend.customEnum;
 
 import lombok.Getter;
 

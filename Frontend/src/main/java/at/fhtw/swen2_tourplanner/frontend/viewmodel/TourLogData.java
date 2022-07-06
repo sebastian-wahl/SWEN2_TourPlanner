@@ -1,15 +1,16 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.TourLogTableCell;
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomDoubleStringConverter;
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomIntegerStringConverter;
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalDateTimeStringConverter;
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.TourLogTableCell;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.converter.CustomDoubleStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.converter.CustomIntegerStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.converter.CustomLocalDateTimeStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.converter.CustomLocalTimeStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.listener.AddListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.DeleteListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.TourLogGetListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.UpdateListener;
 import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
+import at.fhtw.swen2_tourplanner.frontend.util.PredicateGenerator;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import javafx.beans.property.*;
@@ -36,7 +37,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 public class TourLogData implements ViewModel, StringObserver {
     // other view models
@@ -312,26 +312,7 @@ public class TourLogData implements ViewModel, StringObserver {
     @Override
     public void update(String s) {
         if (s != null && !s.isEmpty()) {
-            DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern(CustomLocalDateTimeStringConverter.DATE_TIME_FORMAT);
-            DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern(CustomLocalTimeStringConverter.TIME_FORMAT);
-            Predicate<TourLog> startDatePredicate = tourLog -> tourLog.getDateTime() != null && formatterDate.format(tourLog.getDateTime()).contains(s);
-
-            Predicate<TourLog> durationPredicate = tourLog -> tourLog.getTotalTime() != null && formatterTime.format(tourLog.getTotalTime()).contains(s);
-
-            Predicate<TourLog> distancePredicate = tourLog -> ("" + tourLog.getDistance()).contains(s);
-
-            Predicate<TourLog> difficultyPredicate = tourLog -> ("" + tourLog.getDifficulty()).contains(s);
-
-            Predicate<TourLog> ratingPredicate = tourLog -> ("" + tourLog.getRating()).contains(s);
-
-            Predicate<TourLog> commentPredicate = tourLog -> tourLog.getComment() != null && tourLog.getComment().contains(s);
-
-            Predicate<TourLog> masterPredicate = startDatePredicate.or(durationPredicate)
-                    .or(difficultyPredicate)
-                    .or(distancePredicate)
-                    .or(ratingPredicate)
-                    .or(commentPredicate);
-            tourLogList.setPredicate(masterPredicate);
+            tourLogList.setPredicate(PredicateGenerator.getTourLogPredicate(s));
         } else {
             tourLogList.setPredicate(null);
         }

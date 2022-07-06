@@ -1,6 +1,6 @@
-package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
+package at.fhtw.swen2_tourplanner.frontend.cellObject.converter;
 
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.exception.ConverterException;
 
 public interface Converter<T> {
     T convertFromString(String s) throws ConverterException;

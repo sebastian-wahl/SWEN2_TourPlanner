@@ -1,7 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.controller;
 
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalDateTimeStringConverter;
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.CustomLocalTimeStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.converter.CustomLocalDateTimeStringConverter;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.converter.CustomLocalTimeStringConverter;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.TourLogData;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import javafx.fxml.FXML;

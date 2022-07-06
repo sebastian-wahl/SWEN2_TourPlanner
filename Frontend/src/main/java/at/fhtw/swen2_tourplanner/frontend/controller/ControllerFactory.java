@@ -48,7 +48,6 @@ public class ControllerFactory {
         dashboard = new Dashboard(tourList, tourBasicData, tourLogData, infoLine, tourService, tourLogService, mapQuestService,
                 menubar);
 
-
         // --- register observers ---
         // search observer
         searchbarTour.registerObserver(tourList);

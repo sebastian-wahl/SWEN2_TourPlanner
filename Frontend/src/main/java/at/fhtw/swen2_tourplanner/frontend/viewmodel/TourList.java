@@ -6,6 +6,7 @@ import at.fhtw.swen2_tourplanner.frontend.listener.TourGetListener;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourObservable;
+import at.fhtw.swen2_tourplanner.frontend.util.PredicateGenerator;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import javafx.application.Platform;
 import javafx.beans.Observable;
@@ -26,7 +27,6 @@ import lombok.extern.log4j.Log4j2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 @Log4j2
 public class TourList implements ViewModel, StringObserver, UpdateTourObservable, ChangeListener<Tour> {
@@ -155,14 +155,7 @@ public class TourList implements ViewModel, StringObserver, UpdateTourObservable
     }
 
     private void updateFilteredListPredicate() {
-        Predicate<Tour> tourPredicate1 = Tour::isFavorite;
-        Predicate<Tour> tourPredicate2 = tour -> tour.getName().toLowerCase().contains(this.searchText.toLowerCase());
-        // set predicate filter list
-        if (this.onlyFavoriteTour.get()) {
-            tourList.setPredicate(tourPredicate1.and(tourPredicate2));
-        } else {
-            tourList.setPredicate(tourPredicate2);
-        }
+        tourList.setPredicate(PredicateGenerator.getTourPredicate(this.searchText, this.onlyFavoriteTour.get()));
     }
 
     @Override

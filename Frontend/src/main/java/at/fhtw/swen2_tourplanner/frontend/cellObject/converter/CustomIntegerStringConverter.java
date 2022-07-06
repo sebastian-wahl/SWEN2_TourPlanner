@@ -1,6 +1,6 @@
-package at.fhtw.swen2_tourplanner.frontend.cellObjects.converter;
+package at.fhtw.swen2_tourplanner.frontend.cellObject.converter;
 
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.exception.ConverterException;
 import javafx.util.converter.IntegerStringConverter;
 import lombok.extern.log4j.Log4j2;
 

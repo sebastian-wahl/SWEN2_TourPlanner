@@ -1,7 +1,7 @@
-package at.fhtw.swen2_tourplanner.frontend.cellObjects;
+package at.fhtw.swen2_tourplanner.frontend.cellObject;
 
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.converter.Converter;
-import at.fhtw.swen2_tourplanner.frontend.cellObjects.exception.ConverterException;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.converter.Converter;
+import at.fhtw.swen2_tourplanner.frontend.cellObject.exception.ConverterException;
 import at.fhtw.swen2_tourplanner.frontend.listener.UpdateInfoTextListener;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
 import javafx.event.Event;

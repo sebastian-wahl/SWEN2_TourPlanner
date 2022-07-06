@@ -2,6 +2,7 @@ package guitest;
 
 import at.fhtw.swen2_tourplanner.frontend.FXMLDependencyInjection;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -52,12 +53,12 @@ class TourPlannerGuiTest {
 
         // assert add
         Assertions.assertThat(tourNameField).hasText("");
-        Assertions.assertThat(tourListView).hasExactlyChildren(startSize + 1, "#cell");
+        Platform.runLater(() -> Assertions.assertThat(tourListView).hasExactlyChildren(startSize + 1, "#cell"));
 
         Button deleteButton = robot.lookup("#deleteTourButton").nth(startSize).queryButton();
         robot.clickOn(deleteButton);
 
         // assert delete
-        Assertions.assertThat(tourListView).hasExactlyChildren(startSize, "#cell");
+        Platform.runLater(() -> Assertions.assertThat(tourListView).hasExactlyChildren(startSize, "#cell"));
     }
 }
