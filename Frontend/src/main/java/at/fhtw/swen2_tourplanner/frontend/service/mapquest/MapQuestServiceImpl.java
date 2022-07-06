@@ -1,6 +1,5 @@
 package at.fhtw.swen2_tourplanner.frontend.service.mapquest;
 
-import at.fhtw.swen2_tourplanner.frontend.service.exceptions.ApiCallTimoutException;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.BackendConnectionException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -34,7 +33,7 @@ public class MapQuestServiceImpl implements MapQuestService {
     }
 
     @Override
-    public boolean validateInput(String location) throws BackendConnectionException, ApiCallTimoutException {
+    public boolean validateInput(String location) throws BackendConnectionException {
         try {
             log.info("Validate location request send for location '{}'.", location);
             return Boolean.TRUE.equals(mapQuestAPI.validateLocation(location).execute().body());
@@ -42,7 +41,7 @@ public class MapQuestServiceImpl implements MapQuestService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("getAllTours");
+            throw new BackendConnectionException("The API Call \"getAllTours\" timed out!");
         } catch (IOException e) {
             log.error(e);
         }

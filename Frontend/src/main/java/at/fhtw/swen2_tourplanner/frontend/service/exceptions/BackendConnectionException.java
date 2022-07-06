@@ -6,4 +6,8 @@ public class BackendConnectionException extends Exception {
     public BackendConnectionException() {
         super(ERROR_MSG);
     }
+
+    public BackendConnectionException(String message) {
+        super(message);
+    }
 }

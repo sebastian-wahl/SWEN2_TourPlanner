@@ -1,6 +1,5 @@
 package at.fhtw.swen2_tourplanner.frontend.service.tour;
 
-import at.fhtw.swen2_tourplanner.frontend.service.exceptions.ApiCallTimoutException;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.BackendConnectionException;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -39,7 +38,7 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public List<Tour> getAllTours() throws BackendConnectionException, ApiCallTimoutException {
+    public List<Tour> getAllTours() throws BackendConnectionException {
         try {
             log.info("Get all tours request send.");
             List<Tour> result = tourAPI.getAllTours().execute().body();
@@ -48,7 +47,7 @@ public class TourServiceImpl implements TourService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("getAllTours");
+            throw new BackendConnectionException("The API Call \"getAllTours\" timed out!");
         } catch (IOException e) {
             log.error(e);
         }
@@ -56,7 +55,7 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public Optional<Tour> getTourById(UUID id) throws BackendConnectionException, ApiCallTimoutException {
+    public Optional<Tour> getTourById(UUID id) throws BackendConnectionException {
         try {
             log.info("Get tour by id request send.");
             return tourAPI.getTourById(id).execute().body();
@@ -64,7 +63,7 @@ public class TourServiceImpl implements TourService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("getTour");
+            throw new BackendConnectionException("The API Call \"getTour\" timed out!");
         } catch (IOException e) {
             log.error(e);
         }
@@ -73,7 +72,7 @@ public class TourServiceImpl implements TourService {
 
 
     @Override
-    public boolean deleteTour(Tour tour) throws BackendConnectionException, ApiCallTimoutException {
+    public boolean deleteTour(Tour tour) throws BackendConnectionException {
         try {
             log.info("Delete tour with id {}", tour.getId());
             return tourAPI.deleteTour(tour.getId()).execute().isSuccessful();
@@ -81,7 +80,7 @@ public class TourServiceImpl implements TourService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("deleteTour");
+            throw new BackendConnectionException("The API Call \"deleteTour\" timed out!");
         } catch (IOException e) {
             log.error(e);
         }
@@ -89,7 +88,7 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public Optional<Tour> addTour(Tour tour) throws BackendConnectionException, ApiCallTimoutException {
+    public Optional<Tour> addTour(Tour tour) throws BackendConnectionException {
         try {
             log.info("Add tour");
             return tourAPI.addTour(tour).execute().body();
@@ -97,7 +96,7 @@ public class TourServiceImpl implements TourService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("addTour");
+            throw new BackendConnectionException("The API Call \"addTour\" timed out!");
         } catch (IOException e) {
             log.error(e);
         }
@@ -105,9 +104,9 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public List<Tour> importTours(List<Tour> tourList) throws BackendConnectionException, ApiCallTimoutException {
+    public List<Tour> importTours(List<Tour> tourList) throws BackendConnectionException {
         try {
-            log.info("Add tour");
+            log.info("Import tours");
             List<Tour> out = tourAPI.importTours(tourList).execute().body();
             if (out == null) {
                 return Collections.emptyList();
@@ -117,7 +116,7 @@ public class TourServiceImpl implements TourService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("addTour");
+            throw new BackendConnectionException("The API Call \"importTours\" timed out!");
         } catch (IOException e) {
             log.error(e);
         }
@@ -125,7 +124,7 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public Optional<Tour> updateTour(Tour tour) throws BackendConnectionException, ApiCallTimoutException {
+    public Optional<Tour> updateTour(Tour tour) throws BackendConnectionException {
         try {
             log.info("Update tour request sent. Updating tour with id {}", tour);
             return tourAPI.updateTour(tour).execute().body();
@@ -133,7 +132,7 @@ public class TourServiceImpl implements TourService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("updateTour");
+            throw new BackendConnectionException("The API Call \"updateTour\" timed out!");
         } catch (IOException e) {
             log.error(e);
         }

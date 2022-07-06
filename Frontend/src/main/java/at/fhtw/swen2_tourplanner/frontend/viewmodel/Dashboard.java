@@ -1,6 +1,5 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
-import at.fhtw.swen2_tourplanner.frontend.service.exceptions.ApiCallTimoutException;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.BackendConnectionException;
 import at.fhtw.swen2_tourplanner.frontend.service.mapquest.MapQuestService;
 import at.fhtw.swen2_tourplanner.frontend.service.mapquest.microservice.ValidationService;
@@ -104,7 +103,7 @@ public class Dashboard implements ViewModel {
     private boolean validateLocationCatchException(String location) {
         try {
             return mapQuestService.validateInput(location);
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             log.error(e);
             this.infoLine.setErrorText(e.getMessage());
         }
@@ -155,7 +154,7 @@ public class Dashboard implements ViewModel {
     private List<Tour> importToursCatchException(List<Tour> tourList) {
         try {
             return this.tourService.importTours(tourList);
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             log.error(e);
             this.infoLine.setErrorText(e.getMessage());
         }
@@ -194,7 +193,7 @@ public class Dashboard implements ViewModel {
                 return new byte[0];
             }
             return summary;
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             log.error(e);
             this.infoLine.setErrorText(e.getMessage());
             return new byte[0];
@@ -233,7 +232,7 @@ public class Dashboard implements ViewModel {
                 return new byte[0];
             }
             return report;
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             log.error(e);
             this.infoLine.setErrorText(e.getMessage());
             return new byte[0];
@@ -294,7 +293,7 @@ public class Dashboard implements ViewModel {
         List<Tour> out;
         try {
             out = tourService.getAllTours();
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             out = Collections.emptyList();
             this.infoLine.setErrorText(e.getMessage());
         }
@@ -328,7 +327,7 @@ public class Dashboard implements ViewModel {
         Optional<Tour> out;
         try {
             out = tourService.addTour(tour);
-        } catch (BackendConnectionException | ApiCallTimoutException ex) {
+        } catch (BackendConnectionException ex) {
             this.infoLine.setErrorText(ex.getMessage());
             out = Optional.empty();
         }
@@ -357,7 +356,7 @@ public class Dashboard implements ViewModel {
     private boolean deleteTourCatchException(Tour toDelete) {
         try {
             return tourService.deleteTour(toDelete);
-        } catch (BackendConnectionException | ApiCallTimoutException ex) {
+        } catch (BackendConnectionException ex) {
             this.infoLine.setErrorText(ex.getMessage());
         }
         return false;
@@ -387,7 +386,7 @@ public class Dashboard implements ViewModel {
         Optional<Tour> out;
         try {
             out = tourService.updateTour(tour);
-        } catch (BackendConnectionException | ApiCallTimoutException ex) {
+        } catch (BackendConnectionException ex) {
             this.infoLine.setErrorText(ex.getMessage());
             out = Optional.empty();
         }
@@ -429,7 +428,7 @@ public class Dashboard implements ViewModel {
     private Optional<Tour> getCalculatedAttributesCatchException(UUID tourId) {
         try {
             return this.tourLogService.getComputedTourAttributes(tourId);
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             log.error(e.getMessage());
             this.infoLine.setErrorText(e.getMessage());
         }
@@ -458,7 +457,7 @@ public class Dashboard implements ViewModel {
         List<TourLog> out;
         try {
             out = this.tourLogService.getAllLogs(uuid);
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             out = Collections.emptyList();
             log.error(e.getMessage());
             this.infoLine.setErrorText(e.getMessage());
@@ -486,7 +485,7 @@ public class Dashboard implements ViewModel {
     private Optional<TourLog> addTourLogCatchException(TourLog toAdd) {
         try {
             return tourLogService.addTourLog(toAdd);
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             log.error(e.getMessage());
             this.infoLine.setErrorText(e.getMessage());
         }
@@ -513,7 +512,7 @@ public class Dashboard implements ViewModel {
     private Optional<TourLog> updateTourCatchException(TourLog toUpdate) {
         try {
             return this.tourLogService.updateTourLog(toUpdate);
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             log.error(e.getMessage());
             this.infoLine.setErrorText(e.getMessage());
             return Optional.empty();
@@ -543,7 +542,7 @@ public class Dashboard implements ViewModel {
     private boolean deleteTourLogCatchException(TourLog toDelete) {
         try {
             return this.tourLogService.deleteTourLog(toDelete);
-        } catch (BackendConnectionException | ApiCallTimoutException e) {
+        } catch (BackendConnectionException e) {
             log.error(e.getMessage());
             this.infoLine.setErrorText(e.getMessage());
             return false;

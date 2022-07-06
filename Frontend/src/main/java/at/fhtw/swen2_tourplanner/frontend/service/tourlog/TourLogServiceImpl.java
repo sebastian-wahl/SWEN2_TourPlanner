@@ -1,6 +1,5 @@
 package at.fhtw.swen2_tourplanner.frontend.service.tourlog;
 
-import at.fhtw.swen2_tourplanner.frontend.service.exceptions.ApiCallTimoutException;
 import at.fhtw.swen2_tourplanner.frontend.service.exceptions.BackendConnectionException;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
@@ -42,7 +41,7 @@ public class TourLogServiceImpl implements TourLogService {
 
 
     @Override
-    public List<TourLog> getAllLogs(UUID tourId) throws ApiCallTimoutException, BackendConnectionException {
+    public List<TourLog> getAllLogs(UUID tourId) throws BackendConnectionException {
         try {
             log.info("Get all tour logs request sent.");
             return tourLogAPI.getAllLogs(tourId).execute().body();
@@ -50,7 +49,7 @@ public class TourLogServiceImpl implements TourLogService {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("getAllTourLogs");
+            throw new BackendConnectionException("The API Call \"getAllTourLogs\" timed out!");
         } catch (IOException e) {
             log.error(e);
         }
@@ -58,12 +57,12 @@ public class TourLogServiceImpl implements TourLogService {
     }
 
     @Override
-    public boolean deleteTourLog(TourLog tourLog) throws ApiCallTimoutException, BackendConnectionException {
+    public boolean deleteTourLog(TourLog tourLog) throws BackendConnectionException {
         try {
             log.info("Delete tour log request sent. Deleting tour log with id {}. ", tourLog.getId());
             return tourLogAPI.deleteTourLog(tourLog.getId()).execute().isSuccessful();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("deleteTourLog");
+            throw new BackendConnectionException("The API Call \"deleteTourLog\" timed out!");
         } catch (ConnectException e) {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
@@ -75,12 +74,12 @@ public class TourLogServiceImpl implements TourLogService {
 
     @Override
 
-    public Optional<TourLog> addTourLog(TourLog tourLog) throws ApiCallTimoutException, BackendConnectionException {
+    public Optional<TourLog> addTourLog(TourLog tourLog) throws BackendConnectionException {
         try {
             log.info("Add tour log request sent");
             return tourLogAPI.addTourLog(tourLog).execute().body();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("addTourLog");
+            throw new BackendConnectionException("The API Call \"addTourLog\" timed out");
         } catch (ConnectException e) {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
@@ -91,12 +90,12 @@ public class TourLogServiceImpl implements TourLogService {
     }
 
     @Override
-    public Optional<TourLog> updateTourLog(TourLog tourLog) throws ApiCallTimoutException, BackendConnectionException {
+    public Optional<TourLog> updateTourLog(TourLog tourLog) throws BackendConnectionException {
         try {
             log.info("Update tour log request sent. Updating log with id {}", tourLog.getId());
             return tourLogAPI.updateTourLog(tourLog).execute().body();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("updateTourLog");
+            throw new BackendConnectionException("The API Call \"updateTourLog\" timed out");
         } catch (ConnectException e) {
             throw new BackendConnectionException();
         } catch (IOException e) {
@@ -106,13 +105,13 @@ public class TourLogServiceImpl implements TourLogService {
     }
 
     @Override
-    public byte[] getTourReport(UUID tourId) throws BackendConnectionException, ApiCallTimoutException {
+    public byte[] getTourReport(UUID tourId) throws BackendConnectionException {
         try {
             log.info("Get tour request sent. Generation tour request for tour with");
             final ResponseBody responseBody = tourLogAPI.getTourReport(tourId).execute().body();
             return responseBody != null ? responseBody.bytes() : new byte[0];
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("getTourReport");
+            throw new BackendConnectionException("The API Call \"getTourReport\" timed out");
         } catch (ConnectException e) {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
@@ -123,13 +122,13 @@ public class TourLogServiceImpl implements TourLogService {
     }
 
     @Override
-    public byte[] getTourSummary() throws BackendConnectionException, ApiCallTimoutException {
+    public byte[] getTourSummary() throws BackendConnectionException {
         try {
             log.info("Get tour summary sent.");
             final ResponseBody responseBody = tourLogAPI.getTourSummary().execute().body();
             return responseBody != null ? responseBody.bytes() : new byte[0];
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("getTourSummary");
+            throw new BackendConnectionException("The API Call \"getTourSummary\" timed out");
         } catch (ConnectException e) {
             log.error("Failed to connect to BE!");
             throw new BackendConnectionException();
@@ -140,12 +139,12 @@ public class TourLogServiceImpl implements TourLogService {
     }
 
     @Override
-    public Optional<Tour> getComputedTourAttributes(UUID tourId) throws BackendConnectionException, ApiCallTimoutException {
+    public Optional<Tour> getComputedTourAttributes(UUID tourId) throws BackendConnectionException {
         try {
             log.info("Update tour attributes for tour with id {}", tourId.toString());
             return tourLogAPI.getComputedTourAttributes(tourId).execute().body();
         } catch (SocketTimeoutException ex) {
-            throw new ApiCallTimoutException("updateTourLog");
+            throw new BackendConnectionException("The API Call \"updateTourLog\" timed out");
         } catch (ConnectException e) {
             throw new BackendConnectionException();
         } catch (IOException e) {
