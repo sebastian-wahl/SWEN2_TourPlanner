@@ -80,6 +80,17 @@ into the base component.
 We decided to go 
 ### Backend
 
+#### Architecture
+
+The backend is written in Spring Boot. We used the repository pattern to create several services for each type of entity or API call. The services we created are: 
+- `TourService`:
+    - Database access for all Tours
+- `TourLogService`:
+    - Database access for all TourLogs
+- `MapquestService`:
+    - API calls to MapQuest
+
+
 ## Lessons learned
 
 ## Unique feature
