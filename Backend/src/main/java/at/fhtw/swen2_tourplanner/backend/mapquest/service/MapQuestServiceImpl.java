@@ -41,10 +41,7 @@ public class MapQuestServiceImpl implements MapQuestService {
         final String url = LOCATION_URL + "&location=" + address;
         final RestTemplate restTemplate = new RestTemplate();
         final MapLocationResponse response = restTemplate.getForObject(url, MapLocationResponse.class);
-        if (checkFields(response)){
-            return true;
-        }
-        return false;
+        return checkFields(response);
     }
 
     private boolean checkFields(MapLocationResponse response) {

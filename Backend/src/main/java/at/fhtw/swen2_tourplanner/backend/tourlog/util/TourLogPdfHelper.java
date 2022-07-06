@@ -98,7 +98,7 @@ public class TourLogPdfHelper {
 
         tourSummary(document, tour);
 
-        float[] pointColumnWidths = {160F, 150F, 150F, 150F};
+        final float[] pointColumnWidths = {160F, 150F, 150F, 150F};
         Table table = new Table(pointColumnWidths);
         table.addCell(new Cell().add(new Paragraph("Amount of logged tours")));
         table.addCell(new Cell().add(new Paragraph("Average Time")));
@@ -124,7 +124,7 @@ public class TourLogPdfHelper {
         Paragraph title = new Paragraph("Tour: " + name).setFontColor(new DeviceRgb(8, 73, 117)).setFontSize(23f);
         title.getAccessibilityProperties().setRole(StandardRoles.H1);
 
-        float[] pointColumnWidths = {104F, 104F, 104F, 104F, 104F};
+        final float[] pointColumnWidths = {104F, 104F, 104F, 104F, 104F};
         Table table = new Table(pointColumnWidths);
         table.addCell(new Cell().add(new Paragraph("Start")));
         table.addCell(new Cell().add(new Paragraph("Goal")));
