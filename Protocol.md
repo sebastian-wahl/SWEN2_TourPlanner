@@ -67,22 +67,30 @@ private Optional<Tour> createTourCatchException(Tour tour) {
 }
 ```
 
-#### Use cases
+An exception to this is the `GetMultipleTourService` which is a subclass of the `javafx.concurrent.ScheduledService<V>`.
+This service is scheduled to send a request every 30 seconds to keep the FE state up to date so that multiple clients
+can be used at the same time.
 
 #### UI decisions
 
 Our final UI design looks like the following:
 ![TourPlannerUI](src/main/resources/TourPlannerUI.PNG)
-![TourPlannerUI](src/main/resources/TourPlannerUI2.PNG)
+![TourPlannerUI2](src/main/resources/TourPlannerUI2.PNG)
 We decided to split up the UI in several single components. Every red rectangle represents a component which included
 into the base component.
-![TourPlannerUI](src/main/resources/TourPlannerUIComponents.PNG)
-We decided to go 
+![TourPlannerUIComponents](src/main/resources/TourPlannerUIComponents.PNG)
+We did this do to give the project a better/cleaner structure and also reuse some
+components such as the searchbar (seen on the top left and bottom right).
+
+For the frontend overall it took over 200 hours to finish it.
+
 ### Backend
 
 #### Architecture
 
-The backend is written in Spring Boot. We used the repository pattern to create several services for each type of entity or API call. The services we created are: 
+The backend is written in Spring Boot. We used the repository pattern to create several services for each type of entity
+or API call. The services we created are:
+
 - `TourService`:
     - Database access for all Tours
 - `TourLogService`:
@@ -90,8 +98,18 @@ The backend is written in Spring Boot. We used the repository pattern to create 
 - `MapquestService`:
     - API calls to MapQuest
 
-
 ## Lessons learned
 
+We learned that communication when working as a team is one of the most important things.
+During development we needed to switch some of our approaches because they didn't work as excepted. Therfore, we learned
+that it is also important to check your implementation for flaws before putting a lot of afford into developing.
+
 ## Unique feature
+
+For our unique feature we added a favourite tag to each tour so a tour can be found more easily. We also added some sort
+of command line with which the UI can communicate with the user and also indicate if the program is loading with a
+loading bar.
+
+![LoadingBar](src/main/resources/InfoBar.png)
+
 
