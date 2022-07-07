@@ -1,0 +1,13 @@
+{
+  "id": "a384d852-48e6-4f2c-a268-21e075de3fce",
+  "name": "Test1",
+  "start": "Ospelgasse 12 Wien 1200",
+  "goal": "Hauptallee 5 1020 Wien",
+  "transport_type": 0,
+  "tour_distance": 1.71,
+  "estimated_time": "00:05:33",
+  "favorite": true,
+  "routeImageName": "a384d852-48e6-4f2c-a268-21e075de3fce_image.jpg",
+  "childFriendliness": 1.0,
+  "popularity": 1
+}

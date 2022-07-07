@@ -11,13 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CustomLocalTimeStringConverterTest {
 
-    private CustomLocalTimeStringConverter converter = new CustomLocalTimeStringConverter();
-
-    private String timeString = "12:12:12";
-    private String timeString2 = "111:12:11";
-    private String timeString3 = "42:12:100";
-
-    private LocalTime time = LocalTime.of(12, 12, 12);
+    private final CustomLocalTimeStringConverter converter = new CustomLocalTimeStringConverter();
+    private final String timeString = "12:12:12";
+    private final String timeString2 = "111:12:11";
+    private final String timeString3 = "42:12:100";
+    private final LocalTime time = LocalTime.of(12, 12, 12);
 
     @SneakyThrows
     @Test

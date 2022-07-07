@@ -1,0 +1,13 @@
+{
+  "id": "18e0533c-2fbc-4800-a496-c9f0692515dd",
+  "name": "Tour 2",
+  "start": "Ospelgasse 2, 1200 Wien",
+  "goal": "Praterstraße 4, 1020 Wien",
+  "transport_type": 1,
+  "tour_distance": 1.846,
+  "estimated_time": "00:05:48",
+  "favorite": false,
+  "routeImageName": "18e0533c-2fbc-4800-a496-c9f0692515dd_image.jpg",
+  "childFriendliness": 1.0,
+  "popularity": 1
+}

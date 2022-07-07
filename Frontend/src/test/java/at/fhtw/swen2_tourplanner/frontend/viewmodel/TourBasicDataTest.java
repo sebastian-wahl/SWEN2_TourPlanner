@@ -11,19 +11,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 class TourBasicDataTest {
 
-    private TourBasicData tourBasicData;
-
-    private DecimalFormat df;
-
-    @BeforeEach
-    void setUp() {
-        df = new DecimalFormat("##." + "0".repeat(2));
-
-        tourBasicData = new TourBasicData();
-    }
+    private final TourBasicData tourBasicData = new TourBasicData();
+    private final DecimalFormat df = new DecimalFormat("##." + "0".repeat(2));
 
     @Test
-    void testSetCurrentTour() {
+    void testSetCurrentTourToTour() {
         Tour testTour = new Tour("Test");
         tourBasicData.setCurrentTour(testTour);
         assertThat(tourBasicData.getNameProperty().getValue()).isEqualTo(testTour.getName());
@@ -36,7 +28,10 @@ class TourBasicDataTest {
         assertThat(tourBasicData.getChildFriendlinessProperty().getValue()).isEqualTo(df.format(testTour.getChildFriendliness()).replace(",", ".") + "/3.00");
         assertThat(tourBasicData.getFavoriteCheckboxProperty().getValue()).isEqualTo(testTour.isFavorite());
         assertThat(tourBasicData.getTransportTypeSelectedItemProperty().getValue()).isEqualTo(TransportTypeEnum.valueOf(testTour.getTransportType()).getName());
+    }
 
+    @Test
+    void testSetCurrentTourToNull() {
         tourBasicData.setCurrentTour(null);
         assertThat(tourBasicData.getNameProperty().getValue()).isEmpty();
         assertThat(tourBasicData.getNameProperty().getValue()).isEmpty();
@@ -50,4 +45,6 @@ class TourBasicDataTest {
         assertThat(tourBasicData.getFavoriteCheckboxProperty().getValue()).isEqualTo(false);
         assertThat(tourBasicData.getTransportTypeSelectedItemProperty().getValue()).isEqualTo("");
     }
+
+
 }

@@ -9,15 +9,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CustomLongStringConverterTest {
 
-    private CustomLongStringConverter converter = new CustomLongStringConverter();
-
-    private String testString = "1";
-    private String testString2 = "1lf";
-    private String testString3 = "kdsfm";
+    private final CustomLongStringConverter converter = new CustomLongStringConverter();
+    private final String testString2 = "1lf";
+    private final String testString3 = "kdsfm";
 
     @SneakyThrows
     @Test
     void convertFromStringSuccessful() {
+        String testString = "1";
         Long converted = converter.convertFromString(testString);
         assertThat(converted).isEqualTo(1);
     }

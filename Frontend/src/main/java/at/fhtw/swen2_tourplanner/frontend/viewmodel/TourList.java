@@ -4,7 +4,6 @@ import at.fhtw.swen2_tourplanner.frontend.listener.AddListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.DeleteListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.TourGetListener;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
-import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
 import at.fhtw.swen2_tourplanner.frontend.observer.UpdateTourObservable;
 import at.fhtw.swen2_tourplanner.frontend.util.PredicateGenerator;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
@@ -30,7 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
-public class TourList implements ViewModel, StringObserver, UpdateTourObservable, ChangeListener<Tour> {
+public class TourList implements ViewModel, UpdateTourObservable, ChangeListener<Tour>, BaseObserver<String> {
     // View Properties
     @Getter
     private final StringProperty newTourName;

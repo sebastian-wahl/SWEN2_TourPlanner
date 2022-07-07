@@ -9,7 +9,7 @@ import at.fhtw.swen2_tourplanner.frontend.listener.AddListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.DeleteListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.TourLogGetListener;
 import at.fhtw.swen2_tourplanner.frontend.listener.UpdateListener;
-import at.fhtw.swen2_tourplanner.frontend.observer.StringObserver;
+import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
 import at.fhtw.swen2_tourplanner.frontend.util.PredicateGenerator;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.Tour;
 import at.fhtw.swen2_tourplanner.frontend.viewmodel.modelobjects.TourLog;
@@ -38,7 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class TourLogData implements ViewModel, StringObserver {
+public class TourLogData implements ViewModel, BaseObserver<String> {
     // other view models
     private final Searchbar tourLogSearchbar;
     private final InfoLine infoLine;

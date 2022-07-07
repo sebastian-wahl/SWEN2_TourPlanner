@@ -8,15 +8,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CustomIntegerStringConverterTest {
-    private CustomIntegerStringConverter converterWithBounds = new CustomIntegerStringConverter(1, 5);
-
-
-    private String testString1 = "1";
-    private String testString2 = "6";
-    private String testString3 = "-1";
-    private String testString4 = "1d";
-
-    private Integer testInt = 1;
+    private final CustomIntegerStringConverter converterWithBounds = new CustomIntegerStringConverter(1, 5);
+    private final String testString1 = "1";
+    private final String testString4 = "1d";
+    private final Integer testInt = 1;
 
     @SneakyThrows
     @Test
@@ -28,6 +23,7 @@ class CustomIntegerStringConverterTest {
     @SneakyThrows
     @Test
     void convertFromStringOutOfBounds() {
+        String testString2 = "6";
         Integer converted = converterWithBounds.convertFromString(testString2);
         assertThat(converted).isEqualTo(5);
     }
@@ -35,6 +31,7 @@ class CustomIntegerStringConverterTest {
     @SneakyThrows
     @Test
     void convertFromStringOutOfBounds2() {
+        String testString3 = "-1";
         Integer converted = converterWithBounds.convertFromString(testString3);
         assertThat(converted).isEqualTo(1);
     }

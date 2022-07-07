@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CustomLocalDateTimeStringConverterTest {
 
-    private CustomLocalDateTimeStringConverter converter = new CustomLocalDateTimeStringConverter();
-    private String dateString = "12.12.2022 12:12";
-    private String dateString2 = "12:12.2022 12:12";
-    private LocalDateTime localDate = LocalDateTime.of(2022, 12, 12, 12, 12);
+    private final CustomLocalDateTimeStringConverter converter = new CustomLocalDateTimeStringConverter();
+    private final String dateString = "12.12.2022 12:12";
+    private final String dateString2 = "12:12.2022 12:12";
+    private final LocalDateTime localDate = LocalDateTime.of(2022, 12, 12, 12, 12);
 
     @BeforeEach
     void setUp() {

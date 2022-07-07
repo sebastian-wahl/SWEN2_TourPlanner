@@ -1,7 +1,7 @@
 package at.fhtw.swen2_tourplanner.frontend.viewmodel;
 
+import at.fhtw.swen2_tourplanner.frontend.observer.BaseObservable;
 import at.fhtw.swen2_tourplanner.frontend.observer.BaseObserver;
-import at.fhtw.swen2_tourplanner.frontend.observer.StringObservable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -11,7 +11,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Searchbar implements ViewModel, StringObservable {
+public class Searchbar implements ViewModel, BaseObservable<String> {
     private final List<BaseObserver<String>> searchbarBaseObservers;
     @Getter
     private final StringProperty searchText;

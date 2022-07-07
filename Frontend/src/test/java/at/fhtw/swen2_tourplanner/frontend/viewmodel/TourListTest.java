@@ -25,7 +25,7 @@ class TourListTest {
     @Test
     void testAddTourSuccessful() {
         tourList.getNewTourName().setValue("New Tour");
-        tourList.setTourAddListener((Tour tour) -> assertThat(tour).isNotNull());
+        tourList.setTourAddListener((Tour tour, boolean replacement) -> assertThat(tour).isNotNull());
         tourList.addTour();
     }
 

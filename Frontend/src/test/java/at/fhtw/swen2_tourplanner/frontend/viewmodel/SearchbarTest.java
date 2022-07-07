@@ -6,8 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SearchbarTest {
 
-    private Searchbar searchbar = new Searchbar();
-
+    private final Searchbar searchbar = new Searchbar();
 
     @Test
     void testSearch() {

@@ -106,7 +106,8 @@ that it is also important to check your implementation for flaws before putting 
 
 ## Unique feature
 
-For our unique feature we added a favourite tag to each tour so a tour can be found more easily. We also added some sort
+For our unique feature we added a favourite attribute to each tour. A user can mark multiple tours as his favourite and
+filter them to only show his favourite tours, so a tour can be found more easily. We also added some sort
 of command line with which the UI can communicate with the user and also indicate if the program is loading with a
 loading bar.
 
