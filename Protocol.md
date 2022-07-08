@@ -98,6 +98,11 @@ or API call. The services we created are:
 - `MapquestService`:
     - API calls to MapQuest
 
+Every service has a concrete implementation called `...Impl` that implements all methods. The Tour and TourLog Services also 
+have Helper classes, located in the util folder, which serve the purpose of accessing MapQuest and creating PDF files respectively. 
+
+Every service has a controller called `...Controller` that defines every REST Endpoint the user can access.
+
 ## Lessons learned
 
 We learned that communication when working as a team is one of the most important things.
